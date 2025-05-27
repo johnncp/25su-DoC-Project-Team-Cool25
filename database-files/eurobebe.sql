@@ -18,13 +18,17 @@ CREATE TABLE User
 -- ### Year
 CREATE TABLE Year
 (
-    year INT PRIMARY KEY
+    year    INT PRIMARY KEY,
+    user_id INT,
+    FOREIGN KEY (user_id) REFERENCES User (user_id)
+        ON UPDATE cascade ON DELETE restrict
 );
 
 -- ### EUBirthData
 CREATE TABLE EUBirthData
 (
-    country_code     VARCHAR(10) PRIMARY KEY,
+    eubd_id          INT PRIMARY KEY,
+    country_code     VARCHAR(10),
     birth_rate       DECIMAL(5, 2),
     crude_birth_rate DECIMAL(5, 2),
     year             INT,
@@ -35,7 +39,7 @@ CREATE TABLE EUBirthData
 -- ### EUEmployment
 CREATE TABLE EUEmployment
 (
-    elk_id            INT PRIMARY KEY,
+    eue_id            INT PRIMARY KEY,
     year              INT,
     country_code      VARCHAR(10),
     workforce         INT,
@@ -66,7 +70,10 @@ CREATE TABLE Children_FamilyBenefits
 CREATE TABLE PolicyAnalysis
 (
     analysis_id  INT PRIMARY KEY,
-    country_code VARCHAR(10)
+    user_id      INT,
+    country_code VARCHAR(10),
+    FOREIGN KEY (user_id) REFERENCES User (user_id)
+        ON UPDATE cascade ON DELETE restrict
 );
 
 -- ### PolicyDetails
