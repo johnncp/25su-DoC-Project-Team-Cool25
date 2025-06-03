@@ -34,11 +34,9 @@ SideBarLinks(show_home=True)
 
 # set the title of the page and provide a simple prompt. 
 logger.info("Loading the Home page of the app")
-st.title('CS 4973 Sample DoC Project App')
+st.title('Welcome to Eurobébé')
 st.write('\n\n')
-st.write('### 2025 Summer 1 Dialogue of Civilizations')
-st.write('\n')
-st.write('#### HI! As which user would you like to log in?')
+st.write('#### Discover Europe\'s Preferred Resource with Parenthood.')
 
 # For each of the user personas for which we are implementing
 # functionality, we put a button on the screen that the user 
