@@ -1,7 +1,7 @@
-DROP DATABASE IF EXISTS ngo_database;
-CREATE DATABASE IF NOT EXISTS ngo_database;
+DROP DATABASE IF EXISTS test_database;
+CREATE DATABASE IF NOT EXISTS test_database;
 
-USE ngo_database;
+USE test_database;
 
 
 CREATE TABLE IF NOT EXISTS WorldNGOs (

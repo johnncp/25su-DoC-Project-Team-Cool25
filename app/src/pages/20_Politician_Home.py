@@ -19,6 +19,9 @@ st.title(f"Latest News on {user_topic}")
 # Text input from user
 user_topic = st.text_input("Or refine yourself:", value=DEFAULT_TOPIC)
 
+# Disclaimer
+st.caption("• Eurobébé is not affiliated with the articles posted. Use intended for informational purposes only.")
+
 # Request to NewsAPI
 url = f"https://newsapi.org/v2/everything?q={user_topic}&sortBy=publishedAt&language=en&apiKey={API_KEY}"
 

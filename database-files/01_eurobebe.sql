@@ -1,7 +1,7 @@
-DROP DATABASE IF EXISTS eurobebe;
-CREATE DATABASE eurobebe;
-SHOW DATABASES;
-USE eurobebe;
+DROP DATABASE IF EXISTS euro_database;
+CREATE DATABASE IF NOT EXISTS euro_database;
+
+USE euro_database;
 
 -- # USER:
 -- ### User
@@ -16,7 +16,7 @@ CREATE TABLE User
 
 -- # DATA:
 -- ### Year
-CREATE TABLE Year
+CREATE TABLE IF NOT EXISTS Year
 (
     year    INT PRIMARY KEY,
     user_id INT,
@@ -25,7 +25,7 @@ CREATE TABLE Year
 );
 
 -- ### EUBirthData
-CREATE TABLE EUBirthData
+CREATE TABLE IF NOT EXISTS EUBirthData
 (
     eubd_id          INT PRIMARY KEY,
     country_code     VARCHAR(10),
@@ -37,7 +37,7 @@ CREATE TABLE EUBirthData
 );
 
 -- ### EUEmployment
-CREATE TABLE EUEmployment
+CREATE TABLE IF NOT EXISTS EUEmployment
 (
     eue_id            INT PRIMARY KEY,
     year              INT,
@@ -52,7 +52,7 @@ CREATE TABLE EUEmployment
 );
 
 -- ### Children_FamilyBenefits
-CREATE TABLE Children_FamilyBenefits
+CREATE TABLE IF NOT EXISTS Children_FamilyBenefits
 (
     cfb_id          INT PRIMARY KEY,
     year            INT,
@@ -67,7 +67,7 @@ CREATE TABLE Children_FamilyBenefits
 -- # FEATURES:
 -- ## Politicians:
 -- PolicyAnalysis
-CREATE TABLE PolicyAnalysis
+CREATE TABLE IF NOT EXISTS PolicyAnalysis
 (
     analysis_id  INT PRIMARY KEY,
     user_id      INT,
@@ -77,7 +77,7 @@ CREATE TABLE PolicyAnalysis
 );
 
 -- ### PolicyDetails
-CREATE TABLE PolicyDetails
+CREATE TABLE IF NOT EXISTS PolicyDetails
 (
     details_id           INT PRIMARY KEY,
     cost_per_month       DECIMAL(10, 2),
@@ -90,7 +90,7 @@ CREATE TABLE PolicyDetails
 
 -- ## Daycare Operators:
 -- ### BusinessPlanning
-CREATE TABLE BusinessPlanning
+CREATE TABLE IF NOT EXISTS BusinessPlanning
 (
     plan_id       INT PRIMARY KEY,
     daycare_id    INT,
@@ -101,7 +101,7 @@ CREATE TABLE BusinessPlanning
 );
 
 -- DaycareLocations
-CREATE TABLE DaycareLocations
+CREATE TABLE IF NOT EXISTS DaycareLocations
 (
     daycare_id INT PRIMARY KEY,
     opening_time TIME,
@@ -112,7 +112,7 @@ CREATE TABLE DaycareLocations
 );
 
 -- GeneralLogistics 
-CREATE TABLE GeneralLogistics
+CREATE TABLE IF NOT EXISTS GeneralLogistics
 (
     oper_id            INT PRIMARY KEY,
     staffing_demand    INT,
@@ -123,7 +123,7 @@ CREATE TABLE GeneralLogistics
 );
 
 -- OperatingHours 
-CREATE TABLE OperatingHours
+CREATE TABLE IF NOT EXISTS OperatingHours
 (
     hours_id      INT PRIMARY KEY,
     plan_id       INT,
@@ -135,7 +135,7 @@ CREATE TABLE OperatingHours
 
 -- ## Expecting Parents:
 -- ### ChildcareOptions
-CREATE TABLE ChildcareOptions
+CREATE TABLE IF NOT EXISTS ChildcareOptions
 (
     option_id      INT PRIMARY KEY,
     country_code   VARCHAR(10),
@@ -203,6 +203,6 @@ INSERT INTO ChildcareOptions (option_id, country_code, cost_per_month, user_id) 
 (2, 'DE', 450.00, 2);
 
 -- ## DaycareLocations
-INSERT INTO DaycareLocations (daycare_id, opening_time, closing_time, monthly_price, city, country_code) VALUE 
+INSERT INTO DaycareLocations (daycare_id, opening_time, closing_time, monthly_price, city, country_code) VALUES
 (1, 080000, 200000, 300.25, 'Brussels', 'BE'),
 (2, 090000, 160000, 256.78, 'Nice', 'FR');

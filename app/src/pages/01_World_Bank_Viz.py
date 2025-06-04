@@ -12,9 +12,36 @@ from modules.nav import SideBarLinks
 # Call the SideBarLinks from the nav module in the modules directory
 SideBarLinks()
 
-# set the header of the page
-st.header('World Bank Data')
+# set the title of the page
+st.title('Find Daycares')
 
+import streamlit as st
+import requests
+
+# User inputs
+country = st.text_input("Country Code", "BE")
+city = st.text_input("City", "Brussels")
+price = st.number_input("Max Monthly Price", min_value=0, value=1000)
+
+# Fetch data
+if st.button("Search Daycares"):
+    params = {
+        "country_code": country,
+        "city": city,
+        "monthly_price": price
+    }
+    response = requests.get("http://web-api:4000/location/locations", params=params)
+
+    if response.status_code == 200:
+        data = response.json()
+        st.success(f"Found {len(data)} results")
+        for item in data:
+            st.write(item)
+    else:
+        st.error("Failed to fetch locations")
+
+
+"""
 # You can access the session state to make a more customized/personalized app experience
 st.write(f"### Hi, {st.session_state['first_name']}.")
 
@@ -39,3 +66,4 @@ with st.echo(code_location='above'):
                                 slim_countries['incomeLevel'],  
                                 margins = False) 
     st.table(data_crosstab)
+"""
