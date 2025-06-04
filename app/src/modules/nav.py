@@ -12,7 +12,7 @@ hour = now.hour
 # Determine greeting
 if 5 <= hour < 12:
     greeting = "Good morning"
-elif 12 <= hour < 18:
+elif 12 <= hour < 16:
     greeting = "Good afternoon"
 else:
     greeting = "Good evening"

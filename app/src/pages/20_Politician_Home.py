@@ -10,7 +10,7 @@ st.set_page_config(layout = 'wide')
 SideBarLinks()
 
 API_KEY = 'b7fbb637b8044d34b684ae6076ee98e2'
-DEFAULT_TOPIC = "EU birth rates"
+DEFAULT_TOPIC = "European birth rates"
 user_topic = DEFAULT_TOPIC
 
 # Display
@@ -51,4 +51,4 @@ else:
 if st.button('Update ML Models', 
              type='primary',
              use_container_width=True):
-  st.switch_page('pages/21_ML_Model_Mgmt.py')
+  st.switch_page('pages/21_Birth_Rate_Predictor.py')
