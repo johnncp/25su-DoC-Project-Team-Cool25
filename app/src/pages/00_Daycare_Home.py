@@ -55,10 +55,10 @@ st.title(f"Hello, {st.session_state['first_name']}!")
 st.write('')
 st.write('### What does your daycare need today?')
 
-if st.button('View World Bank Data Visualization', 
+if st.button('Business Planning', 
              type='primary',
              use_container_width=True):
-  st.switch_page('pages/01_World_Bank_Viz.py')
+  st.switch_page('pages/01_Business_Planner.py')
 
 if st.button('View World Map Demo', 
              type='primary',

@@ -203,6 +203,6 @@ INSERT INTO ChildcareOptions (option_id, country_code, cost_per_month, user_id) 
 (2, 'DE', 450.00, 2);
 
 -- ## DaycareLocations
-INSERT INTO DaycareLocations (daycare_id, opening_time, closing_time, monthly_price, city, country_code) VALUE 
+INSERT INTO DaycareLocations (daycare_id, opening_time, closing_time, monthly_price, city, country_code) VALUES 
 (1, 080000, 200000, 300.25, 'Brussels', 'BE'),
 (2, 090000, 160000, 256.78, 'Nice', 'FR');
