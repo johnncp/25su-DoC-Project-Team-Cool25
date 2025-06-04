@@ -94,6 +94,7 @@ with col1:
         )
     if st.button("Log in as Cara Day", 
             type = 'primary', 
+            icon=":material/login:",
             use_container_width=True):
         # when user clicks the button, they are now considered authenticated
         st.session_state['authenticated'] = True
@@ -105,7 +106,7 @@ with col1:
         # finally, we ask streamlit to switch to another page, in this case, the 
         # landing page for this particular user type
         logger.info("Logging in as Daycare Operator Cara Day")
-        st.switch_page('pages/00_Pol_Strat_Home.py')
+        st.switch_page('pages/00_Daycare_Home.py')
 
 with col2:
     st.markdown("# A parent?")
@@ -113,12 +114,13 @@ with col2:
     st.markdown(
         """
         :primary-badge[Adoptive Parents] :primary-badge[Caregivers]
-        :primary-badge[PTA Members] :primary-badge[Homeschooling]
+        :primary-badge[PTA Members] :primary-badge[Homeschools]
         :primary-badge[Suburban Parents] :primary-badge[Family Support Group Members]
         """
         )
     if st.button("Log in as Eura Pean", 
             type = 'primary', 
+            icon=":material/login:",
             use_container_width=True):
         # when user clicks the button, they are now considered authenticated
         st.session_state['authenticated'] = True
@@ -130,7 +132,7 @@ with col2:
         # finally, we ask streamlit to switch to another page, in this case, the 
         # landing page for this particular user type
         logger.info("Logging in as Parent Eura Pean")
-        st.switch_page('pages/10_USAID_Worker_Home.py')
+        st.switch_page('pages/10_Parent_Home.py')
 
 with col3:
     st.markdown("# A politician?")
@@ -138,12 +140,13 @@ with col3:
     st.markdown(
         """
         :primary-badge[Senators] :primary-badge[County Commissioners]
-        :primary-badge[Political Strategists] :primary-badge[Political Influencer]
+        :primary-badge[Political Strategists] :primary-badge[Political Influencers]
         :primary-badge[Lobbyists]
         """
         )
     if st.button("Log in as Paul E. Tishan", 
             type = 'primary', 
+            icon=":material/login:",
             use_container_width=True):
         # when user clicks the button, they are now considered authenticated
         st.session_state['authenticated'] = True
@@ -155,6 +158,6 @@ with col3:
         # finally, we ask streamlit to switch to another page, in this case, the 
         # landing page for this particular user type
         logger.info("Logging in as Politician Paul E. Tishan")
-        st.switch_page('pages/20_Admin_Home.py')
+        st.switch_page('pages/20_Politician_Home.py')
 
 st.divider()

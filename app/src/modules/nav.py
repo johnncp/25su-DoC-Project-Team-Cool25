@@ -3,6 +3,19 @@
 # This file has function to add certain functionality to the left side bar of the app
 
 import streamlit as st
+from datetime import datetime
+
+# Get current hour
+now = datetime.now()
+hour = now.hour
+
+# Determine greeting
+if 5 <= hour < 12:
+    greeting = "Good morning"
+elif 12 <= hour < 18:
+    greeting = "Good afternoon"
+else:
+    greeting = "Good evening"
 
 
 #### ------------------------ General ------------------------
@@ -71,7 +84,7 @@ def SideBarLinks(show_home=False):
     """
 
     # add a logo to the sidebar always
-    st.sidebar.image("assets/eurobebe_logo1.png", width=250)
+    st.sidebar.image("assets/eurobebe_logo1.png", width=180)
 
     # If there is no logged in user, redirect to the Home (Landing) page
     if "authenticated" not in st.session_state:
@@ -84,6 +97,8 @@ def SideBarLinks(show_home=False):
 
     # Show the other page navigators depending on the users' role.
     if st.session_state["authenticated"]:
+
+        st.sidebar.header(greeting + ", " + st.session_state['first_name'] + ".")
 
         # Show World Bank Link and Map Demo Link if the user is a political strategy advisor role.
         if st.session_state["role"] == "pol_strat_advisor":
