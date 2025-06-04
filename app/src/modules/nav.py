@@ -30,7 +30,7 @@ def AboutPageNav():
 #### ------------------------ Examples for Role of pol_strat_advisor ------------------------
 def PolStratAdvHomeNav():
     st.sidebar.page_link(
-        "pages/00_Pol_Strat_Home.py", label="Political Strategist Home", icon="👤"
+        "pages/00_Daycare_Home.py", label="Daycare Operator Home", icon="👤"
     )
 
 
@@ -101,7 +101,7 @@ def SideBarLinks(show_home=False):
         st.sidebar.header(greeting + ", " + st.session_state['first_name'] + ".")
 
         # Show World Bank Link and Map Demo Link if the user is a political strategy advisor role.
-        if st.session_state["role"] == "pol_strat_advisor":
+        if st.session_state["role"] == "daycare_operator":
             PolStratAdvHomeNav()
             WorldBankVizNav()
             MapDemoNav()

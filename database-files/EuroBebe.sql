@@ -100,6 +100,17 @@ CREATE TABLE BusinessPlanning
         ON UPDATE cascade ON DELETE restrict
 );
 
+-- DaycareLocations
+CREATE TABLE DaycareLocations
+(
+    daycare_id INT PRIMARY KEY,
+    opening_time TIME,
+    closing_time TIME,
+    monthly_price DECIMAL(7,2),
+    city VARCHAR(100),
+    country_code VARCHAR(10)
+);
+
 -- GeneralLogistics 
 CREATE TABLE GeneralLogistics
 (
@@ -191,3 +202,7 @@ INSERT INTO ChildcareOptions (option_id, country_code, cost_per_month, user_id) 
 (1, 'BE', 650.00, 1),
 (2, 'DE', 450.00, 2);
 
+-- ## DaycareLocations
+INSERT INTO DaycareLocations (daycare_id, opening_time, closing_time, monthly_price, city, country_code) VALUE 
+(1, 080000, 200000, 300.25, 'Brussels', 'BE'),
+(2, 090000, 160000, 256.78, 'Nice', 'FR');

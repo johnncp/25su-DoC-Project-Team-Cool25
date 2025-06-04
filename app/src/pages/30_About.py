@@ -24,22 +24,22 @@ st.title("About the Authors")
 authors = [
     {
         "name": "Sophie Farrell",
-        "image": "assets/sophie_author_photo.png",
+        "image": "assets/30_About/sophie_author_photo.png",
         "bio": "3rd Year Computer Science and Economics Student"
     },
     {
         "name": "Mia Giargiari",
-        "image": "assets/mia_author_photo.png",
+        "image": "assets/30_About/mia_author_photo.png",
         "bio": "2nd Year Honors Business (Marketing) and Law Student Minoring in Data Science"
     },
     {
         "name": "Emma Kulla",
-        "image": "assets/emma_author_photo.png",
+        "image": "assets/30_About/emma_author_photo.png",
         "bio": "2nd Year Honors Data Science and Business Administration (Finance) Student"
     },
     {
         "name": "John Nguyen",
-        "image": "assets/john_author_photo.png",
+        "image": "assets/30_About/john_author_photo.png",
         "bio": "3rd Year Computer Science and Business Administration (FinTech, Marketing Analytics) Student"
     },
 ]
