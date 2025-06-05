@@ -5,13 +5,74 @@ logger = logging.getLogger(__name__)
 import streamlit as st
 from modules.nav import SideBarLinks
 import requests
+import pandas as pd
+import plotly.express as px
+import pycountry
 
 st.set_page_config(layout="wide")
 
 # Display the appropriate sidebar links for the role of the logged in user
 SideBarLinks()
 
-st.title("Prediction with Regression")
+st.title("Find EU Members by Childcare Spending")
+
+df = pd.read_csv("datasets/parent/3Expenditure.csv")
+
+daycare_df = df[
+    (df['benefit_type'] == "Childcare services") &
+    (df['unit'] == "Million Euros (2015 prices)")
+].copy()
+
+daycare_df['expenditure'] = pd.to_numeric(daycare_df['expenditure'], errors='coerce')
+latest_daycare = daycare_df.sort_values("year").groupby("country").tail(1)
+
+# Fix EL → GR for Greece
+latest_daycare['country'] = latest_daycare['country'].replace({'EL': 'GR'})
+
+# Country code conversions
+def iso2_to_iso3(code):
+    try:
+        return pycountry.countries.get(alpha_2=code).alpha_3
+    except:
+        return None
+
+def iso2_to_name(code):
+    try:
+        return pycountry.countries.get(alpha_2=code).name
+    except:
+        return code
+
+latest_daycare['iso_alpha'] = latest_daycare['country'].apply(iso2_to_iso3)
+latest_daycare['country_name'] = latest_daycare['country'].apply(iso2_to_name)
+
+# Drop invalid
+latest_daycare = latest_daycare.dropna(subset=["iso_alpha", "expenditure"])
+
+# Convert to euros
+latest_daycare['expenditure_eur'] = latest_daycare['expenditure'] * 1_000_000
+
+# Choropleth plot
+fig = px.choropleth(
+    latest_daycare,
+    locations="iso_alpha",
+    locationmode="ISO-3",
+    color="expenditure_eur",
+    hover_name="country_name",
+    hover_data={"expenditure_eur": ":,.0f"},
+    color_continuous_scale="YlGnBu",
+    title="Childcare Services Expenditures by EU Country (Most Recent Year)",
+    template="plotly_white",
+    scope="europe"
+)
+
+fig.update_layout(
+    geo=dict(showframe=False, showcoastlines=False),
+    coloraxis_colorbar_title="€ Spent on Childcare (EUR)",
+    margin={"r": 0, "t": 40, "l": 0, "b": 0},
+    title_x=0.5
+)
+
+st.plotly_chart(fig, use_container_width=True)
 
 # create a 2 column layout
 col1, col2 = st.columns(2)

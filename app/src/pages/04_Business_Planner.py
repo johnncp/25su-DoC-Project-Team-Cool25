@@ -45,8 +45,15 @@ with col1:
     #might not work
     viewLocations = True
 
+API_URL = "http://web-api:4000/location//locations"
+
+response = requests.get(API_URL)
+if response.status_code == 200:
+    locations = response.json()
+st.write(locations)    
+
 # this is set up like this for formatting reasons
-if viewLocations == True:
+if viewLocations == True and viewLocations == False:
   try: 
     response = requests.get(API_URL)
     if response.status_code == 200:
@@ -58,7 +65,7 @@ if viewLocations == True:
 
     # Create expandable rows for each NGO
     for loc in locations:
-        with st.expander(f"{loc['Daycare ID']} ({loc['Country']})"):
+        with st.expander(f"{loc['Daycare ID']} ({loc['Daycare Name']})"):
             st.write("**Basic Information**")
             col1, col2 = st.columns(2)
 
