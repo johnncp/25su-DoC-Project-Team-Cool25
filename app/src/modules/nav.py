@@ -79,7 +79,7 @@ def NoteTakingFeature():
 
     with st.sidebar.expander("✪ Your Insights", expanded=False):
         # Text area with value tied to session state
-        notes = st.text_area("Pen down your reflections:", value=st.session_state.notes, height=300)
+        notes = st.text_area("Pen down your reflections:", value=st.session_state.notes, height=200)
 
         # Update session state when user types
         st.session_state.notes = notes

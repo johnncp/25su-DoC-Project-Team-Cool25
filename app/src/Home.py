@@ -44,6 +44,11 @@ background_img = get_base64("assets/homepage_background.png")
 
 st.markdown(f"""
     <style>
+    @keyframes fadeIn {{
+        0% {{ opacity: 0; }}
+        100% {{ opacity: 1; }}
+    }}
+
     .overlay-text {{
         position: absolute;
         top: 50%;
@@ -56,12 +61,15 @@ st.markdown(f"""
         padding: 15px 25px;
         border-radius: 8px;
         line-height: 0.8;
+        opacity: 0;
+        animation: fadeIn 0.5s ease-out forwards;
     }}
+
     .subheading {{
         position: absolute;
         top: 60%;
         left: 50%;
-        transform: translate(-100%, -90%);
+        transform: translate(-100%, -95%);
         color: #31333E;
         font-size: 1.6rem;
         font-weight: 400;
@@ -69,12 +77,14 @@ st.markdown(f"""
         padding: 10px 25px;
         border-radius: 8px;
         line-height: 1;
+        opacity: 0;
+        animation: fadeIn 0.5s ease-out forwards;
     }}
     </style>
 
     <img src="data:image/png;base64,{background_img}">
-        <div class="overlay-text">Welcome to Eurobébé</div>
-        <div class="subheading">Discover Europe's Preferred Resource for Parenthood. A CS 4973 Project at Northeastern University.</div>
+    <div class="overlay-text">Welcome to Eurobébé</div>
+    <div class="subheading">Discover Europe's Preferred Resource for Parenthood. A CS 4973 Project at Northeastern University.</div>
 """, unsafe_allow_html=True)
 
 st.divider()
