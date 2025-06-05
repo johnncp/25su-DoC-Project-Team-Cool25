@@ -61,7 +61,7 @@ st.markdown(f"""
         position: absolute;
         top: 60%;
         left: 50%;
-        transform: translate(-100%, -120%);
+        transform: translate(-100%, -90%);
         color: #31333E;
         font-size: 1.6rem;
         font-weight: 400;
@@ -74,7 +74,7 @@ st.markdown(f"""
 
     <img src="data:image/png;base64,{background_img}">
         <div class="overlay-text">Welcome to Eurobébé</div>
-        <div class="subheading">Discover Europe's Preferred Resource for Parenthood.</div>
+        <div class="subheading">Discover Europe's Preferred Resource for Parenthood. A CS 4973 Project at Northeastern University.</div>
 """, unsafe_allow_html=True)
 
 st.divider()

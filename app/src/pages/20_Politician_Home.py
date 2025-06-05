@@ -1,23 +1,78 @@
 import logging
 logger = logging.getLogger(__name__)
+import base64, requests
 
 import streamlit as st
 from modules.nav import SideBarLinks
 import requests
 
+API_KEY = 'b7fbb637b8044d34b684ae6076ee98e2'
+DEFAULT_TOPIC = "European Birth Rates"
+user_topic = DEFAULT_TOPIC
+
 st.set_page_config(layout = 'wide')
 
 SideBarLinks()
 
-API_KEY = 'b7fbb637b8044d34b684ae6076ee98e2'
-DEFAULT_TOPIC = "European birth rates"
-user_topic = DEFAULT_TOPIC
+def get_base64(path):
+    with open(path, "rb") as f:
+        return base64.b64encode(f.read()).decode()
+
+background_img = get_base64("assets/30_Politician/politician_home_background.png")
+
+st.markdown(f"""
+    <style>
+    @keyframes fadeIn {{
+        0% {{ opacity: 0; }}
+        100% {{ opacity: 1; }}
+    }}
+
+    .overlay-text {{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-100%, -120%);
+        color: #31333E;
+        font-size: 4.2rem;
+        font-weight: bold;
+        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+        padding: 15px 25px;
+        border-radius: 8px;
+        line-height: 0.8;
+        opacity: 0;
+        animation: fadeIn 0.5s ease-out forwards;
+    }}
+
+    .subheading {{
+        position: absolute;
+        top: 60%;
+        left: 50%;
+        transform: translate(-100%, -120%);
+        color: #31333E;
+        font-size: 1.6rem;
+        font-weight: 400;
+        text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.05);
+        padding: 10px 25px;
+        border-radius: 8px;
+        line-height: 1;
+        opacity: 0;
+        animation: fadeIn 0.5s ease-out forwards;
+    }}
+    </style>
+
+    <img src="data:image/png;base64,{background_img}">
+    <div class="overlay-text">Welcome, {st.session_state['first_name']}!</div>
+    <div class="subheading">Continue your work for the community. For the region. For the world.</div>
+""", unsafe_allow_html=True)
 
 # Display
-st.title(f"Latest News on {user_topic}")
+st.title(f"The Latest News on {user_topic}")
 
 # Text input from user
-user_topic = st.text_input("Or refine yourself:", value=DEFAULT_TOPIC)
+user_topic = st.text_input("Or click to refine queries yourself:", value=DEFAULT_TOPIC)
+
+# Disclaimer
+st.caption("• Eurobébé is not affiliated with the following articles and does not confirm factuality. Use intended for informational purposes only.")
 
 # Request to NewsAPI
 url = f"https://newsapi.org/v2/everything?q={user_topic}&sortBy=publishedAt&language=en&apiKey={API_KEY}"
@@ -48,7 +103,26 @@ if data.get("articles"):
 else:
     st.warning("No articles found. Try a different topic.")
 
-if st.button('Update ML Models', 
-             type='primary',
-             use_container_width=True):
-  st.switch_page('pages/21_Birth_Rate_Predictor.py')
+st.divider()
+
+st.title(f"Be the change, {st.session_state['first_name']}.")
+
+# Nav to features
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    if st.button('〰️ Model', type='primary', use_container_width=True):
+        st.success("Redirecting to Model..."),
+        st.switch_page('pages/21_Politican_Birth_Rate_Predictor.py')
+
+with col2:
+    if st.button('🔎 Legislation Finder', type='primary', use_container_width=True):
+        st.success("Legendary sessions..."),
+        st.switch_page('pages/22_Politician_Legislation_Finder.py')
+
+with col3:
+    if st.button('☰ Resource Page', type='primary', use_container_width=True):
+        st.success("Redirecting to Resources..."),
+        st.switch_page('pages/23_Politician_Family_Time_Resources.py')
+
+st.divider()

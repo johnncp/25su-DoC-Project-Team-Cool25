@@ -14,10 +14,15 @@ def get_base64(path):
     with open(path, "rb") as f:
         return base64.b64encode(f.read()).decode()
 
-background_img = get_base64("assets/caraday_home_background.png")
+background_img = get_base64("assets/00_Daycare_Home/daycare_home_background.png")
 
 st.markdown(f"""
     <style>
+    @keyframes fadeIn {{
+        0% {{ opacity: 0; }}
+        100% {{ opacity: 1; }}
+    }}
+
     .overlay-text {{
         position: absolute;
         top: 50%;
@@ -30,7 +35,10 @@ st.markdown(f"""
         padding: 15px 25px;
         border-radius: 8px;
         line-height: 0.8;
+        opacity: 0;
+        animation: fadeIn 0.5s ease-out forwards;
     }}
+
     .subheading {{
         position: absolute;
         top: 60%;
@@ -43,24 +51,31 @@ st.markdown(f"""
         padding: 10px 25px;
         border-radius: 8px;
         line-height: 1;
+        opacity: 0;
+        animation: fadeIn 0.5s ease-out forwards;
     }}
     </style>
 
     <img src="data:image/png;base64,{background_img}">
-        <div class="overlay-text">Welcome, {st.session_state['first_name']}!</div>
-        <div class="subheading">What can we do for your daycare today?</div>
+    <div class="overlay-text">Greetings, {st.session_state['first_name']}!</div>
+    <div class="subheading">What can we do for your daycare today?</div>
 """, unsafe_allow_html=True)
 
-st.title(f"Hello, {st.session_state['first_name']}!")
-st.write('')
-st.write('### What does your daycare need today?')
+# Nav to features
+col1, col2, col3 = st.columns(3)
 
-if st.button('Business Planning', 
-             type='primary',
-             use_container_width=True):
-  st.switch_page('pages/01_Business_Planner.py')
 
-if st.button('View World Map Demo', 
-             type='primary',
-             use_container_width=True):
-  st.switch_page('pages/02_Map_Demo.py')
+with col1:
+    if st.button('☆ Predict an EU Member', type='primary', use_container_width=True):
+        st.success("Redirecting to Country Predictor..."),
+        st.switch_page('pages/01_Daycare_EU_Member_Predictor.py')
+
+with col2:
+    if st.button('☰ Resource Page', type='primary', use_container_width=True):
+        st.success("Redirecting to Resources..."),
+        st.switch_page('pages/02_Daycare_Resources.py')
+
+with col3:
+    if st.button('Business Planner', type='primary', use_container_width=True):
+        st.success("Rdirecting to Business Planner..."),
+        st.switch_page('pages/04_Business_Planner.py')
