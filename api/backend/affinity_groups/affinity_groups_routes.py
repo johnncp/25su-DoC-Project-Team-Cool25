@@ -55,3 +55,43 @@ def get_all_groups():
         current_app.logger.error(f'Database error in get_all_groups: {str(e)}')
         return jsonify({"error": str(e)}), 500
     
+#adds a new group
+# need to change values to be for group
+@group.route("/groups", methods=["POST"])
+def add_new_group():
+    try: 
+        data = request.get_json()
+
+        required_fields = ["id", "resource_name", "resource_type", "focus_area", "country_code"]
+        for field in required_fields:
+            if field not in data:
+                return jsonify({"error": f"Missing required field: {field}"}), 400
+
+        cursor = db.get_db().cursor()
+
+        query = """
+        INSERT INTO AffinityResources (id, resource_name, resource_type, focus_area, country_code)
+        VALUES (%s, %s, %s, %s, %s)
+        """
+        cursor.execute(
+            query,
+            (
+                data["id"],
+                data["resource_name"],
+                data["resource_type"],
+                data["focus_area"],
+                data["country_code"],
+            ),
+        )
+
+        db.get_db().commit()
+        cursor.close()
+
+        return (
+            jsonify({"message": "Resource created successfully"}),
+            201,
+        )
+
+    except Error as e:
+        current_app.logger.error(f'Database error in add_new_group: {str(e)}')
+        return jsonify({"error": str(e)}), 500

@@ -14,6 +14,8 @@ import datetime
 
 location = Blueprint("location", __name__)
 
+# gets all locations with ability to filter by country, city, and price
+# need to make it so only shows active
 @location.route("/locations", methods=["GET"])
 def get_all_locations():
     try:
@@ -36,7 +38,7 @@ def get_all_locations():
         # how can i construct a query dynamically? 
         # WHERE 1=1 allows you to add on the filters
         ## 1=1 will always be true but primes query for adding on filters
-        query = "SELECT * FROM DaycareLocations WHERE 1=1"
+        query = "SELECT * FROM DaycareLocations WHERE inactive = false"
         params = []
 
         # Add filters if provided
@@ -149,6 +151,7 @@ def update_location(daycare_id):
         return jsonify({"error": str(e)}), 500
     
 # add a new daycare location    
+# need to update so it makes it automatically active
 @location.route("/locations", methods=["POST"])
 def add_new_location():
     try: 
@@ -190,9 +193,7 @@ def add_new_location():
         return jsonify({"error": str(e)}), 500
     
 # will delete a daycare location
-# ngl, i have no idea how to do this
-# insert into a deleted locations table
-# then delete from daycare locations table
+# needs further testing
 @location.route("/locations/<int:daycare_id>", methods=["DELETE"])
 def delete_location(daycare_id):
     try: 
@@ -205,6 +206,26 @@ def delete_location(daycare_id):
         if not cursor.fetchone():
             return jsonify({"error": "Daycare not found"}), 404
 
+        update_fields = []
+        params = []
+        allowed_fields = ["inactive"]
+
+        for field in allowed_fields:
+            if field in data:
+                update_fields.append(f"{field} = %s")
+                params.append(data[field])
+
+        if not update_fields:
+            return jsonify({"error": "No valid fields to update"}), 400
+        
+        params.append(daycare_id)
+        query = f"UPDATE DaycareLocations SET {', '.join(update_fields)} WHERE daycare_id = %s"
+
+        cursor.execute(query, params)
+        db.get_db().commit()
+        cursor.close()
+        
+        return jsonify({"message": "Daycare deleted successfully"}), 200
 
     except Error as e:
         current_app.logger.error(f'Database error in delete_location: {str(e)}')

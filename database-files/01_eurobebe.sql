@@ -85,6 +85,7 @@ CREATE TABLE IF NOT EXISTS DaycareLocations
     monthly_price DECIMAL(7, 2),
     city          VARCHAR(50),
     country_code  VARCHAR(10),
+    inactive      BOOLEAN,
     user_id       INT,
     FOREIGN KEY (user_id) REFERENCES User (user_id)
         ON UPDATE cascade ON DELETE restrict
@@ -132,9 +133,9 @@ VALUES (1, 'Birth Rate Act', 'Day care grants', 'BE', 2021),
        (2, 'Parental Leave Bill', 'Parental Leave', 'DE', 2023);
 
 -- ## DaycareLocations
-INSERT INTO DaycareLocations (daycare_id, daycare_name, opening_time, closing_time, monthly_price, city, country_code)
-VALUES (101, 'Little Child Daycare', 080000, 200000, 300.25, 'Brussels', 'BE'),
-       (102, 'Happy Children Place', 090000, 160000, 256.78, 'Nice', 'FR');
+INSERT INTO DaycareLocations (daycare_id, daycare_name, opening_time, closing_time, monthly_price, city, country_code, inactive)
+VALUES (101, 'Little Child Daycare', 080000, 200000, 300.25, 'Brussels', 'BE', false),
+       (102, 'Happy Children Place', 090000, 160000, 256.78, 'Nice', 'FR', false);
 
 -- ## AffinityResources
 INSERT INTO AffinityResources(id, resource_name, reource_type, focus_area, country_code)
