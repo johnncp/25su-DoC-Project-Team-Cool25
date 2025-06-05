@@ -67,7 +67,7 @@ st.title(f"Choose your research.")
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    if st.button('☆ Predict an EU Member', type='primary', use_container_width=True):
+    if st.button('☆ Find Countries by Childcare Spending', type='primary', use_container_width=True):
         st.success("Redirecting to EU predictor..."),
         st.switch_page('pages/11_Parent_EU_Member_Predictor.py')
 
