@@ -18,6 +18,11 @@ background_img = get_base64("assets/10_Parent_Home/parent_home_background.png")
 
 st.markdown(f"""
     <style>
+    @keyframes fadeIn {{
+        0% {{ opacity: 0; }}
+        100% {{ opacity: 1; }}
+    }}
+
     .overlay-text {{
         position: absolute;
         top: 50%;
@@ -30,7 +35,10 @@ st.markdown(f"""
         padding: 15px 25px;
         border-radius: 8px;
         line-height: 0.8;
+        opacity: 0;
+        animation: fadeIn 0.5s ease-out forwards;
     }}
+
     .subheading {{
         position: absolute;
         top: 60%;
@@ -43,16 +51,17 @@ st.markdown(f"""
         padding: 10px 25px;
         border-radius: 8px;
         line-height: 1;
+        opacity: 0;
+        animation: fadeIn 0.5s ease-out forwards;
     }}
     </style>
 
     <img src="data:image/png;base64,{background_img}">
-        <div class="overlay-text">Hey there, {st.session_state['first_name']}!</div>
-        <div class="subheading">We're here for you to take highly informed steps in life. </div>
+    <div class="overlay-text">Hey there, {st.session_state['first_name']}!</div>
+    <div class="subheading">We're here for you to take highly informed steps in life.</div>
 """, unsafe_allow_html=True)
 
-st.title(f"Welcome USAID Worker, {st.session_state['first_name']}.")
-st.write('')
+st.title(f"Choose your research.")
 
 # Nav to features
 col1, col2, col3 = st.columns(3)

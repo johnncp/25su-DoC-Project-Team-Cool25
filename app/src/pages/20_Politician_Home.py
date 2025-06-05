@@ -22,6 +22,11 @@ background_img = get_base64("assets/30_Politician/politician_home_background.png
 
 st.markdown(f"""
     <style>
+    @keyframes fadeIn {{
+        0% {{ opacity: 0; }}
+        100% {{ opacity: 1; }}
+    }}
+
     .overlay-text {{
         position: absolute;
         top: 50%;
@@ -34,7 +39,10 @@ st.markdown(f"""
         padding: 15px 25px;
         border-radius: 8px;
         line-height: 0.8;
+        opacity: 0;
+        animation: fadeIn 0.5s ease-out forwards;
     }}
+
     .subheading {{
         position: absolute;
         top: 60%;
@@ -47,12 +55,14 @@ st.markdown(f"""
         padding: 10px 25px;
         border-radius: 8px;
         line-height: 1;
+        opacity: 0;
+        animation: fadeIn 0.5s ease-out forwards;
     }}
     </style>
 
     <img src="data:image/png;base64,{background_img}">
-        <div class="overlay-text">Welcome, {st.session_state['first_name']}!</div>
-        <div class="subheading">Continue your work for the community. For the region. For the world.</div>
+    <div class="overlay-text">Welcome, {st.session_state['first_name']}!</div>
+    <div class="subheading">Continue your work for the community. For the region. For the world.</div>
 """, unsafe_allow_html=True)
 
 # Display
@@ -62,7 +72,7 @@ st.title(f"The Latest News on {user_topic}")
 user_topic = st.text_input("Or click to refine queries yourself:", value=DEFAULT_TOPIC)
 
 # Disclaimer
-st.caption("• Eurobébé is not affiliated with the following articles. Use intended for informational purposes only.")
+st.caption("• Eurobébé is not affiliated with the following articles and does not confirm factuality. Use intended for informational purposes only.")
 
 # Request to NewsAPI
 url = f"https://newsapi.org/v2/everything?q={user_topic}&sortBy=publishedAt&language=en&apiKey={API_KEY}"
