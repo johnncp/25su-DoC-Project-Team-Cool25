@@ -69,7 +69,7 @@ with col1:
     select_all = st.checkbox("Select all members", value=True)
 
 with col2:
-    fixed_range = st.checkbox("Fix the Y-axis", value=True)
+    fixed_range = st.checkbox("Fixed Y-axis", value=True)
 
 # Pre-select logic
 pre_selected = national_countries if select_all else [eu_country]
