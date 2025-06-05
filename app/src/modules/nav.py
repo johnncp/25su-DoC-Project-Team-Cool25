@@ -84,24 +84,32 @@ def NoteTakingFeature():
         # Update session state when user types
         st.session_state.notes = notes
 
-        # Download Markdown button
-        markdown_content = f"# {st.session_state['first_name']}\'s Notes\n\n\n{notes}"
-        notes_buffer = StringIO(markdown_content)
-        st.download_button(
-            label="↓ Download as Markdown",
-            data=notes_buffer.getvalue(),
-            file_name=st.session_state['first_name'] + "s_Notes.md",
-            mime="text/markdown"
-        )
+        st.text("Download as:")
 
-        # Download Plain text button
-        notes_buffer = StringIO(notes)
-        st.download_button(
-            label="↓ Download as Plain Text",
-            data=notes_buffer.getvalue(),
-            file_name=st.session_state['first_name'] + "s_Notes.txt",
-            mime="text/plain"
-        )
+        col1, col2 = st.columns(2)
+
+        with col1:
+            # Download Markdown button
+            markdown_content = f"# {st.session_state['first_name']}\'s Notes\n\n\n{notes}"
+            notes_buffer = StringIO(markdown_content)
+            st.download_button(
+                label="↓ .md",
+                data=notes_buffer.getvalue(),
+                use_container_width=True,
+                file_name=st.session_state['first_name'] + "s_Notes.md",
+                mime="text/markdown"
+            )
+        
+        with col2:
+            # Download Plain text button
+            notes_buffer = StringIO(notes)
+            st.download_button(
+                label="↓ .txt",
+                data=notes_buffer.getvalue(),
+                use_container_width=True,
+                file_name=st.session_state['first_name'] + "s_Notes.txt",
+                mime="text/plain"
+            )
             
 
 
@@ -110,13 +118,13 @@ def PoliticianPageNav():
     st.sidebar.page_link("pages/20_Politician_Home.py", label="Your Home", icon="🖥️")
 
     st.sidebar.page_link(
-        "pages/21_Politician_Birth_Rate_Predictor.py", label="Model", icon="🧮"
+        "pages/21_Politician_Birth_Rate_Predictor.py", label="Birth Rate Predictor", icon="🍼"
     )
     st.sidebar.page_link(
         "pages/22_Politician_Legislation_Finder.py", label="Legislation Finder", icon="🔎"
     )
     st.sidebar.page_link(
-        "pages/23_Politician_Family_Time_Resources.py", label="Family Time Resources", icon="🫂"
+        "pages/23_Politician_Family_Time_Resources.py", label="N/A", icon="⚠️"
     )
 
 

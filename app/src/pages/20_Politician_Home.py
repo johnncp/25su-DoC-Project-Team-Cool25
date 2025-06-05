@@ -113,7 +113,7 @@ col1, col2, col3 = st.columns(3)
 with col1:
     if st.button('〰️ Model', type='primary', use_container_width=True):
         st.success("Redirecting to Model..."),
-        st.switch_page('pages/21_Politican_Birth_Rate_Predictor.py')
+        st.switch_page('pages/21_Politician_Birth_Rate_Predictor.py')
 
 with col2:
     if st.button('🔎 Legislation Finder', type='primary', use_container_width=True):
