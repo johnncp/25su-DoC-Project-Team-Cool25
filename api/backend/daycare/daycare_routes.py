@@ -14,8 +14,6 @@ import datetime
 
 location = Blueprint("location", __name__)
 
-# gets all locations with ability to filter by country, city, and price
-# need to make it so only shows active
 @location.route("/locations", methods=["GET"])
 def get_all_locations():
     try:
@@ -38,7 +36,7 @@ def get_all_locations():
         # how can i construct a query dynamically? 
         # WHERE 1=1 allows you to add on the filters
         ## 1=1 will always be true but primes query for adding on filters
-        query = "SELECT * FROM DaycareLocations WHERE inactive = false"
+        query = "SELECT * FROM DaycareLocations WHERE 1=1"
         params = []
 
         # Add filters if provided
@@ -110,123 +108,4 @@ def get_all_locations():
     #nice error message
     except Error as e:
         current_app.logger.error(f'Database error in get_all_locations: {str(e)}')
-        return jsonify({"error": str(e)}), 500
-
-#update hours and price of a specific daycare location
-@location.route("/locations/<int:daycare_id>", methods=["PUT"])
-def update_location(daycare_id):
-    try: 
-        data = request.get_json()
-
-        cursor = db.get_db().cursor()
-
-        # grabbing the selected daycare
-        cursor.execute("SELECT * FROM DaycareLocations WHERE daycare_id = %s", (daycare_id,))
-        if not cursor.fetchone():
-            return jsonify({"error": "Daycare not found"}), 404
-        
-        update_fields = []
-        params = []
-        allowed_fields = ["opening_time", "closing_time", "monthly_price"]
-
-        for field in allowed_fields:
-            if field in data:
-                update_fields.append(f"{field} = %s")
-                params.append(data[field])
-
-        if not update_fields:
-            return jsonify({"error": "No valid fields to update"}), 400
-        
-        params.append(daycare_id)
-        query = f"UPDATE DaycareLocations SET {', '.join(update_fields)} WHERE daycare_id = %s"
-
-        cursor.execute(query, params)
-        db.get_db().commit()
-        cursor.close()
-        
-        return jsonify({"message": "Daycare updated successfully"}), 200
-
-    except Error as e:
-        current_app.logger.error(f'Database error in update_location: {str(e)}')
-        return jsonify({"error": str(e)}), 500
-    
-# add a new daycare location    
-# need to update so it makes it automatically active
-@location.route("/locations", methods=["POST"])
-def add_new_location():
-    try: 
-        data = request.get_json()
-
-        required_fields = ["daycare_id", "opening_time", "closing_time", "monthly_price", "city", "country_code"]
-        for field in required_fields:
-            if field not in data:
-                return jsonify({"error": f"Missing required field: {field}"}), 400
-
-        cursor = db.get_db().cursor()
-
-        query = """
-        INSERT INTO DaycareLocations (daycare_id, opening_time, closing_time, monthly_price, city, country_code)
-        VALUES (%s, %s, %s, %s, %s, %s)
-        """
-        cursor.execute(
-            query,
-            (
-                data["daycare_id"],
-                data["opening_time"],
-                data["closing_time"],
-                data["monthly_price"],
-                data["city"],
-                data["country_code"],
-            ),
-        )
-
-        db.get_db().commit()
-        cursor.close()
-
-        return (
-            jsonify({"message": "Daycare created successfully"}),
-            201,
-        )
-
-    except Error as e:
-        current_app.logger.error(f'Database error in add_new_location: {str(e)}')
-        return jsonify({"error": str(e)}), 500
-    
-# will delete a daycare location
-# needs further testing
-@location.route("/locations/<int:daycare_id>", methods=["DELETE"])
-def delete_location(daycare_id):
-    try: 
-        data = request.get_json()
-
-        cursor = db.get_db().cursor()
-
-        # grabbing the selected daycare
-        cursor.execute("SELECT * FROM DaycareLocations WHERE daycare_id = %s", (daycare_id,))
-        if not cursor.fetchone():
-            return jsonify({"error": "Daycare not found"}), 404
-
-        update_fields = []
-        params = []
-        allowed_fields = ["inactive"]
-
-        for field in allowed_fields:
-            if field in data:
-                update_fields.append(f"{field} = %s")
-                params.append(data[field])
-
-        if not update_fields:
-            return jsonify({"error": "No valid fields to update"}), 400
-        
-        params.append(daycare_id)
-        query = f"UPDATE DaycareLocations SET {', '.join(update_fields)} WHERE daycare_id = %s"
-
-        cursor.execute(query, params)
-        db.get_db().commit()
-        cursor.close()
-        
-        return jsonify({"message": "Daycare deleted successfully"}), 200
-
-    except Error as e:
-        current_app.logger.error(f'Database error in delete_location: {str(e)}')
         return jsonify({"error": str(e)}), 500

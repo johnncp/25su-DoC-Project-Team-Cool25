@@ -64,7 +64,6 @@ st.markdown(f"""
 # Nav to features
 col1, col2, col3 = st.columns(3)
 
-
 with col1:
     if st.button('☆ Predict an EU Member', type='primary', use_container_width=True):
         st.success("Redirecting to Country Predictor..."),
