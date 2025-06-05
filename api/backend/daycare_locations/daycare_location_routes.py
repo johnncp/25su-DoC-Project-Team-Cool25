@@ -146,7 +146,7 @@ def update_location(daycare_id):
         return jsonify({"error": str(e)}), 500
     
 # add a new daycare location    
-@locations.route("/locations", methods=["POST"])
+@locations.route("/addlocations", methods=["POST"])
 def add_new_location():
     try: 
         data = request.get_json()
@@ -173,6 +173,8 @@ def add_new_location():
                 data["country_code"],
             ),
         )
+
+        
 
         db.get_db().commit()
         cursor.close()

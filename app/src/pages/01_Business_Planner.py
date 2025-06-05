@@ -27,6 +27,7 @@ with col3:
              use_container_width=True):
       API_URL = "http://web-api:4000/location//locations"
       addLocation = True
+      st.switch_page('pages/02_Add_Location.py')
 
 with col2:
   if st.button('Research new locations', 
@@ -80,7 +81,9 @@ if viewLocations == True:
   except requests.exceptions.RequestException as e:
         st.error(f"Error connecting to the API: {str(e)}")
         st.info("Please ensure the API server is running on http://web-api:4000")
+daycare_id = 0
 
+#currently this does nothing
 if addLocation == True:
     with st.form("add_location_form"):
         st.subheader("Daycare Location Information")
@@ -95,6 +98,8 @@ if addLocation == True:
 
         # Form submission button
         submitted = st.form_submit_button("Add Location")
+
+
 
         if submitted:
             # Validate required fields
@@ -126,4 +131,4 @@ if addLocation == True:
                 except requests.exceptions.RequestException as e:
                     st.error(f"Error connecting to the API: {str(e)}")
                     st.info("Please ensure the API server is running")
-        
+st.write(daycare_id)
