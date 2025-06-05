@@ -55,19 +55,16 @@ st.markdown(f"""
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    if st.button('☆ Predict an EU Member', type='primary'):
+    if st.button('☆ Predict an EU Member', type='primary', use_container_width=True):
         st.success("Redirecting to Country Predictor..."),
-        use_container_width=True,
         st.switch_page('pages/01_EU_Member_Predictor.py')
 
 with col2:
-    if st.button('☰ Resource Page', type='primary'):
+    if st.button('☰ Resource Page', type='primary', use_container_width=True):
         st.success("Redirecting to Resources..."),
-        use_container_width=True,
         st.switch_page('pages/02_Daycare_Resources.py')
 
 with col3:
-    if st.button('⏱︎ Operating Hours', type='primary'):
+    if st.button('⏱︎ Operating Hours', type='primary', use_container_width=True):
         st.success("Opening hours section..."),
-        use_container_width=True,
         st.switch_page('pages/03_Operating_Hours.py')

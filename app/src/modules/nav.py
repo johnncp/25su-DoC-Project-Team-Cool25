@@ -11,11 +11,11 @@ hour = now.hour
 
 # Determine greeting
 if 5 <= hour < 12:
-    greeting = "Good morning"
+    greeting = "🌅 Good morning"
 elif 12 <= hour < 16:
-    greeting = "Good afternoon"
+    greeting = "☀️ Good afternoon"
 else:
-    greeting = "Good evening"
+    greeting = "🌓 Good evening"
 
 
 #### ------------------------ General ------------------------
@@ -24,13 +24,13 @@ def HomeNav():
 
 
 def AboutPageNav():
-    st.sidebar.page_link("pages/30_About.py", label="About")
+    st.sidebar.page_link("pages/30_About.py", label="About Us")
 
 
-#### ------------------------ Examples for Role of daycare_operator ------------------------
+#### ------------------------ Role of daycare_operator ------------------------
 def DaycareHomeNav():
     st.sidebar.page_link(
-        "pages/00_Daycare_Home.py", label="Daycare Operator Home", icon="🛖"
+        "pages/00_Daycare_Home.py", label="Your Home", icon="🛖"
     )
 
 
@@ -48,7 +48,7 @@ def DaycareOperatingHoursNav():
     st.sidebar.page_link("pages/03_Operating_Hours.py", label="Operating Hours", icon="🕰️")
 
 
-## ------------------------ Examples for Role of usaid_worker ------------------------
+## ------------------------ Role of usaid_worker ------------------------
 def ApiTestNav():
     st.sidebar.page_link("pages/12_API_Test.py", label="Test the API", icon="🛜")
 
@@ -73,11 +73,17 @@ def AddNgoNav():
     st.sidebar.page_link("pages/15_Add_NGO.py", label="Add New NGO", icon="➕")
 
 
-#### ------------------------ System Admin Role ------------------------
-def AdminPageNav():
-    st.sidebar.page_link("pages/20_Admin_Home.py", label="System Admin", icon="🖥️")
+#### ------------------------ Role of politician ------------------------
+def PoliticianPageNav():
+    st.sidebar.page_link("pages/20_Politician_Home.py", label="Your Home", icon="🖥️")
     st.sidebar.page_link(
-        "pages/21_ML_Model_Mgmt.py", label="ML Model Management", icon="🏢"
+        "pages/21_Politician_Birth_Rate_Predictor.py", label="Model", icon="🧮"
+    )
+    st.sidebar.page_link(
+        "pages/22_Politician_Legislation_Finder.py", label="Legislation Finder", icon="🔎"
+    )
+    st.sidebar.page_link(
+        "pages/23_Politician_Family_Time_Resources.py", label="Family Time Resources", icon="🫂"
     )
 
 
@@ -124,8 +130,8 @@ def SideBarLinks(show_home=False):
             AddNgoNav()
 
         # If the user is an administrator, give them access to the administrator pages
-        if st.session_state["role"] == "administrator":
-            AdminPageNav()
+        if st.session_state["role"] == "politician":
+            PoliticianPageNav()
         
         st.sidebar.divider()
 
