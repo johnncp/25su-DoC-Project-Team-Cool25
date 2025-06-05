@@ -21,7 +21,7 @@ import requests
 # User inputs
 country = st.text_input("Country Code", "BE")
 city = st.text_input("City", "Brussels")
-price = st.number_input("Max Monthly Price", min_value=0, value=1000)
+price = st.number_input("Max Monthly Price", min_value=0, value=500)
 
 # Fetch data
 if st.button("Search Daycares"):
@@ -30,7 +30,7 @@ if st.button("Search Daycares"):
         "city": city,
         "monthly_price": price
     }
-    response = requests.get("http://web-api:4000/location/locations", params=params)
+    response = requests.get("http://web-api:4000/location/locations")
 
     if response.status_code == 200:
         data = response.json()

@@ -51,16 +51,23 @@ st.markdown(f"""
         <div class="subheading">What can we do for your daycare today?</div>
 """, unsafe_allow_html=True)
 
-st.title(f"Hello, {st.session_state['first_name']}!")
-st.write('')
-st.write('### What does your daycare need today?')
+# Nav to features
+col1, col2, col3 = st.columns(3)
 
-if st.button('View World Bank Data Visualization', 
-             type='primary',
-             use_container_width=True):
-  st.switch_page('pages/01_World_Bank_Viz.py')
+with col1:
+    if st.button('☆ Predict an EU Member', type='primary'):
+        st.success("Redirecting to Country Predictor..."),
+        use_container_width=True,
+        st.switch_page('pages/01_EU_Member_Predictor.py')
 
-if st.button('View World Map Demo', 
-             type='primary',
-             use_container_width=True):
-  st.switch_page('pages/02_Map_Demo.py')
+with col2:
+    if st.button('☰ Resource Page', type='primary'):
+        st.success("Redirecting to Resources..."),
+        use_container_width=True,
+        st.switch_page('pages/02_Daycare_Resources.py')
+
+with col3:
+    if st.button('⏱︎ Operating Hours', type='primary'):
+        st.success("Opening hours section..."),
+        use_container_width=True,
+        st.switch_page('pages/03_Operating_Hours.py')

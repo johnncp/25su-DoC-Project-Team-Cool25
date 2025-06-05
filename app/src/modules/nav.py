@@ -27,21 +27,25 @@ def AboutPageNav():
     st.sidebar.page_link("pages/30_About.py", label="About")
 
 
-#### ------------------------ Examples for Role of pol_strat_advisor ------------------------
-def PolStratAdvHomeNav():
+#### ------------------------ Examples for Role of daycare_operator ------------------------
+def DaycareHomeNav():
     st.sidebar.page_link(
-        "pages/00_Daycare_Home.py", label="Daycare Operator Home", icon="👤"
+        "pages/00_Daycare_Home.py", label="Daycare Operator Home", icon="🛖"
     )
 
 
-def WorldBankVizNav():
+def DaycareEUMemberPredictorNav():
     st.sidebar.page_link(
-        "pages/01_World_Bank_Viz.py", label="World Bank Visualization", icon="🏦"
+        "pages/01_EU_Member_Predictor.py", label="EU Member Predictor", icon="🇪🇺"
     )
 
 
-def MapDemoNav():
-    st.sidebar.page_link("pages/02_Map_Demo.py", label="Map Demonstration", icon="🗺️")
+def DaycareResourcesNav():
+    st.sidebar.page_link("pages/02_Daycare_Resources.py", label="Resources", icon="📚")
+
+
+def DaycareOperatingHoursNav():
+    st.sidebar.page_link("pages/03_Operating_Hours.py", label="Operating Hours", icon="🕰️")
 
 
 ## ------------------------ Examples for Role of usaid_worker ------------------------
@@ -84,7 +88,9 @@ def SideBarLinks(show_home=False):
     """
 
     # add a logo to the sidebar always
-    st.sidebar.image("assets/eurobebe_logo1.png", width=180)
+    st.sidebar.image("assets/eurobebe_logo1.png", width=210)
+
+    st.sidebar.divider()
 
     # If there is no logged in user, redirect to the Home (Landing) page
     if "authenticated" not in st.session_state:
@@ -98,13 +104,16 @@ def SideBarLinks(show_home=False):
     # Show the other page navigators depending on the users' role.
     if st.session_state["authenticated"]:
 
-        st.sidebar.header(greeting + ", " + st.session_state['first_name'] + ".")
+        st.sidebar.title(greeting + ", " + st.session_state['first_name'] + "!")
+
+        st.sidebar.divider()
 
         # Show World Bank Link and Map Demo Link if the user is a political strategy advisor role.
         if st.session_state["role"] == "daycare_operator":
-            PolStratAdvHomeNav()
-            WorldBankVizNav()
-            MapDemoNav()
+            DaycareHomeNav()
+            DaycareEUMemberPredictorNav()
+            DaycareResourcesNav()
+            DaycareOperatingHoursNav()
 
         # If the user role is usaid worker, show the Api Testing page
         if st.session_state["role"] == "usaid_worker":
@@ -117,6 +126,8 @@ def SideBarLinks(show_home=False):
         # If the user is an administrator, give them access to the administrator pages
         if st.session_state["role"] == "administrator":
             AdminPageNav()
+        
+        st.sidebar.divider()
 
     # Always show the About page at the bottom of the list of links
     AboutPageNav()
