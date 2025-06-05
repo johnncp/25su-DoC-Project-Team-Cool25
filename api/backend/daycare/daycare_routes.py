@@ -109,3 +109,103 @@ def get_all_locations():
     except Error as e:
         current_app.logger.error(f'Database error in get_all_locations: {str(e)}')
         return jsonify({"error": str(e)}), 500
+
+#update hours and price of a specific daycare location
+@location.route("/locations/<int:daycare_id>", methods=["PUT"])
+def update_location(daycare_id):
+    try: 
+        data = request.get_json()
+
+        cursor = db.get_db().cursor()
+
+        # grabbing the selected daycare
+        cursor.execute("SELECT * FROM DaycareLocations WHERE daycare_id = %s", (daycare_id,))
+        if not cursor.fetchone():
+            return jsonify({"error": "Daycare not found"}), 404
+        
+        update_fields = []
+        params = []
+        allowed_fields = ["opening_time", "closing_time", "monthly_price"]
+
+        for field in allowed_fields:
+            if field in data:
+                update_fields.append(f"{field} = %s")
+                params.append(data[field])
+
+        if not update_fields:
+            return jsonify({"error": "No valid fields to update"}), 400
+        
+        params.append(daycare_id)
+        query = f"UPDATE DaycareLocations SET {', '.join(update_fields)} WHERE daycare_id = %s"
+
+        cursor.execute(query, params)
+        db.get_db().commit()
+        cursor.close()
+        
+        return jsonify({"message": "Daycare updated successfully"}), 200
+
+    except Error as e:
+        current_app.logger.error(f'Database error in update_location: {str(e)}')
+        return jsonify({"error": str(e)}), 500
+    
+# add a new daycare location    
+@location.route("/locations", methods=["POST"])
+def add_new_location():
+    try: 
+        data = request.get_json()
+
+        required_fields = ["daycare_id", "opening_time", "closing_time", "monthly_price", "city", "country_code"]
+        for field in required_fields:
+            if field not in data:
+                return jsonify({"error": f"Missing required field: {field}"}), 400
+
+        cursor = db.get_db().cursor()
+
+        query = """
+        INSERT INTO DaycareLocations (daycare_id, opening_time, closing_time, monthly_price, city, country_code)
+        VALUES (%s, %s, %s, %s, %s, %s)
+        """
+        cursor.execute(
+            query,
+            (
+                data["daycare_id"],
+                data["opening_time"],
+                data["closing_time"],
+                data["monthly_price"],
+                data["city"],
+                data["country_code"],
+            ),
+        )
+
+        db.get_db().commit()
+        cursor.close()
+
+        return (
+            jsonify({"message": "Daycare created successfully"}),
+            201,
+        )
+
+    except Error as e:
+        current_app.logger.error(f'Database error in add_new_location: {str(e)}')
+        return jsonify({"error": str(e)}), 500
+    
+# will delete a daycare location
+# ngl, i have no idea how to do this
+# insert into a deleted locations table
+# then delete from daycare locations table
+@location.route("/locations/<int:daycare_id>", methods=["DELETE"])
+def delete_location(daycare_id):
+    try: 
+        data = request.get_json()
+
+        cursor = db.get_db().cursor()
+
+        # grabbing the selected daycare
+        cursor.execute("SELECT * FROM DaycareLocations WHERE daycare_id = %s", (daycare_id,))
+        if not cursor.fetchone():
+            return jsonify({"error": "Daycare not found"}), 404
+
+
+    except Error as e:
+        current_app.logger.error(f'Database error in delete_location: {str(e)}')
+        return jsonify({"error": str(e)}), 500
