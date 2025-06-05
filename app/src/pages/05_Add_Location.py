@@ -18,6 +18,7 @@ with st.form("add_location_form"):
 
     # Required fields
     name = st.number_input("Daycare ID *", min_value=0)
+    daycare_name = st.text_input("Daycare Name *")
     country = st.text_input("City *")
     founding_year = st.text_input("Country *" )
     focus_area = st.time_input("Opening Time *")
@@ -29,7 +30,7 @@ with st.form("add_location_form"):
 
     if submitted:
         # Validate required fields
-        if not all([name, country, founding_year, focus_area, website]):
+        if not all([name, daycare_name, country, founding_year, focus_area, website]):
             st.error("Please fill in all required fields marked with *")
         else:
             if isinstance(focus_area, datetime.timedelta):
@@ -49,6 +50,7 @@ with st.form("add_location_form"):
             # Prepare the data for API
             ngo_data = {
                 "daycare_id": int(name),
+                "daycare_name": daycare_name,
                 "opening_time": departure_time.isoformat(),
                 "closing_time": time_two.isoformat(),
                 "monthly_price": monthly_price,

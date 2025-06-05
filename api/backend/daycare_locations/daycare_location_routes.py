@@ -83,6 +83,7 @@ def get_all_locations():
 
             result = {
                 "Daycare ID": row["daycare_id"],
+                "Daycare Name": row["daycare_name"],
                 "City": row["city"],
                 "Country": row["country_code"],
                 "Opening Time": departure_time.isoformat(),
@@ -151,7 +152,7 @@ def add_new_location():
     try: 
         data = request.get_json()
 
-        required_fields = ["daycare_id", "opening_time", "closing_time", "monthly_price", "city", "country_code"]
+        required_fields = ["daycare_id", "daycare_name", "opening_time", "closing_time", "monthly_price", "city", "country_code"]
         for field in required_fields:
             if field not in data:
                 return jsonify({"error": f"Missing required field: {field}"}), 400
@@ -159,13 +160,14 @@ def add_new_location():
         cursor = db.get_db().cursor()
 
         query = """
-        INSERT INTO DaycareLocations (daycare_id, opening_time, closing_time, monthly_price, city, country_code)
-        VALUES (%s, %s, %s, %s, %s, %s)
+        INSERT INTO DaycareLocations (daycare_id, daycare_name, opening_time, closing_time, monthly_price, city, country_code)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
         """
         cursor.execute(
             query,
             (
                 data["daycare_id"],
+                data["daycare_name"],
                 data["opening_time"],
                 data["closing_time"],
                 data["monthly_price"],

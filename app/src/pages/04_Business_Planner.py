@@ -58,7 +58,7 @@ if viewLocations == True:
 
     # Create expandable rows for each NGO
     for loc in locations:
-        with st.expander(f"{loc['Daycare ID']} ({loc['Country']})"):
+        with st.expander(f"{loc['Daycare ID']} ({loc['Daycare Name']})"):
             st.write("**Basic Information**")
             col1, col2 = st.columns(2)
 
