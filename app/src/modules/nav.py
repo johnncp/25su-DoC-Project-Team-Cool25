@@ -20,11 +20,11 @@ else:
 
 #### ------------------------ General ------------------------
 def HomeNav():
-    st.sidebar.page_link("Home.py", label="Home")
+    st.sidebar.page_link("Home.py", label="Home", icon="🖼️")
 
 
 def AboutPageNav():
-    st.sidebar.page_link("pages/30_About.py", label="About Us")
+    st.sidebar.page_link("pages/30_About.py", label="About", icon="🧑‍🧑‍🧒‍🧒")
 
 
 #### ------------------------ Role of daycare_operator ------------------------
@@ -36,7 +36,7 @@ def DaycareHomeNav():
 
 def DaycareEUMemberPredictorNav():
     st.sidebar.page_link(
-        "pages/01_EU_Member_Predictor.py", label="EU Member Predictor", icon="🇪🇺"
+        "pages/01_Daycare_EU_Member_Predictor.py", label="EU Member Predictor", icon="🇪🇺"
     )
 
 
@@ -44,24 +44,19 @@ def DaycareResourcesNav():
     st.sidebar.page_link("pages/02_Daycare_Resources.py", label="Resources", icon="📚")
 
 
-def DaycareOperatingHoursNav():
-    st.sidebar.page_link("pages/03_Operating_Hours.py", label="Operating Hours", icon="🕰️")
+## ------------------------ Role of parent ------------------------
+def ParentEUMemberPredictorNav():
+    st.sidebar.page_link("pages/11_Parent_EU_Member_Predictor.py", label="EU Member Predictor", icon="🇪🇺")
 
 
-## ------------------------ Role of usaid_worker ------------------------
-def ApiTestNav():
-    st.sidebar.page_link("pages/12_API_Test.py", label="Test the API", icon="🛜")
-
-
-def PredictionNav():
+def ParentResourcesNav():
     st.sidebar.page_link(
-        "pages/11_Prediction.py", label="Regression Prediction", icon="📈"
-    )
+        "pages/12_Parent_Resources.py", label="Resources", icon="📚")
 
 
-def ClassificationNav():
+def ParentWorkHoursNav():
     st.sidebar.page_link(
-        "pages/13_Classification.py", label="Classification Demo", icon="🌺"
+        "pages/13_Parent_Work_Hours.py", label="Work Hours Analysis", icon="⏱️"
     )
 
 
@@ -119,15 +114,12 @@ def SideBarLinks(show_home=False):
             DaycareHomeNav()
             DaycareEUMemberPredictorNav()
             DaycareResourcesNav()
-            DaycareOperatingHoursNav()
 
         # If the user role is usaid worker, show the Api Testing page
-        if st.session_state["role"] == "usaid_worker":
-            PredictionNav()
-            ApiTestNav()
-            ClassificationNav()
-            NgoDirectoryNav()
-            AddNgoNav()
+        if st.session_state["role"] == "parent":
+            ParentEUMemberPredictorNav()
+            ParentResourcesNav()
+            ParentWorkHoursNav()
 
         # If the user is an administrator, give them access to the administrator pages
         if st.session_state["role"] == "politician":
@@ -140,7 +132,7 @@ def SideBarLinks(show_home=False):
 
     if st.session_state["authenticated"]:
         # Always show a logout button if there is a logged in user
-        if st.sidebar.button("Logout"):
+        if st.sidebar.button("✖️ Logout"):
             del st.session_state["role"]
             del st.session_state["authenticated"]
             st.switch_page("Home.py")

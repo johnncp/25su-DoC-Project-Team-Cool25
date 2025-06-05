@@ -55,30 +55,6 @@ st.markdown(f"""
         <div class="subheading">Continue your work for the community. For the region. For the world.</div>
 """, unsafe_allow_html=True)
 
-st.divider()
-
-st.title(f"Be the change.")
-
-# Nav to features
-col1, col2, col3 = st.columns(3)
-
-with col1:
-    if st.button('〰️ Model', type='primary', use_container_width=True):
-        st.success("Redirecting to Model..."),
-        st.switch_page('pages/01_EU_Member_Predictor.py')
-
-with col2:
-    if st.button('🔎 Legislation Finder', type='primary', use_container_width=True):
-        st.success("Legendary sessions..."),
-        st.switch_page('pages/22_Legislation_Finder.py')
-
-with col3:
-    if st.button('☰ Resource Page', type='primary', use_container_width=True):
-        st.success("Redirecting to Resources..."),
-        st.switch_page('pages/23_Family_Time_Resources.py')
-
-st.divider()
-
 # Display
 st.title(f"The Latest News on {user_topic}")
 
@@ -119,7 +95,24 @@ else:
 
 st.divider()
 
-if st.button('Update ML Models', 
-             type='primary',
-             use_container_width=True):
-  st.switch_page('pages/21_Birth_Rate_Predictor.py')
+st.title(f"Be the change, {st.session_state['first_name']}.")
+
+# Nav to features
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    if st.button('〰️ Model', type='primary', use_container_width=True):
+        st.success("Redirecting to Model..."),
+        st.switch_page('pages/21_Politican_Birth_Rate_Predictor.py')
+
+with col2:
+    if st.button('🔎 Legislation Finder', type='primary', use_container_width=True):
+        st.success("Legendary sessions..."),
+        st.switch_page('pages/22_Politician_Legislation_Finder.py')
+
+with col3:
+    if st.button('☰ Resource Page', type='primary', use_container_width=True):
+        st.success("Redirecting to Resources..."),
+        st.switch_page('pages/23_Politician_Family_Time_Resources.py')
+
+st.divider()

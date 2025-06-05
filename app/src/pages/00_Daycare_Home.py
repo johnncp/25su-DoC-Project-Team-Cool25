@@ -14,7 +14,7 @@ def get_base64(path):
     with open(path, "rb") as f:
         return base64.b64encode(f.read()).decode()
 
-background_img = get_base64("assets/caraday_home_background.png")
+background_img = get_base64("assets/00_Daycare_Home/daycare_home_background.png")
 
 st.markdown(f"""
     <style>
@@ -52,19 +52,14 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # Nav to features
-col1, col2, col3 = st.columns(3)
+col1, col2 = st.columns(2)
 
 with col1:
     if st.button('☆ Predict an EU Member', type='primary', use_container_width=True):
         st.success("Redirecting to Country Predictor..."),
-        st.switch_page('pages/01_EU_Member_Predictor.py')
+        st.switch_page('pages/01_Daycare_EU_Member_Predictor.py')
 
 with col2:
     if st.button('☰ Resource Page', type='primary', use_container_width=True):
         st.success("Redirecting to Resources..."),
         st.switch_page('pages/02_Daycare_Resources.py')
-
-with col3:
-    if st.button('⏱︎ Operating Hours', type='primary', use_container_width=True):
-        st.success("Opening hours section..."),
-        st.switch_page('pages/03_Operating_Hours.py')
