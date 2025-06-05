@@ -1,0 +1,57 @@
+from flask import (
+    Blueprint,
+    request,
+    jsonify,
+    make_response,
+    current_app,
+    redirect,
+    url_for,
+)
+import json
+from backend.db_connection import db
+from mysql.connector import Error
+import datetime
+
+group = Blueprint("group", __name__)
+
+# get affinity group that can be filtered by focus area, country, and resource type
+@group.route("/groups", methods=["GET"])
+def get_all_groups():
+    try: 
+        current_app.logger.info('Starting get_all_groups request')
+        cursor = db.get_db().cursor()
+
+        country = request.args.get("country_code")
+        focus_area = request.args.get("focus_area")
+        resource_type = request.args.get("resource_type")
+
+        current_app.logger.debug(f'Query parameters - country: {country}, focus_area: {focus_area}, resource_type: {resource_type}')
+
+        query = "SELECT * FROM AffinityResources WHERE 1=1"
+        params = []
+
+        if country:
+            query += " AND country_code = %s"
+            params.append(country)
+        if focus_area:
+            query += " AND city = %s"
+            params.append(focus_area)
+        if resource_type:
+            query += " AND monthly_price = %s"
+            params.append(resource_type)
+
+        current_app.logger.debug(f'Executing query: {query} with params: {params}')
+        cursor.execute(query, params)
+
+        groups = cursor.fetchall()
+
+        cursor.close()
+
+        current_app.logger.info(f'Successfully retrieved {len(groups)} NGOs')
+        return jsonify(groups), 200
+
+
+    except Error as e:
+        current_app.logger.error(f'Database error in get_all_groups: {str(e)}')
+        return jsonify({"error": str(e)}), 500
+    

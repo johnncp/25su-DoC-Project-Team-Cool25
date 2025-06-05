@@ -7,8 +7,8 @@ from logging.handlers import RotatingFileHandler
 from backend.db_connection import db
 from backend.simple.simple_routes import simple_routes
 from backend.ngos.ngo_routes import ngos
-
 from backend.daycare.daycare_routes import location
+from backend.affinity_groups.affinity_groups_routes import group
 
 
 def create_app():
@@ -48,8 +48,8 @@ def create_app():
     app.logger.info("create_app(): registering blueprints with Flask app object.")
     app.register_blueprint(simple_routes)
     app.register_blueprint(ngos, url_prefix="/ngo")
-
     app.register_blueprint(location, url_prefix="/location")
+    app.register_blueprint(group, url_prefix="/group")
 
 
     # Don't forget to return the app object
