@@ -1,7 +1,7 @@
-DROP DATABASE IF EXISTS euro_database;
-CREATE DATABASE IF NOT EXISTS euro_database;
+DROP DATABASE IF EXISTS eurobebe;
+CREATE DATABASE IF NOT EXISTS eurobebe;
 
-USE euro_database;
+USE eurobebe;
 
 -- # USER:
 -- ### User
@@ -11,7 +11,7 @@ CREATE TABLE User
     fname       VARCHAR(50),
     lname VARCHAR(50),
     country    VARCHAR(50),
-    occupation VARCHAR(60),
+    occupation VARCHAR(60)
 );
 
 -- # DATA:
@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS PolicyAnalysis
     policy_name VARCHAR(50),
     focus_area VARCHAR(50),
     country_code VARCHAR(10),
-    years INT,
+    year INT,
     user_id      INT,
     FOREIGN KEY (user_id) REFERENCES User (user_id)
         ON UPDATE cascade ON DELETE restrict
@@ -127,7 +127,7 @@ VALUES (1, 'Daycare Grant', 'Child under 18', 'Millions of euros', 'BE', 2020, 1
        (2, 'Parental Leave', 'Mothers', 'Millions of euros', 'DE', 2024, 25.00);
 
 -- ## PolicyAnalysis
-INSERT INTO PolicyAnalysis (analysis_id, policy_name, focus_area, country_code, year)
+INSERT INTO PolicyAnalysis (policy_id, policy_name, focus_area, country_code, year)
 VALUES (1, 'Birth Rate Act', 'Day care grants', 'BE', 2021),
        (2, 'Parental Leave Bill', 'Parental Leave', 'DE', 2023);
 

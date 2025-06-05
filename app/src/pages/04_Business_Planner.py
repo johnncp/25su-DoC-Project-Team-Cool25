@@ -45,8 +45,15 @@ with col1:
     #might not work
     viewLocations = True
 
+API_URL = "http://web-api:4000/location//locations"
+
+response = requests.get(API_URL)
+if response.status_code == 200:
+    locations = response.json()
+st.write(locations)    
+
 # this is set up like this for formatting reasons
-if viewLocations == True:
+if viewLocations == True and viewLocations == False:
   try: 
     response = requests.get(API_URL)
     if response.status_code == 200:
