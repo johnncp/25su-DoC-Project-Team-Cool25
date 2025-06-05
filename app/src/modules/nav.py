@@ -186,14 +186,14 @@ def SideBarLinks(show_home=False):
             st.warning("⚠️ \'Your insights\' will be permanently deleted upon logout if not downloaded. Are you sure?")
 
             col1, col2 = st.columns(2)
-            with col1:
+            with col2:
                 if st.button("Logout Anyway", use_container_width=True):
                     del st.session_state["role"]
                     del st.session_state["authenticated"]
                     del st.session_state["notes"]
                     st.session_state["logout_warning"] = False
                     st.switch_page("Home.py")
-            with col2:
+            with col1:
                 if st.button("☆ Cancel", use_container_width=True):
                     st.session_state["logout_warning"] = False
                     st.rerun()
