@@ -14,7 +14,7 @@ st.set_page_config(layout="wide")
 # Display the appropriate sidebar links for the role of the logged in user
 SideBarLinks()
 
-st.title("Find EU Members by Childcare Spending")
+st.title("Find EU Countries by Childcare Spending")
 
 df = pd.read_csv("datasets/parent/3Expenditure.csv")
 

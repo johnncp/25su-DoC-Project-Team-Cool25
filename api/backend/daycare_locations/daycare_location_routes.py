@@ -147,7 +147,7 @@ def update_location(daycare_id):
         return jsonify({"error": str(e)}), 500
     
 # add a new daycare location    
-@locations.route("/locations", methods=["POST"])
+@locations.route("/addlocations", methods=["POST"])
 def add_new_location():
     try: 
         data = request.get_json()
@@ -176,6 +176,8 @@ def add_new_location():
             ),
         )
 
+        
+
         db.get_db().commit()
         cursor.close()
 
@@ -186,4 +188,25 @@ def add_new_location():
 
     except Error as e:
         current_app.logger.error(f'Database error in add_new_location: {str(e)}')
+        return jsonify({"error": str(e)}), 500
+    
+# will delete a daycare location
+# ngl, i have no idea how to do this
+# insert into a deleted locations table
+# then delete from daycare locations table
+@locations.route("/locations/<int:daycare_id>", methods=["DELETE"])
+def delete_location(daycare_id):
+    try: 
+        data = request.get_json()
+
+        cursor = db.get_db().cursor()
+
+        # grabbing the selected daycare
+        cursor.execute("SELECT * FROM DaycareLocations WHERE daycare_id = %s", (daycare_id,))
+        if not cursor.fetchone():
+            return jsonify({"error": "Daycare not found"}), 404
+
+
+    except Error as e:
+        current_app.logger.error(f'Database error in delete_location: {str(e)}')
         return jsonify({"error": str(e)}), 500
