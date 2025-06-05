@@ -8,81 +8,111 @@ st.set_page_config(page_title="Birth Rate Predictor", layout="wide")
 
 SideBarLinks()
 
-eu_countries = [
-    "Austria",
-    "Belgium",
-    "Bulgaria",
-    "Croatia",
-    "Cyprus",
-    "Czech Republic",
-    "Denmark",
-    "Estonia",
-    "Finland",
-    "France",
-    "Germany",
-    "Greece",
-    "Hungary",
-    "Ireland",
-    "Italy",
-    "Latvia",
-    "Lithuania",
-    "Luxembourg",
-    "Malta",
-    "Netherlands",
-    "Poland",
-    "Portugal",
-    "Romania",
-    "Slovakia",
-    "Slovenia",
-    "Spain",
-    "Sweden"
-]
+# Visualization Imports
+import pandas as pd
+import plotly.express as px
 
-st.title('Birth Rate Predictor')
-
-# Input layout
-col1, col2, col3 = st.columns([1.2, 1.2, 1])
-
-with col1:
-    weekly_hours = st.slider("Weekly Hours", min_value=0, max_value=60, value=30)
-    social_protection = st.number_input("Social Protection Benefits (€)", value=0.0, step=10.0)
-    child_allowance = st.number_input("Family or Child Allowance (€)", value=0.0, step=10.0)
-
-with col2:
-    childcare = st.slider("Child Day Care (€)", min_value=0, max_value=5000, value=1000)
-    birth_grant = st.number_input("Birth Grant (€)", value=0.0, step=10.0)
-    parental_leave = st.number_input("Parental Leave (weeks)", value=0.0, step=1.0)
-
-with col3:
-    country = st.selectbox("Country", eu_countries)
-    income_maintenance = st.number_input("Income Maintenance (€)", value=0.0, step=10.0)
-
-# Prediction logic (placeholder)
-# Replace with ML model or actual function
-predicted_birth_rate = 6.0  # dummy placeholder
-
-st.markdown("---")
-st.markdown(f"### 🍼 Predicted Birth Rate: **{predicted_birth_rate:.1f}%**")
-
-st.divider()
-
-"""
-
+# --- PAGE SETUP ---
+st.title("Legislation Finder")
 st.write('\n\n')
-st.write('## Model 1 Maintenance')
+st.write('\n\n')
+st.write('\n\n')
 
-st.button("Train Model 01", 
-            type = 'primary', 
-            use_container_width=True)
+# --- COUNTRY MAPPING ---
+country_map = {
+    'EU27_2020': 'European Union (27)',
+    'BE': 'Belgium',
+    'BG': 'Bulgaria',
+    'CZ': 'Czechia',
+    'DK': 'Denmark',
+    'DE': 'Germany',
+    'EE': 'Estonia',
+    'IE': 'Ireland',
+    'EL': 'Greece',
+    'ES': 'Spain',
+    'FR': 'France',
+    'HR': 'Croatia',
+    'IT': 'Italy',
+    'CY': 'Cyprus',
+    'LV': 'Latvia',
+    'LT': 'Lithuania',
+    'LU': 'Luxembourg',
+    'HU': 'Hungary',
+    'MT': 'Malta',
+    'NL': 'Netherlands',
+    'AT': 'Austria',
+    'PL': 'Poland',
+    'PT': 'Portugal',
+    'RO': 'Romania',
+    'SI': 'Slovenia',
+    'SK': 'Slovakia',
+    'FI': 'Finland',
+    'SE': 'Sweden'
+}
 
-st.button('Test Model 01', 
-            type = 'primary', 
-            use_container_width=True)
+# --- DATA LOAD ---
+df = pd.read_csv("datasets/politician/formatted_birth_data.csv")
+df["country_name"] = df["country"].map(country_map)
+df = df[df["birth_rate_per_thousand"].notna()]
 
-if st.button('Model 1 - get predicted value for 10, 25', 
-             type = 'primary',
-             use_container_width=True):
-  results = requests.get('http://web-api:4000/prediction/10/25').json()
-  st.dataframe(results)
+# --- COUNTRY LISTS ---
+all_countries = sorted(df["country_name"].dropna().unique())
+eu_country = "European Union (27)"
 
-"""
+# Separate EU-wide and national countries
+national_countries = [c for c in all_countries if c != eu_country]
+
+# --- SELECT ALL TOGGLE ---
+select_all = st.checkbox("Select all members", value=False)
+
+# Pre-select logic
+pre_selected = national_countries if select_all else [eu_country]
+
+# --- MULTISELECT ---
+selected_countries = st.multiselect("Select countries to display:", all_countries, default=pre_selected)
+
+# --- FILTER DATA ---
+if selected_countries:
+    filtered_df = df[df["country_name"].isin(selected_countries)]
+else:
+    st.warning("Please select at least one country.")
+    st.stop()
+
+# --- PLOT ---
+line_width = 2 if len(selected_countries) <= 10 else 1
+
+custom_colors = px.colors.qualitative.Plotly + px.colors.qualitative.Dark24 + px.colors.qualitative.Safe # Colors
+country_list = sorted(df["country_name"].unique())
+color_map = {country: custom_colors[i % len(custom_colors)] for i, country in enumerate(country_list)}
+
+fig = px.line(
+    filtered_df,
+    x="year",
+    y="birth_rate_per_thousand",
+    color="country_name",
+    title="Crude Birth Rate Over Time (per 1000 people)",
+    labels={
+        "year": "Year",
+        "birth_rate_per_thousand": "Birth Rate (‰)",
+        "country_name": "Country"
+    },
+    color_discrete_map=color_map,
+    line_shape="spline"
+)
+
+fig.update_traces(line=dict(width=3), opacity=0.5)
+
+fig.update_layout(
+    legend=dict(
+        orientation="h",
+        yanchor="bottom",
+        y=-0.3,
+        xanchor="center",
+        x=0.5,
+        title_text=None
+    ),
+    height=600 if len(selected_countries) <= 10 else 800,
+)
+
+# --- DISPLAY ---
+st.plotly_chart(fig, use_container_width=True)

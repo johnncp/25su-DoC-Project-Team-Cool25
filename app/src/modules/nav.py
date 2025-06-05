@@ -10,12 +10,16 @@ now = datetime.now()
 hour = now.hour
 
 # Determine greeting
-if 5 <= hour < 12:
+if hour < 3:
+    greeting = "🌚 Working late"
+elif 3 <= hour < 12:
     greeting = "🌅 Good morning"
 elif 12 <= hour < 16:
     greeting = "☀️ Good afternoon"
-else:
+elif 16 <= hour < 19:
     greeting = "🌓 Good evening"
+else:
+    greeting = "🌜 Good night"
 
 
 #### ------------------------ General ------------------------
