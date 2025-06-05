@@ -62,8 +62,14 @@ eu_country = "European Union (27)"
 # Separate EU-wide and national countries
 national_countries = [c for c in all_countries if c != eu_country]
 
-# --- SELECT ALL TOGGLE ---
-select_all = st.checkbox("Select all members", value=False)
+# Toggles
+col1, col2, col3, col4 = st.columns(4)
+
+with col1:
+    select_all = st.checkbox("Select all members", value=True)
+
+with col2:
+    fixed_range = st.checkbox("Fix the Y-axis", value=True)
 
 # Pre-select logic
 pre_selected = national_countries if select_all else [eu_country]
@@ -100,7 +106,20 @@ fig = px.line(
     line_shape="spline"
 )
 
-fig.update_traces(line=dict(width=3), opacity=0.5)
+opacity_value = 0.4
+
+if not select_all:
+    opacity_value = 1
+else:
+    opacity_value = 0.4
+
+fig.update_traces(line=dict(width=3),
+                  opacity=opacity_value,
+                  mode="lines+markers")
+
+y_axis_config = dict(showgrid=True, gridcolor="lightgrey")
+if fixed_range:
+    y_axis_config["range"] = [5.5, 14.5]
 
 fig.update_layout(
     legend=dict(
@@ -111,6 +130,14 @@ fig.update_layout(
         x=0.5,
         title_text=None
     ),
+    plot_bgcolor="#ffffff",  # White background
+    paper_bgcolor="#ffffff",
+    xaxis=dict(
+        showgrid=True,
+        gridcolor="lightgrey",
+        zeroline=False
+    ),
+    yaxis=y_axis_config,
     height=600 if len(selected_countries) <= 10 else 800,
 )
 

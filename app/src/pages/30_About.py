@@ -53,6 +53,8 @@ for col, author in zip(cols, authors):
         st.markdown(f"**{author['name']}**")
         st.caption(author["bio"])
 
+st.text("Made with ♡ from Leuven, Belgium. A.D. 2025.")
+
 st.divider()
 
 # Add a button to return to home page

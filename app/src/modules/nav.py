@@ -4,6 +4,7 @@
 
 import streamlit as st
 from datetime import datetime
+from io import StringIO
 
 # Get current hour
 now = datetime.now()
@@ -71,10 +72,43 @@ def NgoDirectoryNav():
 def AddNgoNav():
     st.sidebar.page_link("pages/15_Add_NGO.py", label="Add New NGO", icon="➕")
 
+def NoteTakingFeature():
+    # Initialize session state on first load
+    if "notes" not in st.session_state:
+        st.session_state.notes = ""
+
+    with st.sidebar.expander("✪ Your Insights", expanded=False):
+        # Text area with value tied to session state
+        notes = st.text_area("Pen down your reflections:", value=st.session_state.notes, height=300)
+
+        # Update session state when user types
+        st.session_state.notes = notes
+
+        # Download Markdown button
+        markdown_content = f"# {st.session_state['first_name']}\'s Notes\n\n\n{notes}"
+        notes_buffer = StringIO(markdown_content)
+        st.download_button(
+            label="↓ Download as Markdown",
+            data=notes_buffer.getvalue(),
+            file_name=st.session_state['first_name'] + "s_Notes.md",
+            mime="text/markdown"
+        )
+
+        # Download Plain text button
+        notes_buffer = StringIO(notes)
+        st.download_button(
+            label="↓ Download as Plain Text",
+            data=notes_buffer.getvalue(),
+            file_name=st.session_state['first_name'] + "s_Notes.txt",
+            mime="text/plain"
+        )
+            
+
 
 #### ------------------------ Role of politician ------------------------
 def PoliticianPageNav():
     st.sidebar.page_link("pages/20_Politician_Home.py", label="Your Home", icon="🖥️")
+
     st.sidebar.page_link(
         "pages/21_Politician_Birth_Rate_Predictor.py", label="Model", icon="🧮"
     )
@@ -111,6 +145,9 @@ def SideBarLinks(show_home=False):
 
         st.sidebar.title(greeting + ", " + st.session_state['first_name'] + "!")
 
+        # Notes Feature
+        NoteTakingFeature()
+
         st.sidebar.divider()
 
         # Show World Bank Link and Map Demo Link if the user is a political strategy advisor role.
@@ -135,8 +172,28 @@ def SideBarLinks(show_home=False):
     AboutPageNav()
 
     if st.session_state["authenticated"]:
-        # Always show a logout button if there is a logged in user
-        if st.sidebar.button("✖️ Logout"):
-            del st.session_state["role"]
-            del st.session_state["authenticated"]
-            st.switch_page("Home.py")
+        notes = st.session_state.get("notes", "").strip()
+        if st.sidebar.button("❌ Logout", type='secondary'):
+            if notes:
+                st.session_state["logout_warning"] = True
+            else:
+                del st.session_state["role"]
+                del st.session_state["authenticated"]
+                st.switch_page("Home.py")
+
+        # Warning if notes are empty.
+        if st.session_state.get("logout_warning", False):
+            st.warning("⚠️ \'Your insights\' will be permanently deleted upon logout if not downloaded. Are you sure?")
+
+            col1, col2 = st.columns(2)
+            with col1:
+                if st.button("Logout Anyway", use_container_width=True):
+                    del st.session_state["role"]
+                    del st.session_state["authenticated"]
+                    del st.session_state["notes"]
+                    st.session_state["logout_warning"] = False
+                    st.switch_page("Home.py")
+            with col2:
+                if st.button("☆ Cancel", use_container_width=True):
+                    st.session_state["logout_warning"] = False
+                    st.rerun()
