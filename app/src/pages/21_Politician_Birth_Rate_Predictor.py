@@ -52,9 +52,13 @@ try:
     st.success(f"🍼 **Predicted Birth Rate:** {prediction:.2f} births per 1000 people")
     st.balloons()
 
+    # ---- Optional: Expandable for Weights ----
+    with st.expander("📊 View Model Weights"):
+        st.write(pd.DataFrame(weights_list))
+
 except requests.exceptions.RequestException as e:
     st.error(f"Failed to fetch model weights: {e}")
 
 # ---- Optional: Expandable for Weights ----
-with st.expander("📊 View Model Weights"):
-    st.write(pd.DataFrame(weights_list))
+#with st.expander("📊 View Model Weights"):
+    #st.write(pd.DataFrame(weights_list))

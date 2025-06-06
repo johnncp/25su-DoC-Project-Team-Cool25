@@ -79,6 +79,6 @@ with col2:
 with col3:
     if st.button('☰ Resource Page', type='primary', use_container_width=True):
         st.success("Redirecting to Resources..."),
-        st.switch_page('pages/13_Parent_Work_Hours.py')
+        st.switch_page('pages/17_Parent_Affinity_Resources.py')
 
 st.divider()

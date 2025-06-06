@@ -7,8 +7,11 @@ from logging.handlers import RotatingFileHandler
 from backend.db_connection import db
 from backend.simple.simple_routes import simple_routes
 from backend.ngos.ngo_routes import ngos
-from backend.daycare.daycare_routes import location
+from backend.daycare_locations.daycare_location_routes import locations
 from backend.api_calls.api_calls_routes import apis
+from backend.employment_hours.employment_hours_routes import hours
+from backend.benefits_expenditure.benefits_expenditure_routes import benefits
+from backend.affinity_groups.affinifty_groups_route import group
 
 def create_app():
     app = Flask(__name__)
@@ -47,8 +50,11 @@ def create_app():
     app.logger.info("create_app(): registering blueprints with Flask app object.")
     app.register_blueprint(simple_routes)
     app.register_blueprint(ngos, url_prefix="/ngo")
-    app.register_blueprint(location, url_prefix="/location")
+    app.register_blueprint(locations, url_prefix="/location")
     app.register_blueprint(apis, url_prefix="/euro_apis")
+    app.register_blueprint(hours, url_prefix="/hours")
+    app.register_blueprint(benefits, url_prefix="/benefits")
+    app.register_blueprint(group, url_prefix="/group")
 
     # Don't forget to return the app object
     return app

@@ -47,7 +47,7 @@ def get_all_groups():
 
         cursor.close()
 
-        current_app.logger.info(f'Successfully retrieved {len(groups)} NGOs')
+        current_app.logger.info(f'Successfully retrieved {len(groups)} Resources')
         return jsonify(groups), 200
 
 
