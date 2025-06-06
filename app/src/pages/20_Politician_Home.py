@@ -111,7 +111,7 @@ st.title(f"Be the change, {st.session_state['first_name']}.")
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    if st.button('〰️ Model', type='primary', use_container_width=True):
+    if st.button('〰️ Birth Rate Predictor', type='primary', use_container_width=True):
         st.success("Redirecting to Model..."),
         st.switch_page('pages/21_Politician_Birth_Rate_Predictor.py')
 
@@ -122,7 +122,8 @@ with col2:
 
 with col3:
     if st.button('☰ Resource Page', type='primary', use_container_width=True):
-        st.success("Redirecting to Resources..."),
-        st.switch_page('pages/23_Politician_Family_Time_Resources.py')
+        st.write("Page coming soon!")
+        #st.success("Redirecting to Resources..."),
+        #st.switch_page('pages/23_Politician_Family_Time_Resources.py')
 
 st.divider()

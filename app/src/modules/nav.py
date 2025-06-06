@@ -48,21 +48,32 @@ def DaycareEUMemberPredictorNav():
 def DaycareResourcesNav():
     st.sidebar.page_link("pages/02_Daycare_Resources.py", label="Resources", icon="📚")
 
+def DaycareBusinessPlanNav():
+    st.sidebar.page_link("pages/04_Business_Planner.py", label="Business Planner", icon="💼")
+
 
 ## ------------------------ Role of parent ------------------------
+def ParentHomeNav():
+    st.sidebar.page_link(
+        "pages/10_Parent_Home.py", label="Your Home", icon="🛖"
+    )
+
 def ParentEUMemberPredictorNav():
-    st.sidebar.page_link("pages/11_Parent_EU_Member_Predictor.py", label="EU Member Predictor", icon="🇪🇺")
+    st.sidebar.page_link("pages/11_Parent_EU_Member_Predictor.py", label="EU Country Predictor", icon="🇪🇺")
 
 
 def ParentResourcesNav():
     st.sidebar.page_link(
-        "pages/12_Parent_Resources.py", label="Resources", icon="📚")
+        "pages/17_Parent_Affinity_Resources.py", label="Resources", icon="📚")
 
 
 def ParentWorkHoursNav():
     st.sidebar.page_link(
         "pages/13_Parent_Work_Hours.py", label="Work Hours Analysis", icon="⏱️"
     )
+
+def ParentDaycareFindNav():
+    st.sidebar.page_link("pages/02_Daycare_Resources.py", label="Daycare Finder", icon="🔎")
 
 
 def NgoDirectoryNav():
@@ -123,9 +134,7 @@ def PoliticianPageNav():
     st.sidebar.page_link(
         "pages/22_Politician_Legislation_Finder.py", label="Legislation Finder", icon="🔎"
     )
-    st.sidebar.page_link(
-        "pages/23_Politician_Family_Time_Resources.py", label="N/A", icon="⚠️"
-    )
+    #st.sidebar.page_link("pages/23_Politician_Family_Time_Resources.py", label="N/A", icon="⚠️")
 
 
 # --------------------------------Links Function -----------------------------------------------
@@ -161,14 +170,17 @@ def SideBarLinks(show_home=False):
         # Show World Bank Link and Map Demo Link if the user is a political strategy advisor role.
         if st.session_state["role"] == "daycare_operator":
             DaycareHomeNav()
-            DaycareEUMemberPredictorNav()
-            DaycareResourcesNav()
+            #DaycareEUMemberPredictorNav()
+            #DaycareResourcesNav()
+            DaycareBusinessPlanNav()
 
         # If the user role is usaid worker, show the Api Testing page
         if st.session_state["role"] == "parent":
+            ParentHomeNav()
             ParentEUMemberPredictorNav()
+            ParentDaycareFindNav()
             ParentResourcesNav()
-            ParentWorkHoursNav()
+            #ParentWorkHoursNav()
 
         # If the user is an administrator, give them access to the administrator pages
         if st.session_state["role"] == "politician":
