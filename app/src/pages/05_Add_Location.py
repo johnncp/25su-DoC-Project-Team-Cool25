@@ -7,7 +7,7 @@ import datetime
 # Initialize sidebar
 SideBarLinks()
 
-st.title("Add New NGO")
+st.title("Add New Daycare Location")
 
 # API endpoint
 API_URL = "http://web-api:4000/location/addlocations"
