@@ -26,6 +26,16 @@ CREATE TABLE IF NOT EXISTS Policies
         ON UPDATE cascade ON DELETE restrict
 );
 
+CREATE TABLE IF NOT EXISTS DeletedDaycareLocations (
+    daycare_id    INT PRIMARY KEY,
+    daycare_name  VARCHAR(100),
+    opening_time  TIME,
+    closing_time  TIME,
+    monthly_price DECIMAL(7, 2),
+    city          VARCHAR(50),
+    country_code  VARCHAR(10)
+);
+
 INSERT INTO AffinityResources (id, resource_name, resource_type, focus_area, country_code)
 VALUES(1, "Helping Parents", "Charity", "Working Parents", "BE"),
 (2, "Supporting Mothers", "Affinity Group", "Single Mothers", "FR");
