@@ -121,6 +121,28 @@ def NoteTakingFeature():
                 file_name=st.session_state['first_name'] + "s_Notes.txt",
                 mime="text/plain"
             )
+
+def YourInsightsWarning():
+    # Warning if notes are empty.
+    if st.session_state["authenticated"]:
+        if st.session_state.get("logout_warning", False):
+            container = st.sidebar.container(border=True)
+            container.warning("⚠️ \'Your insights\' will be **permanently** deleted upon logout if not downloaded. Are you sure?")
+
+            col1, col2 = container.columns(2)
+
+            with col1:
+                if st.button("☆ Cancel", use_container_width=True, type="primary"):
+                    st.session_state["logout_warning"] = False
+                    st.rerun()
+
+            with col2:
+                if st.button("Proceed", use_container_width=True, type="tertiary"):
+                    del st.session_state["role"]
+                    del st.session_state["authenticated"]
+                    del st.session_state["notes"]
+                    st.session_state["logout_warning"] = False
+                    st.switch_page("Home.py")
             
 
 
@@ -163,6 +185,7 @@ def SideBarLinks(show_home=False):
         st.sidebar.title(greeting + ", " + st.session_state['first_name'] + "!")
 
         # Notes Feature
+        YourInsightsWarning() # warning before deleting
         NoteTakingFeature()
 
         st.sidebar.divider()
@@ -200,20 +223,3 @@ def SideBarLinks(show_home=False):
                 del st.session_state["role"]
                 del st.session_state["authenticated"]
                 st.switch_page("Home.py")
-
-        # Warning if notes are empty.
-        if st.session_state.get("logout_warning", False):
-            st.warning("⚠️ \'Your insights\' will be permanently deleted upon logout if not downloaded. Are you sure?")
-
-            col1, col2 = st.columns(2)
-            with col2:
-                if st.button("Logout Anyway", use_container_width=True):
-                    del st.session_state["role"]
-                    del st.session_state["authenticated"]
-                    del st.session_state["notes"]
-                    st.session_state["logout_warning"] = False
-                    st.switch_page("Home.py")
-            with col1:
-                if st.button("☆ Cancel", use_container_width=True):
-                    st.session_state["logout_warning"] = False
-                    st.rerun()
