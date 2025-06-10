@@ -35,7 +35,7 @@ def get_all_locations():
         # how can i construct a query dynamically? 
         # WHERE 1=1 allows you to add on the filters
         ## 1=1 will always be true but primes query for adding on filters
-        query = "SELECT * FROM DaycareLocations WHERE 1=1"
+        query = "SELECT * FROM DaycareLocations WHERE inactive = FALSE"
         params = []
 
         # Add filters if provided
@@ -88,7 +88,8 @@ def get_all_locations():
                 "Country": row["country_code"],
                 "Opening Time": departure_time.isoformat(),
                 "Closing Time": time_two.isoformat(),
-                "Monthly Price": row["monthly_price"]
+                "Monthly Price": row["monthly_price"],
+                "Inactive": row["inactive"]
             }
 
             results.append(result)

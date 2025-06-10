@@ -1,0 +1,36 @@
+user_id,first_name,last_name,age,occupation,country_code,role_id
+1,Gary,Richard,66,Montessori School Operator,CZ,1
+2,Cara,Day,53,Daycare Owner,FR,1
+3,Jenna,Mcgee,38,Preschool Principal,GR,1
+4,Jeremy,Bryant,44,Preschool Principal,ES,1
+5,Joanne,Wilson,29,Montessori School Operator,FI,1
+6,Guy,Clay,26,After School Program Manager,HU,1
+7,Angela,Harrison,35,Preschool Principal,SE,1
+8,Lauren,Matthews,24,Daycare Owner,LV,1
+25,Stephanie,Barajas,38,After School Program Manager,HR,1
+26,Allison,Fowler,32,Montessori School Operator,SK,1
+27,Jeffrey,Jones,54,Non-Profit Child Advocacy Member,GR,1
+28,Jason,Anderson,55,Montessori School Operator,SI,1
+29,Susan,Mckee,38,Non-Profit Child Advocacy Member,MT,1
+30,Stephanie,Mendoza,30,After School Program Manager,MT,1
+31,Janet,Boyd,19,Montessori School Operator,BE,1
+32,Sandra,Jackson,44,Non-Profit Child Advocacy Member,DK,1
+33,Kristen,Allen,22,Non-Profit Child Advocacy Member,SI,1
+34,Sarah,Coleman,27,Preschool Principal,BE,1
+35,Rachel,Wilson,24,After School Program Manager,IE,1
+9,Alexander,Todd,70,Caregiver,HR,2
+10,Eura,Peon,28,Expecting Parent,PL,2
+11,Marcus,Wood,28,Caregiver,IT,2
+12,Diane,Cervantes,65,Caregiver,HR,2
+13,Jeffrey,Hudson,20,Caregiver,LT,2
+14,Gene,Palmer,28,Parent,ES,2
+15,Eric,Hernandez,27,Expecting Parent,NL,2
+16,Adrian,Armstrong,35,Adoptive Parent,PT,2
+17,Barbara,Jones,32,County Commissioner,AT,3
+18,Roberto,Palmer,30,Senator,FR,3
+19,Paul E.,Tishan,63,Politician,BE,3
+20,Samuel,Hall,60,Senator,IT,3
+21,Amanda,Green,53,Political Activist,DK,3
+22,Fernando,Lopez,24,Politician,EE,3
+23,Damon,Washington,55,County Commissioner,DE,3
+24,Brett,Taylor,28,Political Activist,LV,3
