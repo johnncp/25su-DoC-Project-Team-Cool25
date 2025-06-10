@@ -27,9 +27,10 @@ def get_all_locations():
         # Get query parameters for filtering
         country = request.args.get("country_code")
         city = request.args.get("city")
-        monthly_price = request.args.get("monthly_price")
+        owner_id = request.args.get("owner_id")
+        #monthly_price = request.args.get("monthly_price")
 
-        current_app.logger.debug(f'Query parameters - country: {country}, focus_area: {city}, founding_year: {monthly_price}')
+        current_app.logger.debug(f'Query parameters - country: {country}, city: {city}, owner: {owner_id}')
 
         # Prepare the Base query
         # how can i construct a query dynamically? 
@@ -46,9 +47,9 @@ def get_all_locations():
         if city:
             query += " AND city = %s"
             params.append(city)
-        if monthly_price:
-            query += " AND monthly_price = %s"
-            params.append(monthly_price)
+        if owner_id:
+            query += " AND owner_id = %s"
+            params.append(owner_id)
 
         # and the query condition would be AND Country = "France"
         current_app.logger.debug(f'Executing query: {query} with params: {params}')
@@ -56,53 +57,12 @@ def get_all_locations():
         # this is where i ask cursor to give back all rows the query returns
         locations = cursor.fetchall()
 
-        #-----------------------------------------------------------------------------#
-        # this beautiful addition is credited to emily moy and her project last year
-        # it is necessary because json hates the time data type
-        # basically it turns it to a format that json likes 
-        results = []
 
-        # Groups the date and time so that it is in a jsonifiable format
-        for row in locations:
-
-            time1 = row['opening_time']
-            time2 = row['closing_time']
-            #If the time is in a format that isnt jsonifable change the format to the standard time format
-            if isinstance(time1, datetime.timedelta):
-                jsonifiable_time = (datetime.datetime.min + time1).time()
-            else:
-                jsonifiable_time = time1
-            
-            if isinstance(time2, datetime.timedelta):
-                jsonifiable_time2 = (datetime.datetime.min + time2).time()
-            else:
-                jsonifiable_time2 = time2
-            
-            departure_time = jsonifiable_time
-            time_two = jsonifiable_time2
-
-            result = {
-                "Daycare ID": row["daycare_id"],
-                "Daycare Name": row["daycare_name"],
-                "City": row["city"],
-                "Country": row["country_code"],
-                "Opening Time": departure_time.isoformat(),
-                "Closing Time": time_two.isoformat(),
-                "Monthly Price": row["monthly_price"],
-                "Inactive": row["inactive"]
-            }
-
-            results.append(result)
-
-        the_response = make_response(jsonify(results))
-        the_response.status_code = 200
-
-        # -------------------------------------------------------#
         cursor.close()
 
         current_app.logger.info(f'Successfully retrieved {len(locations)} Locations')
         # taking ngos retreived from cursor and returning it with http code 200
-        return the_response
+        return jsonify(locations), 200
 
     #nice error message
     except Error as e:
@@ -110,6 +70,7 @@ def get_all_locations():
         return jsonify({"error": str(e)}), 500
 
 #update hours and price of a specific daycare location
+# i don't think this route is necessary anymore but will keep for reference for now
 @locations.route("/locations/<int:daycare_id>", methods=["PUT"])
 def update_location(daycare_id):
     try: 
@@ -147,7 +108,8 @@ def update_location(daycare_id):
         current_app.logger.error(f'Database error in update_location: {str(e)}')
         return jsonify({"error": str(e)}), 500
     
-# add a new daycare location    
+# add a new daycare location 
+# need to update this and figure out how to make it this user's owner_id  
 @locations.route("/locations", methods=["POST"])
 def add_new_location():
     try: 
