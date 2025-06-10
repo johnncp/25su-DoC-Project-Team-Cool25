@@ -187,3 +187,98 @@ def add_new_location():
     except Error as e:
         current_app.logger.error(f'Database error in add_new_location: {str(e)}')
         return jsonify({"error": str(e)}), 500
+    
+@locations.route("/locations/<int:daycare_id>", methods=["DELETE"])
+def delete_location(daycare_id):
+    try:
+        cursor = db.get_db().cursor()
+
+        # Fetch daycare details
+        cursor.execute("SELECT * FROM DaycareLocations WHERE daycare_id = %s", (daycare_id,))
+        daycare = cursor.fetchone()
+
+        if not daycare:
+            return jsonify({"error": "Daycare not found"}), 404
+
+        # Insert into archive table
+        archive_query = """
+            INSERT INTO DeletedDaycareLocations 
+            (daycare_id, daycare_name, opening_time, closing_time, monthly_price, city, country_code)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """
+        archive_values = (
+            daycare["daycare_id"],
+            daycare["daycare_name"],
+            daycare["opening_time"],
+            daycare["closing_time"],
+            daycare["monthly_price"],
+            daycare["city"],
+            daycare["country_code"],
+        )
+
+        cursor.execute(archive_query, archive_values)
+
+        # Delete from original table
+        cursor.execute("DELETE FROM DaycareLocations WHERE daycare_id = %s", (daycare_id,))
+        db.get_db().commit()
+        cursor.close()
+
+        return jsonify({"message": "Daycare deleted successfully"}), 200
+
+    except Error as e:
+        current_app.logger.error(f'Database error in delete_location: {str(e)}')
+        return jsonify({"error": str(e)}), 500
+    
+
+@locations.route("/locations/deleted", methods=["GET"])
+def get_deleted_locations():
+    try:
+        cursor = db.get_db().cursor()
+
+        cursor.execute("SELECT * FROM DeletedDaycareLocations")
+
+        deleted = cursor.fetchall()
+
+        results = []
+
+        # Groups the date and time so that it is in a jsonifiable format
+        for row in deleted:
+
+            time1 = row['opening_time']
+            time2 = row['closing_time']
+            #If the time is in a format that isnt jsonifable change the format to the standard time format
+            if isinstance(time1, datetime.timedelta):
+                jsonifiable_time = (datetime.datetime.min + time1).time()
+            else:
+                jsonifiable_time = time1
+            
+            if isinstance(time2, datetime.timedelta):
+                jsonifiable_time2 = (datetime.datetime.min + time2).time()
+            else:
+                jsonifiable_time2 = time2
+            
+            departure_time = jsonifiable_time
+            time_two = jsonifiable_time2
+
+            result = {
+                "Daycare ID": row["daycare_id"],
+                "Daycare Name": row["daycare_name"],
+                "City": row["city"],
+                "Country": row["country_code"],
+                "Opening Time": departure_time.isoformat(),
+                "Closing Time": time_two.isoformat(),
+                "Monthly Price": row["monthly_price"]
+            }
+
+            results.append(result)
+
+        the_response = make_response(jsonify(results))
+        the_response.status_code = 200
+
+        cursor.close()
+
+        return the_response
+    
+    except Error as e:
+        current_app.logger.error(f'Error fetching deleted locations: {str(e)}')
+        return jsonify({"error": str(e)}), 500

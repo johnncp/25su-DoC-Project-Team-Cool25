@@ -3,86 +3,62 @@ logger = logging.getLogger(__name__)
 import streamlit as st
 from modules.nav import SideBarLinks
 import requests
+import pandas as pd
 
 st.set_page_config(page_title="Birth Rate Predictor", layout="wide")
 
 SideBarLinks()
 
-eu_countries = [
-    "Austria",
-    "Belgium",
-    "Bulgaria",
-    "Croatia",
-    "Cyprus",
-    "Czech Republic",
-    "Denmark",
-    "Estonia",
-    "Finland",
-    "France",
-    "Germany",
-    "Greece",
-    "Hungary",
-    "Ireland",
-    "Italy",
-    "Latvia",
-    "Lithuania",
-    "Luxembourg",
-    "Malta",
-    "Netherlands",
-    "Poland",
-    "Portugal",
-    "Romania",
-    "Slovakia",
-    "Slovenia",
-    "Spain",
-    "Sweden"
-]
+# ---- Title ----
+st.title("Birth Rate Predictor 🍼")
+st.markdown("Use the sliders and inputs below to estimate predicted birth rate based on select factors.")
 
-st.title('Birth Rate Predictor')
+# ---- Input Section ----
+st.header("Input Parameters")
 
-# Input layout
-col1, col2, col3 = st.columns([1.2, 1.2, 1])
+col1, col2 = st.columns(2)
 
 with col1:
-    weekly_hours = st.slider("Weekly Hours", min_value=0, max_value=60, value=30)
-    social_protection = st.number_input("Social Protection Benefits (€)", value=0.0, step=10.0)
-    child_allowance = st.number_input("Family or Child Allowance (€)", value=0.0, step=10.0)
+    weekly_hours = st.slider("Weekly Hours Worked", min_value=0, max_value=60, value=30)
 
 with col2:
-    childcare = st.slider("Child Day Care (€)", min_value=0, max_value=5000, value=1000)
-    birth_grant = st.number_input("Birth Grant (€)", value=0.0, step=10.0)
-    parental_leave = st.number_input("Parental Leave (weeks)", value=0.0, step=1.0)
+    cash = st.number_input("Cash Benefits per Capita (€)", value=0.0, step=100.0)
+    services = st.number_input("Childcare Services per Capita (€)", value=0.0, step=50.0)
+    maternity = st.number_input("Maternity Spending per Capita (€)", value=0.0, step=50.0)
 
-with col3:
-    country = st.selectbox("Country", eu_countries)
-    income_maintenance = st.number_input("Income Maintenance (€)", value=0.0, step=10.0)
+# Convert inputs to numbers
+weekly_hours = int(weekly_hours)
+cash = int(cash)
+maternity = int(maternity)
+services = int(services)
 
-# Prediction logic (placeholder)
-# Replace with ML model or actual function
-predicted_birth_rate = 6.0  # dummy placeholder
+# ---- Prediction Logic ----
+try:
+    response = requests.get("http://web-api:4000/euro_apis/m1weights")
+    response.raise_for_status()
+    weights_list = response.json()
 
-st.markdown("---")
-st.markdown(f"### 🍼 Predicted Birth Rate: **{predicted_birth_rate:.1f}%**")
+    weights = {row["feature_name"]: float(row["weight"]) for row in weights_list}
 
-st.divider()
+    prediction = (
+        weights.get("intercept", 0)
+        + weekly_hours * weights.get("weekly_hours", 0)
+        + cash * weights.get("cash_per_capita", 0)
+        + maternity * weights.get("maternity_per_capita", 0)
+        + services * weights.get("services_per_capita", 0)
+    )
+    prediction = max(0, prediction)
 
-"""
+    st.success(f"🍼 **Predicted Birth Rate:** {prediction:.2f} births per 1000 people")
+    st.balloons()
 
-st.write('\n\n')
-st.write('## Model 1 Maintenance')
+    # ---- Optional: Expandable for Weights ----
+    with st.expander("📊 View Model Weights"):
+        st.write(pd.DataFrame(weights_list))
 
-st.button("Train Model 01", 
-            type = 'primary', 
-            use_container_width=True)
+except requests.exceptions.RequestException as e:
+    st.error(f"Failed to fetch model weights: {e}")
 
-st.button('Test Model 01', 
-            type = 'primary', 
-            use_container_width=True)
-
-if st.button('Model 1 - get predicted value for 10, 25', 
-             type = 'primary',
-             use_container_width=True):
-  results = requests.get('http://web-api:4000/prediction/10/25').json()
-  st.dataframe(results)
-
-"""
+# ---- Optional: Expandable for Weights ----
+#with st.expander("📊 View Model Weights"):
+    #st.write(pd.DataFrame(weights_list))

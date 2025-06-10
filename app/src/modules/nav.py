@@ -48,21 +48,32 @@ def DaycareEUMemberPredictorNav():
 def DaycareResourcesNav():
     st.sidebar.page_link("pages/02_Daycare_Resources.py", label="Resources", icon="📚")
 
+def DaycareBusinessPlanNav():
+    st.sidebar.page_link("pages/04_Business_Planner.py", label="Business Planner", icon="💼")
+
 
 ## ------------------------ Role of parent ------------------------
+def ParentHomeNav():
+    st.sidebar.page_link(
+        "pages/10_Parent_Home.py", label="Your Home", icon="🛖"
+    )
+
 def ParentEUMemberPredictorNav():
-    st.sidebar.page_link("pages/11_Parent_EU_Member_Predictor.py", label="EU Member Predictor", icon="🇪🇺")
+    st.sidebar.page_link("pages/11_Parent_EU_Member_Predictor.py", label="EU Country Predictor", icon="🇪🇺")
 
 
 def ParentResourcesNav():
     st.sidebar.page_link(
-        "pages/12_Parent_Resources.py", label="Resources", icon="📚")
+        "pages/17_Parent_Affinity_Resources.py", label="Resources", icon="📚")
 
 
 def ParentWorkHoursNav():
     st.sidebar.page_link(
         "pages/13_Parent_Work_Hours.py", label="Work Hours Analysis", icon="⏱️"
     )
+
+def ParentDaycareFindNav():
+    st.sidebar.page_link("pages/02_Daycare_Resources.py", label="Daycare Finder", icon="🔎")
 
 
 def NgoDirectoryNav():
@@ -79,29 +90,59 @@ def NoteTakingFeature():
 
     with st.sidebar.expander("✪ Your Insights", expanded=False):
         # Text area with value tied to session state
-        notes = st.text_area("Pen down your reflections:", value=st.session_state.notes, height=300)
+        notes = st.text_area("Pen down your reflections:", value=st.session_state.notes, height=200)
 
         # Update session state when user types
         st.session_state.notes = notes
 
-        # Download Markdown button
-        markdown_content = f"# {st.session_state['first_name']}\'s Notes\n\n\n{notes}"
-        notes_buffer = StringIO(markdown_content)
-        st.download_button(
-            label="↓ Download as Markdown",
-            data=notes_buffer.getvalue(),
-            file_name=st.session_state['first_name'] + "s_Notes.md",
-            mime="text/markdown"
-        )
+        st.text("Download as:")
 
-        # Download Plain text button
-        notes_buffer = StringIO(notes)
-        st.download_button(
-            label="↓ Download as Plain Text",
-            data=notes_buffer.getvalue(),
-            file_name=st.session_state['first_name'] + "s_Notes.txt",
-            mime="text/plain"
-        )
+        col1, col2 = st.columns(2)
+
+        with col1:
+            # Download Markdown button
+            markdown_content = f"# {st.session_state['first_name']}\'s Notes\n\n\n{notes}"
+            notes_buffer = StringIO(markdown_content)
+            st.download_button(
+                label="↓ .md",
+                data=notes_buffer.getvalue(),
+                use_container_width=True,
+                file_name=st.session_state['first_name'] + "s_Notes.md",
+                mime="text/markdown"
+            )
+        
+        with col2:
+            # Download Plain text button
+            notes_buffer = StringIO(notes)
+            st.download_button(
+                label="↓ .txt",
+                data=notes_buffer.getvalue(),
+                use_container_width=True,
+                file_name=st.session_state['first_name'] + "s_Notes.txt",
+                mime="text/plain"
+            )
+
+def YourInsightsWarning():
+    # Warning if notes are empty.
+    if st.session_state["authenticated"]:
+        if st.session_state.get("logout_warning", False):
+            container = st.sidebar.container(border=True)
+            container.warning("⚠️ \'Your insights\' will be **permanently** deleted upon logout if not downloaded. Are you sure?")
+
+            col1, col2 = container.columns(2)
+
+            with col1:
+                if st.button("☆ Cancel", use_container_width=True, type="primary"):
+                    st.session_state["logout_warning"] = False
+                    st.rerun()
+
+            with col2:
+                if st.button("Proceed", use_container_width=True, type="tertiary"):
+                    del st.session_state["role"]
+                    del st.session_state["authenticated"]
+                    del st.session_state["notes"]
+                    st.session_state["logout_warning"] = False
+                    st.switch_page("Home.py")
             
 
 
@@ -110,14 +151,12 @@ def PoliticianPageNav():
     st.sidebar.page_link("pages/20_Politician_Home.py", label="Your Home", icon="🖥️")
 
     st.sidebar.page_link(
-        "pages/21_Politician_Birth_Rate_Predictor.py", label="Model", icon="🧮"
+        "pages/21_Politician_Birth_Rate_Predictor.py", label="Birth Rate Predictor", icon="🍼"
     )
     st.sidebar.page_link(
         "pages/22_Politician_Legislation_Finder.py", label="Legislation Finder", icon="🔎"
     )
-    st.sidebar.page_link(
-        "pages/23_Politician_Family_Time_Resources.py", label="Family Time Resources", icon="🫂"
-    )
+    #st.sidebar.page_link("pages/23_Politician_Family_Time_Resources.py", label="N/A", icon="⚠️")
 
 
 # --------------------------------Links Function -----------------------------------------------
@@ -146,6 +185,7 @@ def SideBarLinks(show_home=False):
         st.sidebar.title(greeting + ", " + st.session_state['first_name'] + "!")
 
         # Notes Feature
+        YourInsightsWarning() # warning before deleting
         NoteTakingFeature()
 
         st.sidebar.divider()
@@ -153,14 +193,17 @@ def SideBarLinks(show_home=False):
         # Show World Bank Link and Map Demo Link if the user is a political strategy advisor role.
         if st.session_state["role"] == "daycare_operator":
             DaycareHomeNav()
-            DaycareEUMemberPredictorNav()
-            DaycareResourcesNav()
+            #DaycareEUMemberPredictorNav()
+            #DaycareResourcesNav()
+            DaycareBusinessPlanNav()
 
         # If the user role is usaid worker, show the Api Testing page
         if st.session_state["role"] == "parent":
+            ParentHomeNav()
             ParentEUMemberPredictorNav()
+            ParentDaycareFindNav()
             ParentResourcesNav()
-            ParentWorkHoursNav()
+            #ParentWorkHoursNav()
 
         # If the user is an administrator, give them access to the administrator pages
         if st.session_state["role"] == "politician":
@@ -180,20 +223,3 @@ def SideBarLinks(show_home=False):
                 del st.session_state["role"]
                 del st.session_state["authenticated"]
                 st.switch_page("Home.py")
-
-        # Warning if notes are empty.
-        if st.session_state.get("logout_warning", False):
-            st.warning("⚠️ \'Your insights\' will be permanently deleted upon logout if not downloaded. Are you sure?")
-
-            col1, col2 = st.columns(2)
-            with col2:
-                if st.button("Logout Anyway", use_container_width=True):
-                    del st.session_state["role"]
-                    del st.session_state["authenticated"]
-                    del st.session_state["notes"]
-                    st.session_state["logout_warning"] = False
-                    st.switch_page("Home.py")
-            with col1:
-                if st.button("☆ Cancel", use_container_width=True):
-                    st.session_state["logout_warning"] = False
-                    st.rerun()

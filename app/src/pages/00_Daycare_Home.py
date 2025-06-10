@@ -65,14 +65,16 @@ st.markdown(f"""
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    if st.button('☆ Predict an EU Member', type='primary', use_container_width=True):
-        st.success("Redirecting to Country Predictor..."),
-        st.switch_page('pages/01_Daycare_EU_Member_Predictor.py')
+    if st.button('☆ Predict an EU Country', type='primary', use_container_width=True):
+        #st.success("Redirecting to Country Predictor..."),
+        #st.switch_page('pages/01_Daycare_EU_Member_Predictor.py')
+        st.write("Page coming soon!")
 
 with col2:
     if st.button('☰ Resource Page', type='primary', use_container_width=True):
-        st.success("Redirecting to Resources..."),
-        st.switch_page('pages/02_Daycare_Resources.py')
+        #st.success("Redirecting to Resources..."),
+        #st.switch_page('pages/02_Daycare_Resources.py')
+        st.write("Page coming soon!")
 
 with col3:
     if st.button('Business Planner', type='primary', use_container_width=True):

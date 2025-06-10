@@ -14,7 +14,7 @@ st.write("""
 
 This example is borrowed from [The Data Professor](https://github.com/dataprofessor/streamlit_freecodecamp/tree/main/app_7_classification_iris)
          
-This app predicts the **Iris flower** type!
+This app predicts the **Iris flower** type! 
 """)
 
 st.sidebar.header('User Input Parameters')

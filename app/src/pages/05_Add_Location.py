@@ -7,10 +7,10 @@ import datetime
 # Initialize sidebar
 SideBarLinks()
 
-st.title("Add New NGO")
+st.title("Add New Daycare Location")
 
 # API endpoint
-API_URL = "http://web-api:4000/location/addlocations"
+API_URL = "http://web-api:4000/location/locations"
 
 # Create a form for NGO details
 with st.form("add_location_form"):

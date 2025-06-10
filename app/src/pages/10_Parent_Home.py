@@ -72,13 +72,13 @@ with col1:
         st.switch_page('pages/11_Parent_EU_Member_Predictor.py')
 
 with col2:
-    if st.button('🔎 Legislation Finder', type='primary', use_container_width=True):
+    if st.button('🔎 Daycare Finder', type='primary', use_container_width=True):
         st.success("Legendary sessions..."),
-        st.switch_page('pages/12_Parent_Resources.py')
+        st.switch_page('pages/02_Daycare_Resources.py')
 
 with col3:
     if st.button('☰ Resource Page', type='primary', use_container_width=True):
         st.success("Redirecting to Resources..."),
-        st.switch_page('pages/13_Parent_Work_Hours.py')
+        st.switch_page('pages/17_Parent_Affinity_Resources.py')
 
 st.divider()
