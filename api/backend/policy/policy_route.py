@@ -59,7 +59,7 @@ def add_new_policy():
     try: 
         data = request.get_json()
 
-        required_fields = ["policy_id", "policy_name", "focus_area", "country_code", "year"]
+        required_fields = ["policy_id", "policy_name", "focus_area", "country_code", "year", "description"]
         for field in required_fields:
             if field not in data:
                 return jsonify({"error": f"Missing required field: {field}"}), 400
@@ -67,8 +67,8 @@ def add_new_policy():
         cursor = db.get_db().cursor()
 
         query = """
-        INSERT INTO Policies (policy_id, policy_name, focus_area, country_code, year)
-        VALUES (%s, %s, %s, %s, %s)
+        INSERT INTO Policies (policy_id, policy_name, focus_area, country_code, year, description)
+        VALUES (%s, %s, %s, %s, %s, %s)
         """
         cursor.execute(
             query,
@@ -78,6 +78,7 @@ def add_new_policy():
                 data["focus_area"],
                 data["country_code"],
                 data["year"],
+                data["description"],
             ),
         )
 

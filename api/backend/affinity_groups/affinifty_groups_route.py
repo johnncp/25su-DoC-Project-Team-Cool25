@@ -61,7 +61,7 @@ def add_new_group():
     try: 
         data = request.get_json()
 
-        required_fields = ["id", "resource_name", "resource_type", "focus_area", "country_code"]
+        required_fields = ["resource_name", "resource_type", "focus_area", "city", "country_code", "description"]
         for field in required_fields:
             if field not in data:
                 return jsonify({"error": f"Missing required field: {field}"}), 400
@@ -69,25 +69,28 @@ def add_new_group():
         cursor = db.get_db().cursor()
 
         query = """
-        INSERT INTO AffinityResources (id, resource_name, resource_type, focus_area, country_code)
-        VALUES (%s, %s, %s, %s, %s)
+        INSERT INTO AffinityResources (resource_name, resource_type, focus_area, city, country_code, description)
+        VALUES (%s, %s, %s, %s, %s, %s)
         """
         cursor.execute(
             query,
             (
-                data["id"],
                 data["resource_name"],
                 data["resource_type"],
                 data["focus_area"],
+                data["city"],
                 data["country_code"],
+                data["description"],
             ),
         )
 
         db.get_db().commit()
+        new_resource_id = cursor.lastrowid
+
         cursor.close()
 
         return (
-            jsonify({"message": "Resource created successfully"}),
+            jsonify({"message": "Resource created successfully", "id": new_resource_id}),
             201,
         )
 

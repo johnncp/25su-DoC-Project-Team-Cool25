@@ -4,7 +4,7 @@ USE euro_database;
 -- ### AffinityResources
 CREATE TABLE IF NOT EXISTS AffinityResources
 (
-    id      INT PRIMARY KEY,
+    id      INT AUTO_INCREMENT PRIMARY KEY,
     resource_name VARCHAR(100),
     resource_type VARCHAR(50),
     focus_area VARCHAR(50),

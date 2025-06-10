@@ -105,7 +105,7 @@ def get_all_daycare_data():
         current_app.logger.info(f'Successfully retrieved {len(daycare)} Daycare Data')
         return the_response
     except Error as e:
-        current_app.logger.error(f'Database error in get_all_ngos: {str(e)}')
+        current_app.logger.error(f'Database error in get_all_daycare_data: {str(e)}')
         return jsonify({"error": str(e)}), 500
     
 # Get all daycare data for a specific daycare with filtering by pretty much everything
@@ -213,7 +213,7 @@ def get_daycare_data(daycare_id):
         current_app.logger.info(f'Successfully retrieved {len(daycare)} Daycare Data')
         return the_response
     except Error as e:
-        current_app.logger.error(f'Database error in get_all_ngos: {str(e)}')
+        current_app.logger.error(f'Database error in get_daycare_data: {str(e)}')
         return jsonify({"error": str(e)}), 500
     
 # Get all daycare data for a specific row 
@@ -299,5 +299,5 @@ def get_data(id):
         current_app.logger.info(f'Successfully retrieved {len(daycare)} Daycare Data')
         return the_response
     except Error as e:
-        current_app.logger.error(f'Database error in get_all_ngos: {str(e)}')
+        current_app.logger.error(f'Database error in get_data: {str(e)}')
         return jsonify({"error": str(e)}), 500
