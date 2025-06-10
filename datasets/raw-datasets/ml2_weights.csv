@@ -1,0 +1,5 @@
+feature,user_input_weight,normalized_weight
+weekly_hours,1,0.09090909090909091
+cash_per_capita,2,0.18181818181818182
+maternity_per_capita,3,0.2727272727272727
+services_per_capita,5,0.45454545454545453
