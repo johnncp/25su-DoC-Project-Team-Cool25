@@ -109,13 +109,13 @@ def update_location(daycare_id):
         return jsonify({"error": str(e)}), 500
     
 # add a new daycare location 
-# need to update this and figure out how to make it this user's owner_id  
+# need to figure out how to make it this user's owner_id!!! (might need to be done on page)
 @locations.route("/locations", methods=["POST"])
 def add_new_location():
     try: 
         data = request.get_json()
 
-        required_fields = ["daycare_id", "daycare_name", "opening_time", "closing_time", "monthly_price", "city", "country_code"]
+        required_fields = ["daycare_name", "city", "country_code", "owner_id"]
         for field in required_fields:
             if field not in data:
                 return jsonify({"error": f"Missing required field: {field}"}), 400
@@ -123,27 +123,25 @@ def add_new_location():
         cursor = db.get_db().cursor()
 
         query = """
-        INSERT INTO DaycareLocations (daycare_id, daycare_name, opening_time, closing_time, monthly_price, city, country_code)
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        INSERT INTO DaycareLocations (daycare_name, city, country_code, owner_id)
+        VALUES (%s, %s, %s, %s)
         """
         cursor.execute(
             query,
             (
-                data["daycare_id"],
                 data["daycare_name"],
-                data["opening_time"],
-                data["closing_time"],
-                data["monthly_price"],
                 data["city"],
                 data["country_code"],
+                data["owner_id"],
             ),
         )
 
         db.get_db().commit()
+        new_daycare_id = cursor.lastrowid
         cursor.close()
 
         return (
-            jsonify({"message": "Daycare created successfully"}),
+            jsonify({"message": "Daycare created successfully", "daycare_id": new_daycare_id}),
             201,
         )
 
@@ -151,6 +149,7 @@ def add_new_location():
         current_app.logger.error(f'Database error in add_new_location: {str(e)}')
         return jsonify({"error": str(e)}), 500
     
+# deletes daycare by setting it as inactive
 @locations.route("/locations/<int:daycare_id>", methods=["DELETE"])
 def delete_location(daycare_id):
     try:
@@ -163,26 +162,9 @@ def delete_location(daycare_id):
         if not daycare:
             return jsonify({"error": "Daycare not found"}), 404
 
-        # Insert into archive table
-        archive_query = """
-            INSERT INTO DeletedDaycareLocations 
-            (daycare_id, daycare_name, opening_time, closing_time, monthly_price, city, country_code)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
-        """
-        archive_values = (
-            daycare["daycare_id"],
-            daycare["daycare_name"],
-            daycare["opening_time"],
-            daycare["closing_time"],
-            daycare["monthly_price"],
-            daycare["city"],
-            daycare["country_code"],
-        )
-
-        cursor.execute(archive_query, archive_values)
-
+        
         # Delete from original table
-        cursor.execute("DELETE FROM DaycareLocations WHERE daycare_id = %s", (daycare_id,))
+        cursor.execute("UPDATE DaycareLocations SET inactive = true WHERE daycare_id = %s", (daycare_id,))
         db.get_db().commit()
         cursor.close()
 
@@ -193,6 +175,7 @@ def delete_location(daycare_id):
         return jsonify({"error": str(e)}), 500
     
 
+#this is be obsolete but leaving for now just in case
 @locations.route("/locations/deleted", methods=["GET"])
 def get_deleted_locations():
     try:

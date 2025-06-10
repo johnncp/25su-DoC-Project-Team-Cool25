@@ -12,6 +12,7 @@ from backend.api_calls.api_calls_routes import apis
 from backend.employment_hours.employment_hours_routes import hours
 from backend.benefits_expenditure.benefits_expenditure_routes import benefits
 from backend.affinity_groups.affinifty_groups_route import group
+from backend.daycare_data.daycare_data_route import daycare
 
 def create_app():
     app = Flask(__name__)
@@ -55,6 +56,7 @@ def create_app():
     app.register_blueprint(hours, url_prefix="/hours")
     app.register_blueprint(benefits, url_prefix="/benefits")
     app.register_blueprint(group, url_prefix="/group")
+    app.register_blueprint(daycare, url_prefix="/daycaredata")
 
     # Don't forget to return the app object
     return app
