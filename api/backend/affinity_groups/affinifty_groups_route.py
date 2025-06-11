@@ -34,10 +34,10 @@ def get_all_groups():
             query += " AND country_code = %s"
             params.append(country)
         if focus_area:
-            query += " AND city = %s"
+            query += " AND focus_area = %s"
             params.append(focus_area)
         if resource_type:
-            query += " AND monthly_price = %s"
+            query += " AND resource_type = %s"
             params.append(resource_type)
 
         current_app.logger.debug(f'Executing query: {query} with params: {params}')

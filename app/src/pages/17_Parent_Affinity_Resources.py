@@ -38,7 +38,7 @@ try:
         # Build query parameters
         params = {}
         if selected_country != "All":
-            params["country"] = selected_country
+            params["country_code"] = selected_country
         if selected_focus != "All":
             params["focus_area"] = selected_focus
         if selected_type != "All":
@@ -55,17 +55,23 @@ try:
             # Create expandable rows for each NGO
             for group in filtered_groups:
                 with st.expander(f"{group['resource_name']} ({group['country_code']})"):
-                    #col1, col2 = st.columns(2)
+                    col1, col2 = st.columns(2)
 
-                    #with col1:
+                    with col1:
                         st.write("**Basic Information**")
-                        st.write(f"**Country:** {group['country_code']}")
                         st.write(f"**Resource Type:** {group['resource_type']}")
                         st.write(f"**Focus Area:** {group['focus_area']}")
+                        st.write(f"**Description:** {group['description']}")
 
-                    #with col2:
+
+                    with col2:
                         #st.write("**Contact Information**")
-                        #st.write(f"**Website:** [{group['Website']}]({group['Website']})")
+                        st.write(f"**City:** {group['city']}")
+                        st.write(f"**Country:** {group['country_code']}")
+
+
+                        st.write(f"**Website:** [{group['website']}]({group['website']})")
+
 
                     # Add a button to view full profile
                     #if st.button(f"View Full Profile", key=f"view_{group['NGO_ID']}"):
