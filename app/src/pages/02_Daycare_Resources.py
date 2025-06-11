@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import plotly.express as px
 from modules.nav import SideBarLinks
+import streamlit as st
+import requests
 
 st.set_page_config(page_title="Daycare Finder", layout="wide")
 
@@ -17,33 +19,39 @@ SideBarLinks()
 
 # set the title of the page
 st.title('Find Daycares')
+tab1, tab2 = st.tabs(["Search for Daycares", "Compare Daycares"])
 
-import streamlit as st
-import requests
+with tab1:
+    # User inputs
+    country = st.text_input("Country Code", "BE")
+    city = st.text_input("City", "Brussels")
 
-# User inputs
-country = st.text_input("Country Code", "BE")
-city = st.text_input("City", "Brussels")
-price = st.number_input("Max Monthly Price", min_value=0, value=500)
+    # Fetch data
+    if st.button("Search Daycares"):
+        params = {
+            "country_code": country,
+            "city": city
+        }
+        response = requests.get("http://web-api:4000/location/locations", params=params)
 
-# Fetch data
-if st.button("Search Daycares"):
-    params = {
-        "country_code": country,
-        "city": city,
-        "monthly_price": price
-    }
-    response = requests.get("http://web-api:4000/location/locations")
+        if response.status_code == 200:
+            data = response.json()
+            st.success(f"Found {len(data)} results")
+            for item in data:
+                with st.container(border = True):
 
-    if response.status_code == 200:
-        data = response.json()
-        st.success(f"Found {len(data)} results")
-        for item in data:
-            st.write(item)
-    else:
-        st.error("Failed to fetch locations")
+                    col1, col2 = st.columns(2)
 
+                    with col1:
+                        st.write(item['daycare_name'])
+                    
+        else:
+            st.error("Failed to fetch locations")
 
+with tab2:
+    selected_country = st.selectbox('Pick a country', ('BE', 'BG', 'CZ', 'DK', 'DE', 'EE', 'IE', 'EL', 'ES', 'FR', 'HR', 'IT', 'CY',
+            'LV', 'LT', 'LU', 'HU', 'MT', 'NL', 'AT', 'PL', 'PT', 'RO', 'SI', 'SK', 'FI', 'SE'))
+    
 
 # You can access the session state to make a more customized/personalized app experience
 #st.write(f"### Hi, {st.session_state['first_name']}.")

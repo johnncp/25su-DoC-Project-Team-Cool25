@@ -8,6 +8,41 @@ SideBarLinks()
 
 st.title("Resource Directory")
 
+# Country code to full name
+country_map = {
+    'EU27_2020': 'European Union (27)',
+    'BE': 'Belgium',
+    'BG': 'Bulgaria',
+    'CZ': 'Czechia',
+    'DK': 'Denmark',
+    'DE': 'Germany',
+    'EE': 'Estonia',
+    'IE': 'Ireland',
+    'EL': 'Greece',
+    'ES': 'Spain',
+    'FR': 'France',
+    'HR': 'Croatia',
+    'IT': 'Italy',
+    'CY': 'Cyprus',
+    'LV': 'Latvia',
+    'LT': 'Lithuania',
+    'LU': 'Luxembourg',
+    'HU': 'Hungary',
+    'MT': 'Malta',
+    'NL': 'Netherlands',
+    'AT': 'Austria',
+    'PL': 'Poland',
+    'PT': 'Portugal',
+    'RO': 'Romania',
+    'SI': 'Slovenia',
+    'SK': 'Slovakia',
+    'FI': 'Finland',
+    'SE': 'Sweden'
+}
+
+# Full name to country code
+name_to_code = {v: k for k, v in country_map.items()}
+
 # API endpoint
 API_URL = "http://web-api:4000/group/groups"
 
@@ -26,8 +61,13 @@ try:
         resource_type = sorted(list(set(group["resource_type"] for group in groups)))
 
         # Create filters
+        # Use full country names
+        country_codes = set(group["country_code"] for group in groups)
+        country_names = sorted([country_map.get(code, code) for code in country_codes])
+
+        # Select full country name
         with col1:
-            selected_country = st.selectbox("Filter by Country", ["All"] + countries)
+            selected_country_name = st.selectbox("Filter by Country", ["All"] + country_names)
 
         with col2:
             selected_focus = st.selectbox("Filter by Focus Area", ["All"] + focus_area)
@@ -37,8 +77,10 @@ try:
 
         # Build query parameters
         params = {}
-        if selected_country != "All":
-            params["country_code"] = selected_country
+        if selected_country_name != "All":
+            country_code = name_to_code.get(selected_country_name)
+            if country_code:
+                params["country_code"] = country_code
         if selected_focus != "All":
             params["focus_area"] = selected_focus
         if selected_type != "All":
@@ -54,7 +96,8 @@ try:
 
             # Create expandable rows for each NGO
             for group in filtered_groups:
-                with st.expander(f"{group['resource_name']} ({group['country_code']})"):
+                country_full = country_map.get(group['country_code'], group['country_code'])
+                with st.expander(f"{group['resource_name']} ({group['city']})"):
                     col1, col2 = st.columns(2)
 
                     with col1:
@@ -67,7 +110,7 @@ try:
                     with col2:
                         #st.write("**Contact Information**")
                         st.write(f"**City:** {group['city']}")
-                        st.write(f"**Country:** {group['country_code']}")
+                        st.write(f"**Country:** {country_full}")
 
 
                         st.write(f"**Website:** [{group['website']}]({group['website']})")

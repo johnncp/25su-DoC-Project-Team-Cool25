@@ -4,7 +4,6 @@ CREATE DATABASE IF NOT EXISTS euro_database;
 USE euro_database;
 
 -- # USER:
--- ### User
 CREATE TABLE IF NOT EXISTS UserRoles
 (
     role_id INT AUTO_INCREMENT PRIMARY KEY,
