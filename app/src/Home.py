@@ -4,7 +4,7 @@
 ##################################################
 
 # Set up basic logging infrastructure
-import logging
+import logging, requests
 import base64
 logging.basicConfig(format='%(filename)s:%(lineno)s:%(levelname)s -- %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -39,6 +39,14 @@ logger.info("Loading Eurobébé Home...")
 def get_base64(path):
     with open(path, "rb") as f:
         return base64.b64encode(f.read()).decode()
+    
+def fetch_users_by_role(role_id):
+    try:
+        response = requests.get(f"http://web-api:4000/users/role/{role_id}")
+        if response.status_code == 200:
+            return response.json()
+    except Exception as e:
+        logger.error(f"Error fetching users: {e}")
 
 background_img = get_base64("assets/homepage_background.png")
 
@@ -93,6 +101,11 @@ st.markdown("<h2 style='text-align: center;'>Are you here as...</h2>", unsafe_al
 
 col1, col2, col3 = st.columns(3)
 
+# Fetch users, going by role
+daycare_users = fetch_users_by_role(1)  # role_id 1: daycare
+parent_users = fetch_users_by_role(2)   # role_id 2: parent
+politician_users = fetch_users_by_role(3)  # role_id 3: politician
+
 with col1:
     st.markdown("# A daycare?")
     st.write('Also a good match for:')
@@ -101,22 +114,31 @@ with col1:
         :primary-badge[After-School Programs] :primary-badge[Montessori School Operators]
         :primary-badge[Preschool Owners] :primary-badge[Nonprofit Child Advocacies]
         """
+    )
+    
+    # Create dropdown with daycare users
+    if daycare_users:
+        daycare_options = {f"{user['first_name']} {user['last_name']}": user for user in daycare_users}
+        selected_daycare = st.selectbox(
+            "Select a daycare operator:",
+            options=list(daycare_options.keys()),
+            key="daycare_select"
         )
-    if st.button("Log in as Cara Day", 
-            type = 'primary', 
-            icon=":material/login:",
-            use_container_width=True):
-        # when user clicks the button, they are now considered authenticated
-        st.session_state['authenticated'] = True
-        # we set the role of the current user
-        st.session_state['role'] = 'daycare_operator'
-        # we add the first name of the user (so it can be displayed on 
-        # subsequent pages). 
-        st.session_state['first_name'] = 'Cara'
-        # finally, we ask streamlit to switch to another page, in this case, the 
-        # landing page for this particular user type
-        logger.info("Logging in as Daycare Operator Cara Day")
-        st.switch_page('pages/00_Daycare_Home.py')
+        
+        if st.button(f"Log in as {selected_daycare}", 
+                type='primary', 
+                icon=":material/login:",
+                use_container_width=True,
+                key="daycare_login"):
+            selected_user = daycare_options[selected_daycare]
+            st.session_state['authenticated'] = True
+            st.session_state['role'] = 'daycare_operator'
+            st.session_state['first_name'] = selected_user['first_name']
+            st.session_state['user_id'] = selected_user['user_id']
+            logger.info(f"Logging in as Daycare Operator {selected_daycare}")
+            st.switch_page('pages/00_Daycare_Home.py')
+    else:
+        st.error("No daycare operators available.")
 
 with col2:
     st.markdown("# A parent?")
@@ -127,22 +149,31 @@ with col2:
         :primary-badge[PTA Members] :primary-badge[Homeschools]
         :primary-badge[Suburban Parents] :primary-badge[Family Support Group Members]
         """
+    )
+    
+    # Create dropdown with parent users
+    if parent_users:
+        parent_options = {f"{user['first_name']} {user['last_name']}": user for user in parent_users}
+        selected_parent = st.selectbox(
+            "Select a parent:",
+            options=list(parent_options.keys()),
+            key="parent_select"
         )
-    if st.button("Log in as Eura Pean", 
-            type = 'primary', 
-            icon=":material/login:",
-            use_container_width=True):
-        # when user clicks the button, they are now considered authenticated
-        st.session_state['authenticated'] = True
-        # we set the role of the current user
-        st.session_state['role'] = 'parent'
-        # we add the first name of the user (so it can be displayed on 
-        # subsequent pages). 
-        st.session_state['first_name'] = 'Eura'
-        # finally, we ask streamlit to switch to another page, in this case, the 
-        # landing page for this particular user type
-        logger.info("Logging in as Parent Eura Pean")
-        st.switch_page('pages/10_Parent_Home.py')
+        
+        if st.button(f"Log in as {selected_parent}", 
+                type='primary', 
+                icon=":material/login:",
+                use_container_width=True,
+                key="parent_login"):
+            selected_user = parent_options[selected_parent]
+            st.session_state['authenticated'] = True
+            st.session_state['role'] = 'parent'
+            st.session_state['first_name'] = selected_user['first_name']
+            st.session_state['user_id'] = selected_user['user_id']
+            logger.info(f"Logging in as Parent {selected_parent}")
+            st.switch_page('pages/10_Parent_Home.py')
+    else:
+        st.error("No parents available")
 
 with col3:
     st.markdown("# A politician?")
@@ -153,21 +184,30 @@ with col3:
         :primary-badge[Political Strategists] :primary-badge[Political Influencers]
         :primary-badge[Lobbyists]
         """
+    )
+    
+    # Create dropdown with politician users
+    if politician_users:
+        politician_options = {f"{user['first_name']} {user['last_name']}": user for user in politician_users}
+        selected_politician = st.selectbox(
+            "Select a politician:",
+            options=list(politician_options.keys()),
+            key="politician_select"
         )
-    if st.button("Log in as Paul E. Tishan", 
-            type = 'primary', 
-            icon=":material/login:",
-            use_container_width=True):
-        # when user clicks the button, they are now considered authenticated
-        st.session_state['authenticated'] = True
-        # we set the role of the current user
-        st.session_state['role'] = 'politician'
-        # we add the first name of the user (so it can be displayed on 
-        # subsequent pages). 
-        st.session_state['first_name'] = 'Paul'
-        # finally, we ask streamlit to switch to another page, in this case, the 
-        # landing page for this particular user type
-        logger.info("Logging in as Politician Paul E. Tishan")
-        st.switch_page('pages/20_Politician_Home.py')
+        
+        if st.button(f"Log in as {selected_politician}", 
+                type='primary', 
+                icon=":material/login:",
+                use_container_width=True,
+                key="politician_login"):
+            selected_user = politician_options[selected_politician]
+            st.session_state['authenticated'] = True
+            st.session_state['role'] = 'politician'
+            st.session_state['first_name'] = selected_user['first_name']
+            st.session_state['user_id'] = selected_user['user_id']
+            logger.info(f"Logging in as Politician {selected_politician}")
+            st.switch_page('pages/20_Politician_Home.py')
+    else:
+        st.error("No politicians available")
 
 st.divider()

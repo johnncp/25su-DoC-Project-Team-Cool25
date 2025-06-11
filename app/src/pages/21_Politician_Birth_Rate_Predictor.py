@@ -35,7 +35,6 @@ services = int(services)
 # ---- Prediction Logic ----
 try:
     response = requests.get("http://web-api:4000/euro_apis/m1weights")
-    response.raise_for_status()
     weights_list = response.json()
 
     weights = {row["feature_name"]: float(row["weight"]) for row in weights_list}
@@ -58,7 +57,3 @@ try:
 
 except requests.exceptions.RequestException as e:
     st.error(f"Failed to fetch model weights: {e}")
-
-# ---- Optional: Expandable for Weights ----
-#with st.expander("📊 View Model Weights"):
-    #st.write(pd.DataFrame(weights_list))
