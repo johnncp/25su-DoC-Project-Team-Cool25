@@ -55,7 +55,7 @@ st.markdown(f"""
         left: 50%;
         transform: translate(-100%, -120%);
         color: #31333E;
-        font-size: 4.2rem;
+        font-size: 3.8rem;
         font-weight: bold;
         text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
         padding: 15px 25px;
@@ -71,7 +71,7 @@ st.markdown(f"""
         left: 50%;
         transform: translate(-100%, -95%);
         color: #31333E;
-        font-size: 1.6rem;
+        font-size: 1.2rem;
         font-weight: 400;
         text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.05);
         padding: 10px 25px;
