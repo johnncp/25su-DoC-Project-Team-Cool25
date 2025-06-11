@@ -247,9 +247,13 @@ def get_location_data(daycare_id):
         params = []
         params.append(daycare_id)
         year = request.args.get("year")
+        monthly_price = request.args.get("monthly_price")
         if year:
             query += " AND year = %s"
             params.append(year)
+        if monthly_price:
+            query += " AND monthly_price = %s"
+            params.append(monthly_price)
 
         cursor.execute(query, params)
 

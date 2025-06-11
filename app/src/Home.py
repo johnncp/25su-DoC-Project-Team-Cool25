@@ -113,6 +113,8 @@ with col1:
         # we add the first name of the user (so it can be displayed on 
         # subsequent pages). 
         st.session_state['first_name'] = 'Cara'
+        #the below session state is temporary until we change this to be a dropdown.
+        st.session_state['user_id'] = 2
         # finally, we ask streamlit to switch to another page, in this case, the 
         # landing page for this particular user type
         logger.info("Logging in as Daycare Operator Cara Day")
