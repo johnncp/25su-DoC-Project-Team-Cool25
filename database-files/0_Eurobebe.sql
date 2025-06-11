@@ -194,18 +194,21 @@ CREATE TABLE IF NOT EXISTS Model1Weights
 (
     weight_id    INT AUTO_INCREMENT PRIMARY KEY,
     feature_name VARCHAR(100)   NOT NULL,
+    mean DECIMAL(30,15), 
+    std DECIMAL(30,15),
     weight       DECIMAL(10, 6) NOT NULL
 );
 
 
 
-INSERT INTO Model1Weights(feature_name,weight) 
-VALUES
- ('intercept','9.666071428571417')
-,('weekly_hours','3.429414357314285')
-,('maternity_per_capita','0.5398557950921468')
-,('services_per_capita','-1.147988490187129')
-,('year','-0.46390444495808775')
-,('weekly_hours_squared','-3.8634844605269785')
-,('cash_per_capita_squared','-1.3734797982048887')
-,('services_per_capita_squared','2.2391481605959784');
+
+
+INSERT INTO Model1Weights(feature_name,mean,std,weight) VALUES
+ ('intercept',0,0,'9.666071428571417')
+,('weekly_hours','37.85357142857143','2.3247855572252205','3.429414357314285')
+,('maternity_per_capita','255.9045238095238','675.8121003464073','0.5398557950921468')
+,('services_per_capita','28570.86797619048','60541.018810716174','-1.147988490187129')
+,('year','2018.5595238095239','2.323280720192664','-0.46390444495808775')
+,('weekly_hours_squared','1438.2653273809524','169.9717289876668','-3.8634844605269785')
+,('cash_per_capita_squared','9858303974.017473','32830349716.742798','-1.3734797982048887')
+,('services_per_capita_squared','4459692699.846209','15944850146.903282','2.2391481605959784');
