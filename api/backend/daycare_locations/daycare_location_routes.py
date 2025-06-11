@@ -228,3 +228,78 @@ def get_deleted_locations():
     except Error as e:
         current_app.logger.error(f'Error fetching deleted locations: {str(e)}')
         return jsonify({"error": str(e)}), 500
+
+# gets all info for a certain location including data in other table
+@locations.route("/locations/<int:daycare_id>", methods=["GET"])
+def get_location_data(daycare_id):
+    try:
+        cursor = db.get_db().cursor()
+
+        # Get NGO details
+        cursor.execute("SELECT * FROM DaycareLocations WHERE daycare_id = %s", (daycare_id,))
+        loc = cursor.fetchone()
+
+        if not loc:
+            return jsonify({"error": "Location not found"}), 404
+
+        # Get associated data
+        query = "SELECT * FROM DaycareData WHERE daycare_id = %s"
+        params = []
+        params.append(daycare_id)
+        year = request.args.get("year")
+        if year:
+            query += " AND year = %s"
+            params.append(year)
+
+        cursor.execute(query, params)
+
+        daycare_data = cursor.fetchall()
+               #-----------------------------------------------------------------------------#
+        # this beautiful addition is credited to emily moy and her project last year
+        # it is necessary because json hates the time data type
+        # basically it turns it to a format that json likes 
+        results = []
+
+        # Groups the date and time so that it is in a jsonifiable format
+        for row in daycare_data:
+
+            time1 = row['opening_time']
+            time2 = row['closing_time']
+            year1 = row['year']
+            #If the time is in a format that isnt jsonifable change the format to the standard time format
+            if isinstance(time1, datetime.timedelta):
+                jsonifiable_time = (datetime.datetime.min + time1).time()
+            else:
+                jsonifiable_time = time1
+            
+            if isinstance(time2, datetime.timedelta):
+                jsonifiable_time2 = (datetime.datetime.min + time2).time()
+            else:
+                jsonifiable_time2 = time2
+
+            
+            departure_time = jsonifiable_time
+            time_two = jsonifiable_time2
+
+            result = {
+                "ID": row["id"],
+                "Daycare ID": row["daycare_id"],
+                "Enrollment": row["enrollment"],
+                "Year": row["year"],
+                "Staff": row["staff"],
+                "Monthly Budget": row["monthly_budget"],
+                "Percent Budget Used": row["percent_budget_used"],
+                "Monthly Price": row["monthly_price"],
+                "Opening Time": departure_time.isoformat(),
+                "Closing Time": time_two.isoformat()
+            }
+
+            results.append(result)
+
+        # Combine data from multiple related queries into one object to return (after jsonify)
+        loc["data"] = results
+
+        cursor.close()
+        return jsonify(loc), 200
+    except Error as e:
+        return jsonify({"error": str(e)}), 500
