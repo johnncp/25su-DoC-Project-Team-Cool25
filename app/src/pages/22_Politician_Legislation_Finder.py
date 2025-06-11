@@ -4,6 +4,8 @@ import streamlit as st
 from modules.nav import SideBarLinks
 import requests
 
+
+
 st.set_page_config(page_title="Birth Rate Predictor", layout="wide")
 
 SideBarLinks()
@@ -143,3 +145,104 @@ fig.update_layout(
 
 # --- DISPLAY ---
 st.plotly_chart(fig, use_container_width=True)
+
+
+# API endpoint
+API_URL = "http://web-api:4000/policy/allpolicy"
+
+# Create filter columns
+col1, col2 = st.columns(2)
+
+# Get unique values for filters from the API
+try:
+    response = requests.get(API_URL)
+    if response.status_code == 200:
+        policy = response.json()
+
+        # Extract unique values for filters
+        # Invert country_map: full country name -> code
+        name_to_code = {v: k for k, v in country_map.items()}
+
+        # Convert selected full country names to country codes
+        selected_country_codes = [name_to_code[c] for c in selected_countries if c in name_to_code]
+
+        params = {}
+        #params = []
+        # Filter policies by selected country codes
+        if selected_country_codes:
+            #filtered_policy = [pol for pol in policy if pol['country_code'] in selected_country_codes]
+            #params["country_code"] = selected_country_codes
+            #params["country_code"] = ",".join(selected_country_codes)
+            params["country_code"] = ",".join(selected_country_codes)
+
+        #for code in selected_country_codes:
+            #params.append(('country_code', code))
+
+        #else:
+            #filtered_policy = policy  # no filtering if none selected
+        #countries = sorted(list(set(pol["country_code"] for pol in policy)))
+        focus_areas = sorted(list(set(pol["focus_area"] for pol in policy)))
+        founding_years = sorted(list(set(pol["year"] for pol in policy)))
+
+        # Create filters
+        with col1:
+            #selected_country = st.selectbox("Filter by Country", ["All"] + countries)
+
+        #with col2:
+            selected_focus = st.selectbox("Filter by Focus Area", ["All"] + focus_areas)
+
+        with col2:
+            selected_year = st.selectbox(
+                "Filter by Year",
+                ["All"] + [str(year) for year in founding_years],
+            )
+
+        # Build query parameters
+
+        #if selected_country != "All":
+            #params["country_code"] = selected_country
+        if selected_focus != "All":
+            params["focus_area"] = selected_focus
+            #params.append(('focus_area', selected_focus))
+
+        if selected_year != "All":
+            params["year"] = selected_year
+            #params.append(('year', selected_year))
+
+
+        #if selected_focus != "All":
+            #filtered_policy = [pol for pol in filtered_policy if pol["focus_area"] == selected_focus]
+       #if selected_year != "All":
+            #filtered_policy = [pol for pol in filtered_policy if str(pol["year"]) == selected_year]
+
+        # Get filtered data
+        filtered_response = requests.get(API_URL, params=params)
+        if filtered_response.status_code == 200:
+            filtered_policy = filtered_response.json()
+
+            # Display results count
+            st.write(f"Found {len(filtered_policy)} Policies")
+
+            # Create expandable rows for each NGO
+            for pol in filtered_policy:
+                with st.expander(f"{pol['policy_name']} ({pol['country_code']})"):
+                    col1, col2 = st.columns(2)
+
+                    with col1:
+                        st.write("**Basic Information**")
+                        st.write(f"**Country:** {pol['country_code']}")
+                        st.write(f"**Year Passed:** {pol['year']}")
+                        st.write(f"**Focus Area:** {pol['focus_area']}")
+
+                    with col2:
+                        st.write("\n\n")
+                        st.write(f"**Description:** {pol['description']})")
+
+                    
+
+    else:
+        st.error("Failed to fetch Policy data from the API")
+
+except requests.exceptions.RequestException as e:
+    st.error(f"Error connecting to the API: {str(e)}")
+    st.info("Please ensure the API server is running on http://web-api:4000")
