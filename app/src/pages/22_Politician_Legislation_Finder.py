@@ -6,7 +6,7 @@ import requests
 
 
 
-st.set_page_config(page_title="Birth Rate Predictor", layout="wide")
+st.set_page_config(page_title="Legislation Finder", layout="wide")
 
 SideBarLinks()
 
@@ -151,7 +151,7 @@ st.plotly_chart(fig, use_container_width=True)
 API_URL = "http://web-api:4000/policy/allpolicy"
 
 # Create filter columns
-col1, col2 = st.columns(2)
+col1, col2, col3 = st.columns(3)
 
 # Get unique values for filters from the API
 try:

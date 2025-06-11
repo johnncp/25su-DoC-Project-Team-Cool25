@@ -9,8 +9,11 @@ import numpy as np
 import plotly.express as px
 from modules.nav import SideBarLinks
 
+st.set_page_config(page_title="Daycare Finder", layout="wide")
+
 # Call the SideBarLinks from the nav module in the modules directory
 SideBarLinks()
+
 
 # set the title of the page
 st.title('Find Daycares')

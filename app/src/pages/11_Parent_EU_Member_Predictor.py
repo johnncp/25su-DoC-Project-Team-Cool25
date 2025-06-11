@@ -9,7 +9,8 @@ import pandas as pd
 import plotly.express as px
 import pycountry
 
-st.set_page_config(layout="wide")
+st.set_page_config(page_title="EU Country Predictor", layout="wide")
+
 
 # Display the appropriate sidebar links for the role of the logged in user
 SideBarLinks()
