@@ -58,27 +58,27 @@ if viewLocations == True:
 
     # Create expandable rows for each NGO
     for loc in locations:
-        with st.expander(f"{loc['Daycare Name']} ({loc['Daycare ID']})"):
+        with st.expander(f"{loc['daycare_name']} ({loc['city']})"):
             st.write("**Basic Information**")
             col1, col2 = st.columns(2)
 
             with col1:
-                st.write(f"**City:** {loc['City']}")
-                st.write(f"**Monthly Price:** {loc['Monthly Price']}")
-                st.write("**Hours**")
-                st.write(f"**Opens:** [{loc['Opening Time']}]")
-                st.write(f"**Closes:** [{loc['Closing Time']}]")
+                st.write(f"**City:** {loc['city']}")
+                #st.write(f"**Monthly Price:** {loc['Monthly Price']}")
+                #st.write("**Hours**")
+                #st.write(f"**Opens:** [{loc['Opening Time']}]")
+                #st.write(f"**Closes:** [{loc['Closing Time']}]")
 
             with col2:
-                st.write(f"**Country:** {loc['Country']}")
+                st.write(f"**Country:** {loc['country_code']}")
                 # buttons to update stuff
-                with st.popover("Update Price"):
-                   newPrice = st.number_input("Update price", min_value=0, max_value=1000, key=f"price_input_{loc['Daycare ID']}")
-                st.write("\n\n")
-                with st.popover("Update Opening Time"):
-                   newOpen = st.time_input("Set new opening time for", value=loc['Opening Time'])
-                with st.popover("Update Closing Time"):
-                   newOpen = st.time_input("Set new closing time for", value=loc['Closing Time'])
+                #with st.popover("Update Price"):
+                   #newPrice = st.number_input("Update price", min_value=0, max_value=1000, key=f"price_input_{loc['Daycare ID']}")
+                #st.write("\n\n") 
+                #with st.popover("Update Opening Time"):
+                   #newOpen = st.time_input("Set new opening time for", value=loc['Opening Time'])
+                #with st.popover("Update Closing Time"):
+                   #newOpen = st.time_input("Set new closing time for", value=loc['Closing Time']) 
 
   except requests.exceptions.RequestException as e:
         st.error(f"Error connecting to the API: {str(e)}")
