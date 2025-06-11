@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 
+
 # get data
 def load_data():
     df = pd.read_csv("Model_data.csv")
@@ -15,6 +16,23 @@ def load_data():
     df['services_per_capita_squared'] = df['services_per_capita'] ** 2
 
     return df
+
+# prepares input from a selected country
+def prepare_input_from_country(df, country_name, predict_year=2024):
+    country_df = df[(df['Country'] == country_name) & (df['year'] != predict_year)]
+    if country_df.empty:
+        raise ValueError(f"No data available for {country_name} before {predict_year}.")
+
+    latest = country_df.sort_values('year', ascending=False).iloc[0].fillna(0)
+
+    return {
+        'weekly_hours': latest['weekly_hours'],
+        'maternity_per_capita': latest['maternity_per_capita'],
+        'services_per_capita': latest['services_per_capita'],
+        'cash_per_capita': latest['cash_per_capita'],
+        'year': predict_year
+    }
+
 
 # get features
 def get_features():
@@ -93,15 +111,3 @@ def run_pipeline(country_input):
     r2 = evaluate_model(X_test_std, y_test, beta)
     predicted = predict_example(country_input, features, mean, std, beta)
     return predicted, r2, beta, mean, std, features
-
-
-if __name__ == "__main__":
-    country_Y = {
-        'weekly_hours': 35.5,
-        'maternity_per_capita': 700,
-        'services_per_capita': 16000,
-        'cash_per_capita': 20000,
-        'year': 2024
-    }
-
-    run_pipeline(country_Y)
