@@ -22,13 +22,13 @@ with col1:
     weekly_hours = st.slider("Weekly Hours Worked", min_value=0, max_value=60, value=30)
 
 with col2:
-    cash = st.number_input("Cash Benefits per Capita (€)", value=0.0, step=100.0)
+    #cash = st.number_input("Cash Benefits per Capita (€)", value=0.0, step=100.0)
     services = st.number_input("Childcare Services per Capita (€)", value=0.0, step=50.0)
     maternity = st.number_input("Maternity Spending per Capita (€)", value=0.0, step=50.0)
 
 # Convert inputs to numbers
 weekly_hours = int(weekly_hours)
-cash = int(cash)
+#cash = int(cash)
 maternity = int(maternity)
 services = int(services)
 
@@ -42,7 +42,7 @@ try:
     prediction = (
         weights.get("intercept", 0)
         + weekly_hours * weights.get("weekly_hours", 0)
-        + cash * weights.get("cash_per_capita", 0)
+        #+ cash * weights.get("cash_per_capita", 0)
         + maternity * weights.get("maternity_per_capita", 0)
         + services * weights.get("services_per_capita", 0)
     )

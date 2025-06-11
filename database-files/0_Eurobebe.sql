@@ -197,13 +197,15 @@ CREATE TABLE IF NOT EXISTS Model1Weights
     weight       DECIMAL(10, 6) NOT NULL
 );
 
-INSERT INTO Model1Weights (feature_name, weight)
-VALUES ('intercept', 7.152300),
-       ('weekly_hours', 0.031100),
-       ('cash_per_capita', 0.063800),
-       ('maternity_per_capita', -0.057400),
-       ('services_per_capita', 0.000200),
-       ('weekly_hours_squared', 0.100900),
-       ('weekly_hours_cubed', -0.075300),
-       ('cash_per_capita_squared', -0.015800),
-       ('services_per_capita_squared', 0.000050);
+
+
+INSERT INTO Model1Weights(feature_name,weight) 
+VALUES
+ ('intercept','9.666071428571417')
+,('weekly_hours','3.429414357314285')
+,('maternity_per_capita','0.5398557950921468')
+,('services_per_capita','-1.147988490187129')
+,('year','-0.46390444495808775')
+,('weekly_hours_squared','-3.8634844605269785')
+,('cash_per_capita_squared','-1.3734797982048887')
+,('services_per_capita_squared','2.2391481605959784');
