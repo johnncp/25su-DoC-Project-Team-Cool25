@@ -146,7 +146,7 @@ CREATE TABLE IF NOT EXISTS DaycareLocations
     daycare_name VARCHAR(100),
     city          VARCHAR(100),
     country_code  VARCHAR(10),
-    inactive BOOLEAN NOT NULL,
+    inactive BOOLEAN DEFAULT FALSE,
     owner_id INT,
     plan_id       INT,
     FOREIGN KEY (plan_id) REFERENCES BusinessPlanning (plan_id)

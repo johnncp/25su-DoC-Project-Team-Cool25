@@ -53,6 +53,7 @@ with col1:
         #st.session_state['view_locations'] = True
         #st.rerun()
         st.write("### View Current Locations Below: ")
+        viewLocations = True
 
         if viewLocations:
             API_URL = "http://web-api:4000/location/locations"
@@ -61,9 +62,13 @@ with col1:
                 if response.status_code == 200:
                     locations = response.json()
 
-                st.write(f"Found {len(locations)} Locations")
                 logger.info("Before the for loop")
-                for loc in locations:
+                owner = st.session_state.get('user_id')
+                filtered_locations = [loc for loc in locations if loc["owner_id"] == owner]
+                st.write(f"Found {len(filtered_locations)} Locations")
+
+
+                for loc in filtered_locations :
                     logger.info(f"location = {loc}")
                     with st.container(border=True):
                         col1, col2 = st.columns(2)
