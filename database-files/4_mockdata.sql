@@ -56,10 +56,7 @@ VALUES(1, "Helping Parents", "Charity", "Working Parents", "BE"),
 
 -- # REAL DATA: 
 -- ## UserRoles:
-INSERT INTO UserRoles(role_id, role_name) 
-VALUES (1,'Business Owner'), 
-(2,'Parent'),
-(3,'Politician');
+
 
 -- ## Users:
 INSERT INTO User (user_id,first_name,last_name,age,occupation,country_code,role_id) 
