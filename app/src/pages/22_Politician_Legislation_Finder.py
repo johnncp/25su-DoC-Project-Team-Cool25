@@ -381,8 +381,7 @@ filtered_df = df[df["country_name"].isin(selected_countries)]
 # COLOR MAP 
 import plotly.express as px
 custom_colors = px.colors.qualitative.Plotly + px.colors.qualitative.Dark24 + px.colors.qualitative.Safe
-color_map = {country: custom_colors[i % len(custom_colors)] for i, country in enumerate(sorted(df["country_name"].unique()))}
-
+color_map = {country: custom_colors[i % len(custom_colors)] for i, country in enumerate(all_countries)}
 # PLOT
 fig = go.Figure()
 
