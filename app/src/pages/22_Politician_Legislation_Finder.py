@@ -311,6 +311,7 @@ prediction_df = filtered_df[filtered_df["year"] == 2024]
 custom_colors = px.colors.qualitative.Plotly + px.colors.qualitative.Dark24 + px.colors.qualitative.Safe
 color_map = {country: custom_colors[i % len(custom_colors)] for i, country in enumerate(all_countries)}
 
+
 # PLOT 
 fig = go.Figure()
 
@@ -318,9 +319,13 @@ for country in selected_countries:
     hist = historical_df[historical_df["country_name"] == country]
     pred = prediction_df[prediction_df["country_name"] == country]
 
-    # plot historical line
+    # Combine historical and prediction if toggle is on
+    combined = pd.concat([hist, pred]) if show_predictions else hist
+
+    # Plot continuous line
     fig.add_trace(go.Scatter(
-        x=hist["year"], y=hist["birth_rate_per_thousand"],
+        x=combined["year"],
+        y=combined["birth_rate_per_thousand"],
         mode="lines+markers",
         name=country,
         line=dict(width=3, color=color_map[country]),
@@ -328,13 +333,14 @@ for country in selected_countries:
         legendgroup=country
     ))
 
-    # prediction as diamond
+    # Emphasize 2024 prediction with diamond marker
     if show_predictions and not pred.empty:
         fig.add_trace(go.Scatter(
-            x=pred["year"], y=pred["birth_rate_per_thousand"],
+            x=pred["year"],
+            y=pred["birth_rate_per_thousand"],
             mode="markers",
             name=f"{country} (2024)",
-            marker=dict(symbol="diamond", size=10, color=color_map[country]),
+            marker=dict(symbol="diamond", size=11, color=color_map[country]),
             legendgroup=country,
             showlegend=False
         ))
