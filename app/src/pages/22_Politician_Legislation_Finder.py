@@ -1,3 +1,4 @@
+"""
 import logging
 logger = logging.getLogger(__name__)
 import streamlit as st
@@ -246,3 +247,187 @@ try:
 except requests.exceptions.RequestException as e:
     st.error(f"Error connecting to the API: {str(e)}")
     st.info("Please ensure the API server is running on http://web-api:4000")
+"""
+import logging
+import streamlit as st
+import pandas as pd
+import plotly.graph_objects as go
+import requests
+from modules.nav import SideBarLinks
+
+# configs
+logger = logging.getLogger(__name__)
+st.set_page_config(page_title="Legislation Finder", layout="wide")
+SideBarLinks()
+st.title("Legislation Finder")
+
+# country mapping
+country_map = {
+    'EU27_2020': 'European Union (27)', 'BE': 'Belgium', 'BG': 'Bulgaria',
+    'CZ': 'Czechia', 'DK': 'Denmark', 'DE': 'Germany', 'EE': 'Estonia',
+    'IE': 'Ireland', 'EL': 'Greece', 'ES': 'Spain', 'FR': 'France', 'HR': 'Croatia',
+    'IT': 'Italy', 'CY': 'Cyprus', 'LV': 'Latvia', 'LT': 'Lithuania',
+    'LU': 'Luxembourg', 'HU': 'Hungary', 'MT': 'Malta', 'NL': 'Netherlands',
+    'AT': 'Austria', 'PL': 'Poland', 'PT': 'Portugal', 'RO': 'Romania',
+    'SI': 'Slovenia', 'SK': 'Slovakia', 'FI': 'Finland', 'SE': 'Sweden'
+}
+
+# loads data
+df = pd.read_csv("datasets/politician/formatted_birth_data.csv")
+df["country_name"] = df["country"].map(country_map)
+df = df[df["birth_rate_per_thousand"].notna()]
+
+# gets model weights
+try:
+    response = requests.get("http://web-api:4000/euro_apis/m1weights")
+    response.raise_for_status()
+    weights_list = response.json()
+    weights = {row["feature_name"]: float(row["weight"]) for row in weights_list}
+
+    mean_vals = {
+        'weekly_hours': 37.88517,
+        'maternity_per_capita': 247.1181,
+        'services_per_capita': 26039.31,
+        'year': 2018.45,
+        'weekly_hours_squared': 1440.816,
+        'cash_per_capita_squared': 8.248512e9,
+        'services_per_capita_squared': 3.750855e9
+    }
+
+    std_vals = {
+        'weekly_hours': 2.35736,
+        'maternity_per_capita': 656.3605,
+        'services_per_capita': 55566.02,
+        'year': 2.265675,
+        'weekly_hours_squared': 171.7396,
+        'cash_per_capita_squared': 2.972042e10,
+        'services_per_capita_squared': 1.440493e10
+    }
+
+    preds = []
+    for country in df['country'].unique():
+        latest = df[(df['country'] == country) & (df['year'] < 2024)].sort_values('year', ascending=False).head(1)
+        if latest.empty:
+            continue
+
+        row = latest.iloc[0]
+        weekly_hours = row['weekly_hours']
+        cash = row['cash_per_capita']
+        maternity = row['maternity_per_capita']
+        services = row['services_per_capita']
+
+        weekly_hours_sq = weekly_hours ** 2
+        cash_sq = cash ** 2
+        services_sq = services ** 2
+
+        features_std = {
+            "weekly_hours": (weekly_hours - mean_vals['weekly_hours']) / std_vals['weekly_hours'],
+            "maternity_per_capita": (maternity - mean_vals['maternity_per_capita']) / std_vals['maternity_per_capita'],
+            "services_per_capita": (services - mean_vals['services_per_capita']) / std_vals['services_per_capita'],
+            "year": (2024 - mean_vals['year']) / std_vals['year'],
+            "weekly_hours_squared": (weekly_hours_sq - mean_vals['weekly_hours_squared']) / std_vals['weekly_hours_squared'],
+            "cash_per_capita_squared": (cash_sq - mean_vals['cash_per_capita_squared']) / std_vals['cash_per_capita_squared'],
+            "services_per_capita_squared": (services_sq - mean_vals['services_per_capita_squared']) / std_vals['services_per_capita_squared'],
+        }
+
+        prediction = (
+            weights.get("intercept", 0)
+            + features_std["weekly_hours"] * weights.get("weekly_hours", 0)
+            + features_std["maternity_per_capita"] * weights.get("maternity_per_capita", 0)
+            + features_std["services_per_capita"] * weights.get("services_per_capita", 0)
+            + features_std["year"] * weights.get("year", 0)
+            + features_std["weekly_hours_squared"] * weights.get("weekly_hours_squared", 0)
+            + features_std["cash_per_capita_squared"] * weights.get("cash_per_capita_squared", 0)
+            + features_std["services_per_capita_squared"] * weights.get("services_per_capita_squared", 0)
+        )
+
+        preds.append({
+            "country": country,
+            "year": 2024,
+            "birth_rate_per_thousand": max(0, prediction),
+            "country_name": country_map.get(country, country)
+        })
+
+    df_preds = pd.DataFrame(preds)
+    df = pd.concat([df, df_preds], ignore_index=True)
+
+except requests.exceptions.RequestException as e:
+    st.warning("Could not fetch model weights. 2024 predictions skipped.")
+    logger.error(e)
+
+# UI FILTERS 
+all_countries = sorted(df["country_name"].dropna().unique())
+eu_country = "European Union (27)"
+national_countries = [c for c in all_countries if c != eu_country]
+
+col1, col2 = st.columns(2)
+with col1:
+    select_all = st.checkbox("Select all members", value=True)
+with col2:
+    fixed_range = st.checkbox("Fixed Y-axis", value=True)
+
+pre_selected = national_countries if select_all else [eu_country]
+selected_countries = st.multiselect("Select countries to display:", all_countries, default=pre_selected)
+
+if not selected_countries:
+    st.warning("Please select at least one country.")
+    st.stop()
+
+filtered_df = df[df["country_name"].isin(selected_countries)]
+
+# color map
+custom_colors = px.colors.qualitative.Plotly + px.colors.qualitative.Dark24 + px.colors.qualitative.Safe
+color_map = {country: custom_colors[i % len(custom_colors)] for i, country in enumerate(sorted(df["country_name"].unique()))}
+
+# split-line
+fig = go.Figure()
+
+for country in selected_countries:
+    country_data = filtered_df[filtered_df["country_name"] == country].sort_values("year")
+    hist = country_data[country_data["year"] < 2024]
+    pred = country_data[country_data["year"] == 2024]
+
+    # Historical line
+    fig.add_trace(go.Scatter(
+        x=hist["year"],
+        y=hist["birth_rate_per_thousand"],
+        mode="lines+markers",
+        name=f"{country} (Actual)",
+        line=dict(color=color_map.get(country, "gray"), width=3),
+        marker=dict(size=6),
+        showlegend=True
+    ))
+
+    # 2024 predicted line
+    if not pred.empty:
+        fig.add_trace(go.Scatter(
+            x=[hist["year"].max(), 2024],
+            y=[hist["birth_rate_per_thousand"].iloc[-1], pred["birth_rate_per_thousand"].iloc[0]],
+            mode="lines+markers",
+            name=f"{country} (Predicted 2024)",
+            line=dict(color="orange", dash="dash", width=3),
+            marker=dict(color="orange", size=8, symbol="diamond"),
+            showlegend=True
+        ))
+
+# layout
+fig.update_layout(
+    title="Crude Birth Rate Over Time (with 2024 Predictions Highlighted)",
+    xaxis_title="Year",
+    yaxis_title="Birth Rate (‰)",
+    template="plotly_white",
+    plot_bgcolor="#ffffff",
+    paper_bgcolor="#ffffff",
+    legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5),
+    height=600 if len(selected_countries) <= 10 else 800
+)
+
+fig.update_xaxes(showgrid=True, gridcolor="lightgrey", zeroline=False)
+
+if fixed_range:
+    fig.update_yaxes(range=[5.5, 14.5], showgrid=True, gridcolor="lightgrey")
+else:
+    fig.update_yaxes(showgrid=True, gridcolor="lightgrey")
+
+# SHOW
+st.plotly_chart(fig, use_container_width=True)
