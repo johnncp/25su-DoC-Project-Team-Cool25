@@ -1,10 +1,11 @@
 import streamlit as st
 import requests
 from streamlit_extras.app_logo import add_logo
-from modules.nav import SideBarLinks
+from modules.nav import SideBarLinks, AlwaysShowAtBottom
 
 # Initialize sidebar
 SideBarLinks()
+AlwaysShowAtBottom()
 
 st.title("NGO Directory")
 

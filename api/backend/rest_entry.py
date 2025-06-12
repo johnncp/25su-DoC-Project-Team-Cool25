@@ -15,6 +15,8 @@ from backend.affinity_groups.affinifty_groups_route import group
 from backend.daycare_data.daycare_data_route import daycare
 from backend.policy.policy_route import policy
 from backend.users.user_routes import users
+from backend.notes.notes_routes import notes
+from backend.model2.model2_routes import model2_routes
 
 def create_app():
     app = Flask(__name__)
@@ -60,6 +62,8 @@ def create_app():
     app.register_blueprint(policy, url_prefix="/policy")
     app.register_blueprint(users, url_prefix="/users")
     app.register_blueprint(simple_routes)
+    app.register_blueprint(notes, url_prefix="/notes")
+    app.register_blueprint(model2_routes, url_prefix="/model2")
 
     # Don't forget to return the app object
     return app

@@ -301,3 +301,40 @@ def get_data(id):
     except Error as e:
         current_app.logger.error(f'Database error in get_data: {str(e)}')
         return jsonify({"error": str(e)}), 500
+    
+@daycare.route("/data/<int:daycare_id>", methods=["PUT"])
+def update_data(daycare_id):
+    try: 
+        data = request.get_json()
+
+        cursor = db.get_db().cursor()
+
+        # grabbing the selected daycare
+        cursor.execute("SELECT * FROM DaycareData WHERE daycare_id = %s", (daycare_id,))
+        if not cursor.fetchone():
+            return jsonify({"error": "Daycare Data not found"}), 404
+        
+        update_fields = []
+        params = []
+        allowed_fields = ["enrollment", "staff", "monthly_budget", "percent_budget_used", "monthly_price", "opening_time", "closing_time"]
+
+        for field in allowed_fields:
+            if field in data:
+                update_fields.append(f"{field} = %s")
+                params.append(data[field])
+
+        if not update_fields:
+            return jsonify({"error": "No valid fields to update"}), 400
+        
+        params.append(daycare_id)
+        query = f"UPDATE DaycareData SET {', '.join(update_fields)} WHERE daycare_id = %s"
+
+        cursor.execute(query, params)
+        db.get_db().commit()
+        cursor.close()
+        
+        return jsonify({"message": "Daycare Data updated successfully"}), 200
+
+    except Error as e:
+        current_app.logger.error(f'Database error in update_data: {str(e)}')
+        return jsonify({"error": str(e)}), 500
