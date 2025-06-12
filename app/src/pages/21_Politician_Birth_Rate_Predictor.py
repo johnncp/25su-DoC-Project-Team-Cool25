@@ -9,7 +9,7 @@ from modules.nav import SideBarLinks, AlwaysShowAtBottom
 logger = logging.getLogger(__name__)
 st.set_page_config(page_title="Birth Rate Predictor", layout="wide")
 SideBarLinks()
-AlwaysShowAtBottom()
+
 
 st.title("Birth Rate Predictor 🍼")
 st.markdown("Select a country and adjust the inputs to estimate its predicted birth rate for 2024.")
@@ -30,6 +30,26 @@ def load_data():
 df = load_data()
 all_countries = sorted(df["Country"].dropna().unique())
 
+
+st.markdown("### Wondering what these features mean?")
+            
+col1, col2 = st.columns(2)
+with col1:
+    st.markdown("""
+    **💼 Work-Life Balance (Weekly Hours)**: Average working hours per week. Lower is generally better for work-life balance.
+                
+    **💰 Cash Support**: Government cash benefits per capita (€). Higher means more financial support.
+     """)
+            
+with col2:
+    st.markdown("""
+    **👶 Maternity Support**: Maternity benefits per capita (€). Higher means better parental support.
+                
+    **🏥 Public Services**: Public services spending per capita (€). Higher means better public services.
+    """)
+            
+st.divider()
+            
 # country selection 
 user_country = st.sidebar.selectbox("Select your country", all_countries)
 
@@ -174,3 +194,6 @@ if not country_hist.empty:
     )
 
     st.plotly_chart(fig, use_container_width=True)
+
+st.sidebar.divider()
+AlwaysShowAtBottom()
