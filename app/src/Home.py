@@ -6,6 +6,7 @@
 # Set up basic logging infrastructure
 import logging, requests
 import base64
+from streamlit.components.v1 import html
 logging.basicConfig(format='%(filename)s:%(lineno)s:%(levelname)s -- %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -218,7 +219,7 @@ with col3:
             keys_to_remove = [key for key in st.session_state.keys() if key.startswith("notes_")]
             for key in keys_to_remove:
                 del st.session_state[key]
-                
+
             st.session_state['authenticated'] = True
             st.session_state['role'] = 'politician'
             st.session_state['first_name'] = selected_user['first_name']
@@ -229,3 +230,140 @@ with col3:
         st.error("No politicians available")
 
 st.divider()
+
+carousel_image_paths = [
+    "assets/Home/carousel_1.jpg",
+    "assets/Home/carousel_2.jpg",
+    "assets/Home/carousel_3.jpg",
+    "assets/Home/carousel_4.jpg"
+]
+
+# Create the HTML string of images
+img_tags = ""
+for path in carousel_image_paths:
+    img_b64 = get_base64(path)
+    img_tags += f'<img src="data:image/jpeg;base64,{img_b64}" alt="local image">'
+
+carousel_html = f"""
+<style>
+.carousel-wrapper {{
+    position: relative;
+    width: auto;
+    height: 400px;
+    overflow: hidden;
+}}
+
+.white-overlay {{
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(to top, rgba(255,255,255,1), rgba(255,255,255,.25));
+    z-index: 1;
+    pointer-events: none;
+}}
+
+.carousel-track {{
+    display: flex;
+    animation: scroll 30s linear infinite;
+    width: max-content;
+    z-index: 0;
+}}
+
+.carousel-track img {{
+    width: auto;
+    height: 150%;
+    object-fit: cover;
+    margin-right: 10px;
+}}
+
+/* Overlay Text */
+.carousel-overlay {{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: #31333E;
+    z-index: 2;
+    pointer-events: none;
+    font-family: 'Segoe UI', sans-serif;
+    width: 80%;
+    max-width: 1000px;
+}}
+
+.carousel-overlay h1 {{
+    font-size: 3.8rem;
+    font-weight: bold;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+    margin: 0;
+}}
+
+.carousel-overlay p {{
+    font-size: 1.2rem;
+    margin-top: 10px;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.05);
+}}
+
+/* Gradient Fades */
+.carousel-wrapper::before,
+.carousel-wrapper::after {{
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 60px;
+    height: 100%;
+    z-index: 3;
+    pointer-events: none;
+}}
+
+.carousel-wrapper::before {{
+    left: 0;
+    background: linear-gradient(to right, white, transparent);
+}}
+
+.carousel-wrapper::after {{
+    right: 0;
+    background: linear-gradient(to left, white, transparent);
+}}
+
+@keyframes scroll {{
+    0%   {{ transform: translateX(0); }}
+    100% {{ transform: translateX(-50%); }}
+}}
+</style>
+
+<div class="carousel-wrapper">
+    <div class="white-overlay"></div>  <!-- NEW white transparency layer -->
+    <div class="carousel-overlay">
+        <h1>Helping the European Union for 20 Years.</h1>
+        <p>Advocating for families, education, and fairness across Europe.</p>
+    </div>
+    <div class="carousel-track">
+        {img_tags}
+        {img_tags}
+    </div>
+</div>
+"""
+
+# Render in Streamlit
+html(carousel_html, height=350)
+
+st.divider()
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.image("assets/Home/LearnMore_photo.png")
+
+with col2:
+    st.markdown("")
+    st.markdown("")
+    st.markdown("")
+    st.markdown("")
+    st.markdown("")
+    st.markdown("# Learn more about the people behind this project.")
+
+    if st.button("Learn More", type="primary"):
+        st.switch_page('pages/30_About.py')

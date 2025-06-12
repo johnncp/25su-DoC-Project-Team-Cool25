@@ -212,7 +212,7 @@ def NoteTakingFeature():
         
         
         if not notes.strip():  # Only show if notes are empty
-            if st.button("Load Previous Note", use_container_width=True, key=f"load_button_{user_id}"):
+            if st.button("↺ Load Previous Note", use_container_width=True, key=f"load_button_{user_id}"):
                 try:
                     response = requests.get(f"http://web-api:4000/notes/notes/{user_id}")
                     
@@ -251,9 +251,6 @@ def NoteTakingFeature():
             except Exception as e:
                 st.error(f"Save error: {str(e)}")
 
-
-        st.caption("Rest assured: \'Your Insights\' are only accessible to you.")
-
         st.text("Download as:")
 
         col1, col2 = st.columns(2)
@@ -280,6 +277,8 @@ def NoteTakingFeature():
                 file_name=st.session_state['first_name'] + "s_Notes.txt",
                 mime="text/plain"
             )
+        
+        st.caption("Rest assured: \'Your Insights\' are only accessible to you.")
         
 """
 def YourInsightsWarning():
