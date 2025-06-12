@@ -131,18 +131,8 @@ if st.session_state["update_location_data"]:
             except requests.exceptions.RequestException as e:
                 st.error(f"Connection error: {str(e)}")
 
-# Add a button to return to the Business Planner Page
-st.write("\n\n")
-if st.button("Return to Business Planner"):
-    st.session_state['show_inputs'] = not st.session_state['show_inputs']
 
-    if "selected_daycare_id" in st.session_state:
-        del st.session_state["selected_daycare_id"]
-    if "delete_location" in st.session_state:
-        del st.session_state["delete_location"]
-
-    st.switch_page("pages/04_Business_Planner.py")
-
+# add button to delete daycare
 if st.button("Delete Daycare"):
      col1, col2, col3 = st.columns([0.5,0.5,0.5])
      st.session_state['delete_location'] = not st.session_state['delete_location']
@@ -185,3 +175,14 @@ if st.session_state.get("confirm_delete"):
 
 
 
+# Add a button to return to the Business Planner Page
+st.write("\n\n")
+if st.button("Return to Business Planner"):
+    st.session_state['show_inputs'] = not st.session_state['show_inputs']
+
+    if "selected_daycare_id" in st.session_state:
+        del st.session_state["selected_daycare_id"]
+    if "delete_location" in st.session_state:
+        del st.session_state["delete_location"]
+
+    st.switch_page("pages/04_Business_Planner.py")
