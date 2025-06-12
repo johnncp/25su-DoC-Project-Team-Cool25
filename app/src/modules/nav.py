@@ -228,8 +228,6 @@ def NoteTakingFeature():
                         st.error("Failed to load notes")
                 except Exception as e:
                     st.error(f"Load error: {str(e)}")
-        else:
-            st.toast("✓ Notes loaded")
                 
                            
 
@@ -252,6 +250,9 @@ def NoteTakingFeature():
                     st.error("Failed to save notes")
             except Exception as e:
                 st.error(f"Save error: {str(e)}")
+
+
+        st.caption("Rest assured: \'Your Insights\' are only accessible to you.")
 
         st.text("Download as:")
 
