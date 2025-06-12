@@ -51,7 +51,7 @@ def DaycareHomeNav():
 
 def DaycareEUMemberPredictorNav():
     st.sidebar.page_link(
-        "pages/08_Daycare_EU_Member_Predictor.py", label="EU Member Recommender", icon="🇪🇺"
+        "pages/08_Daycare_EU_Member_Predictor.py", label="Market Expansion Tool", icon="🇪🇺"
     )
 
 
@@ -119,7 +119,7 @@ def NoteTakingFeature():
         # Text area tied to session state
         notes = st.text_area("Pen down your reflections:", 
                            value=st.session_state[user_notes_key], 
-                           height=270,
+                           height=200,
                            key=f"notes_textarea_{user_id}")
         
         
