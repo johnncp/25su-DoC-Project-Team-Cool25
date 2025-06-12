@@ -23,11 +23,6 @@ def get_all_daycare_data():
         current_app.logger.info('Starting get_all_daycare_data request')
         cursor = db.get_db().cursor()
 
-        # Note: Query parameters are added after the main part of the URL.
-        # Here is an example:
-        # http://localhost:4000/ngo/ngos?founding_year=1971
-        # founding_year is the query param.
-
         # Get query parameters for filtering
         monthly_price = request.args.get("monthly_price")
         year = request.args.get("year")
@@ -53,7 +48,7 @@ def get_all_daycare_data():
         daycare = cursor.fetchall()
         cursor.close()
 
-               #-----------------------------------------------------------------------------#
+        #-----------------------------------------------------------------------------#
         # this beautiful addition is credited to emily moy and her project last year
         # it is necessary because json hates the time data type
         # basically it turns it to a format that json likes 
