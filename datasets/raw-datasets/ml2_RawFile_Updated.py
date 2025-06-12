@@ -8,11 +8,15 @@ df = pd.read_csv("/Users/miagiargiari/Documents/GitHub/25su-DoC-Project-Team-Coo
 features = ["weekly_hours", "cash_per_capita", "maternity_per_capita", "services_per_capita"]
 df = df.dropna(subset=features)
 df_latest = df.sort_values("year").groupby("country_code", as_index=False).tail(1).reset_index(drop=True)
+df_latest["year"] = 2023
+
+
 
 df_norm = df_latest.copy()
 df_norm[features] = (df_latest[features] - df_latest[features].min()) / (
     df_latest[features].max() - df_latest[features].min()
 )
+
 
 def get_iso3(country_name):
     try:
@@ -23,9 +27,9 @@ def get_iso3(country_name):
 df_norm["iso_code"] = df_norm["Country"].apply(get_iso3)
 df_norm = df_norm.dropna(subset=["iso_code"])
 
-
 def normalize_user_input(user_input, max_scale=10):
     return np.array([user_input[feature] / max_scale for feature in features])
+
 
 def compute_cosine_similarity(user_vec, country_vec):
     dot = np.dot(user_vec, country_vec)
@@ -34,6 +38,7 @@ def compute_cosine_similarity(user_vec, country_vec):
     if norm_user == 0 or norm_country == 0:
         return 0
     return dot / (norm_user * norm_country)
+
 
 def compute_similarities(user_input_raw):
     user_vec = normalize_user_input(user_input_raw)
@@ -54,8 +59,8 @@ user_input = {
     "services_per_capita": 9
 }
 
-
 result_df = compute_similarities(user_input)
+
 fig = px.choropleth(
     result_df,
     locations="iso_code",
@@ -65,10 +70,10 @@ fig = px.choropleth(
     range_color=(0, 1),
     locationmode="ISO-3",
     scope="europe",
-    title="Similarity Score by EU Country"
+    title="Similarity Score by Country (Higher = Better Match)"
 )
 
 fig.update_geos(fitbounds="locations", visible=False)
 fig.show()
 
-
+result_df.to_csv("country_similarity_scores.csv", index=False)
