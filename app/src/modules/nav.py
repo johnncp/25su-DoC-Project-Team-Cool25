@@ -207,7 +207,7 @@ def NoteTakingFeature():
         # Text area tied to session state
         notes = st.text_area("Pen down your reflections:", 
                            value=st.session_state[user_notes_key], 
-                           height=200,
+                           height=270,
                            key=f"notes_textarea_{user_id}")
         
         
