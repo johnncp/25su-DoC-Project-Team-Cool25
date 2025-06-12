@@ -112,7 +112,7 @@ st.title(f"Be the change, {st.session_state['first_name']}.")
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    if st.button('〰️ Birth Rate Predictor', type='primary', use_container_width=True):
+    if st.button('🍼 Birth Rate Predictor', type='primary', use_container_width=True):
         st.success("Redirecting to Model..."),
         st.switch_page('pages/21_Politician_Birth_Rate_Predictor.py')
 

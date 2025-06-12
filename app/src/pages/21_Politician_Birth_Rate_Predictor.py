@@ -3,6 +3,7 @@ import requests
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
+import base64
 from modules.nav import SideBarLinks, AlwaysShowAtBottom
 
 # config & Sidebar
@@ -10,9 +11,39 @@ logger = logging.getLogger(__name__)
 st.set_page_config(page_title="Birth Rate Predictor", layout="wide")
 SideBarLinks()
 
+def get_base64(path):
+    with open(path, "rb") as f:
+        return base64.b64encode(f.read()).decode()
+    
+background_img = get_base64("assets/Feature_background.png")
 
-st.title("Birth Rate Predictor 🍼")
-st.markdown("Select a country and adjust the inputs to estimate its predicted birth rate for 2024.")
+st.markdown(f"""
+    <style>
+    @keyframes fadeIn {{
+        0% {{ opacity: 0; }}
+        100% {{ opacity: 1; }}
+    }}
+
+    .overlay-text {{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-100%, -80%);
+        color: #31333E;
+        font-size: 3.8rem;
+        font-weight: bold;
+        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+        padding: 15px 25px;
+        border-radius: 8px;
+        line-height: 0.8;
+        opacity: 0;
+        animation: fadeIn 0.5s ease-out forwards;
+    }}
+    </style>
+
+    <img src="data:image/png;base64,{background_img}">
+    <div class="overlay-text">Birth Rate Predictor 🍼</div>
+""", unsafe_allow_html=True)
 
 # data
 @st.cache_data
@@ -30,6 +61,8 @@ def load_data():
 df = load_data()
 all_countries = sorted(df["Country"].dropna().unique())
 
+st.markdown("Select a country and adjust the inputs to estimate its predicted birth rate for 2024.")
+st.info("← Customize your criteria on the sidebar.")
 
 st.markdown("### Wondering what these features mean?")
             
@@ -71,12 +104,12 @@ st.subheader("Adjust Features for Prediction")
 col1, col2 = st.columns(2)
 
 with col1:
-    weekly_hours = st.sidebar.slider("Weekly Hours Worked", 0, 60, int(latest_data['weekly_hours']))
+    weekly_hours = st.sidebar.slider("Weekly Hours Worked", 0, 60, 30)
 
 with col2:
-    cash = st.sidebar.number_input("Cash Benefits per Capita (€)", value=int(latest_data['cash_per_capita']), step=100)
-    services = st.sidebar.number_input("Childcare Services per Capita (€)", value=int(latest_data['services_per_capita']), step=50)
-    maternity = st.sidebar.number_input("Maternity Spending per Capita (€)", value=int(latest_data['maternity_per_capita']), step=50)
+    cash = st.sidebar.number_input("Cash Benefits per Capita (€)", 40000, step=100)
+    services = st.sidebar.number_input("Childcare Services per Capita (€)", 20000, step=50)
+    maternity = st.sidebar.number_input("Maternity Spending per Capita (€)", 300, step=50)
 
 # load Model Weights + predict
 try:
@@ -158,6 +191,8 @@ except requests.exceptions.RequestException as e:
     st.error(f"Failed to fetch model weights: {e}")
     st.stop()
 
+st.divider()
+
 # --- Visualization of Actual + Predicted ---
 st.subheader(f"Birth Rate Trend for {user_country} with 2024 Prediction")
 
@@ -187,10 +222,15 @@ if not country_hist.empty:
         marker=dict(color='orange', size=10)
     ))
 
+    fig.update_traces(
+        line_shape='spline',
+    )
+
     fig.update_layout(
         xaxis_title='Year',
         yaxis_title='Birth Rate per 1000 People',
-        template='plotly_white'
+        template='plotly_white',
+        height=600
     )
 
     st.plotly_chart(fig, use_container_width=True)
