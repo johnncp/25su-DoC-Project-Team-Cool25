@@ -273,7 +273,7 @@ country_map = {
 }
 
 # loads data
-df = pd.read_csv("datasets/politician/formatted_birth_data.csv")
+df = pd.read_csv("datasets/politician/Model_data.csv")
 df["country_name"] = df["country"].map(country_map)
 df = df[df["birth_rate_per_thousand"].notna()]
 
