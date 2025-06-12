@@ -71,25 +71,22 @@ logger = logging.getLogger(__name__)
 import streamlit as st
 from modules.nav import SideBarLinks
 
-# --- Config & Sidebar ---
+# config & cidebar
 logger = logging.getLogger(__name__)
 st.set_page_config(page_title="Birth Rate Predictor", layout="wide")
 
 st.title("Birth Rate Predictor 🍼")
 st.markdown("Select a country and adjust the inputs to estimate its predicted birth rate for 2024.")
 
-# --- Load Data ---
 @st.cache_data
 def load_data():
-    df = pd.read_csv("Model_data.csv")
+    df = pd.read_csv("datasets/raw-datasets/Model_data.csv")
     return df.dropna(subset=[
         'birth_rate_per_thousand', 'weekly_hours',
         'cash_per_capita', 'maternity_per_capita',
         'services_per_capita', 'year'
     ])
 
-df = load_data()
-all_countries = sorted(df['Country'].dropna().unique())
 
 # --- Country Selection ---
 user_country = st.selectbox("Select your country", all_countries)
@@ -121,7 +118,9 @@ with col2:
     cash = st.number_input("Cash Benefits per Capita (€)", value=int(latest_data['cash_per_capita']), step=100)
     services = st.number_input("Childcare Services per Capita (€)", value=int(latest_data['services_per_capita']), step=50)
 
-# --- Load Model Weights from API ---
+# load Model Weights from API 
+
+
 try:
     response = requests.get("http://web-api:4000/euro_apis/m1weights")  # Your backend endpoint
     response.raise_for_status()
@@ -129,12 +128,12 @@ try:
 
     weights = {row["feature_name"]: float(row["weight"]) for row in weights_list}
 
-    # --- Compute squared features ---
+    # compute squared 
     weekly_hours_sq = weekly_hours ** 2
     cash_sq = cash ** 2
     services_sq = services ** 2
 
-    # --- Compute prediction manually ---
+    # cmpute prediction
     prediction = (
         weights.get("intercept", 0)
         + weekly_hours * weights.get("weekly_hours", 0)
@@ -151,11 +150,8 @@ try:
     st.success(f"🍼 **Predicted Birth Rate for {user_country} in 2024:** {prediction:.2f} births per 1000 people")
     st.balloons()
 
-    # --- View Model Weights ---
-    with st.expander("📊 View Model Weights"):
-        st.write(pd.DataFrame(weights_list))
+    # Vis of Actual + Predicted
 
-    # --- Visualization of Actual + Predicted ---
     st.subheader(f"📈 Birth Rate Trend for {user_country} with 2024 Prediction")
 
     country_hist = df[df['Country'] == user_country].copy()
@@ -167,7 +163,7 @@ try:
 
         fig = go.Figure()
 
-        # Historical data
+        # historical line
         fig.add_trace(go.Scatter(
             x=country_hist['year'],
             y=country_hist['birth_rate_per_thousand'],
@@ -176,7 +172,7 @@ try:
             line=dict(color='blue')
         ))
 
-        # Prediction line
+        # prediction line
         fig.add_trace(go.Scatter(
             x=[last_actual_year, 2024],
             y=[last_actual_value, prediction],
@@ -194,5 +190,4 @@ try:
 
         st.plotly_chart(fig, use_container_width=True)
 
-except requests.exceptions.RequestException as e:
-    st.error(f"⚠️ Failed to fetch model weights: {e}")
+        
