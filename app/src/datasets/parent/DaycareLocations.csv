@@ -1,0 +1,101 @@
+daycare_id,daycare_name,city,country_code,inactive,owner_id
+1,Busy Bees Hub,Rome,IT,FALSE,3
+2,Rainbow Path School,Berlin,DE,FALSE,1
+3,Little Luminaries,Vienna,AT,FALSE,8
+4,NextGen Kids Place,Stockholm,SE,FALSE,6
+5,WhizKidz Clubhouse,Madrid,ES,FALSE,4
+6,WhizKidz Clubhouse,Amsterdam,NL,FALSE,5
+7,KinderNest Academy,Rotterdam,NL,FALSE,5
+8,Little Explorers Academy,Amsterdam,NL,FALSE,5
+9,Creative Cubs Campus,Stockholm,SE,FALSE,6
+10,Rising Stars Learning Hub,Barcelona,ES,FALSE,4
+11,Meadowbrook Learning,Florence,IT,FALSE,3
+12,Little Steps Station,Innsbruck,AT,FALSE,5
+13,Rising Stars Learning Hub,Trier,DE,FALSE,1
+14,Meadowbrook Learning,Gothenburg,SE,FALSE,6
+15,Meadowbrook Learning,Helsinki,FI,FALSE,8
+16,Meadowbrook Learning,Salzburg,AT,FALSE,8
+17,KinderNest Academy,Venice,IT,FALSE,3
+18,Happy Hearts Preschool,Helsignborg,SE,FALSE,6
+19,Sunshine Grove,Hamburg,DE,FALSE,1
+20,WonderNest Learning,Krak�w,PL,FALSE,7
+21,Rainbow Path School,Budapest,HU,FALSE,6
+22,Tiny Treasures Center,Munich,DE,FALSE,1
+23,Sunshine Grove,Graz,AT,FALSE,8
+24,Brilliant Minds Hub,Wroc_aw,PL,FALSE,7
+25,Tiny Treasures Center,Utrecht,NL,FALSE,5
+26,Busy Bees Hub,Innsbruck,AT,FALSE,8
+27,Little Explorers Academy,Seville,ES,FALSE,4
+28,Meadowbrook Learning,Bilbao,ES,FALSE,4
+29,StarSprout Place,Paris,FR,FALSE,2
+30,Little Steps Station,Straburg,FR,FALSE,2
+31,KinderNest Academy,Gothenburg,SE,FALSE,6
+32,Meadowbrook Learning,Valencia,ES,FALSE,4
+33,Tiny Treasures Center,Prague,CZ,FALSE,1
+34,Little Luminaries,Dresden,DE,FALSE,1
+35,Little Luminaries,Nuremberg,DE,FALSE,1
+36,Little Steps Station,Sczcecin,PL,FALSE,7
+37,WhizKidz Clubhouse,Milan,IT,FALSE,3
+38,Happy Hearts Preschool,Vilnius,LT,FALSE,8
+39,Little Explorers Academy,Lyon,FR,FALSE,2
+40,Rising Stars Learning Hub,Marseille,FR,FALSE,2
+41,StarSprout Place,Zaragoza,ES,FALSE,4
+42,Imagine & Grow Center,Turin,IT,FALSE,3
+43,Brilliant Minds Hub,Rouen,FR,FALSE,7
+44,Harmony Hills Childcare,Madrid,ES,FALSE,4
+45,Little Explorers Academy,Lublin,PL,FALSE,7
+46,Rainbow Path School,Paris,FR,FALSE,2
+47,WhizKidz Clubhouse,Marseille,FR,FALSE,3
+48,Meadowbrook Learning,Lisbon,PT,FALSE,8
+49,Little Steps Station,Katowice,PL,FALSE,7
+50,KinderNest Academy,Breda,NL,FALSE,5
+51,Sunny Sprouts,Esch-sur-Alzette,LU,FALSE,29
+52,Bright Stars,Birkirkara,MT,FALSE,35
+53,Creative Steps,Dublin,IE,FALSE,35
+54,Magic Steps,Split,HR,FALSE,30
+55,Bright Stars,Narva,EE,FALSE,28
+56,Rainbow Sprouts,Varna,BG,FALSE,25
+57,Magic Steps,Zagreb,HR,FALSE,30
+58,Little Sprouts,Athens,GR,FALSE,32
+59,Bright Hearts,Cork,IE,FALSE,30
+60,Creative Steps,Maribor,SI,FALSE,25
+61,Magic Dreams,Mosta,MT,FALSE,32
+62,Little Explorers,Liepaja,LV,FALSE,29
+63,Magic Steps,Limerick,IE,FALSE,35
+64,Sunny Adventures,Valletta,MT,FALSE,31
+65,Rainbow Explorers,Košice,SK,FALSE,35
+66,Magic Steps,Plovdiv,BG,FALSE,35
+67,Happy Steps,Plovdiv,BG,FALSE,27
+68,Creative Dreams,Plovdiv,BG,FALSE,35
+69,Sunny Explorers,Varna,BG,FALSE,28
+70,Rainbow Explorers,Timișoara,RO,FALSE,29
+71,Bright Hearts,Ljubljana,SI,FALSE,31
+72,Sunny Steps,Riga,LV,FALSE,31
+73,Magic Hearts,Plovdiv,BG,FALSE,32
+74,Sunny Adventures,Narva,EE,FALSE,30
+75,Creative Dreams,Bratislava,SK,FALSE,31
+76,Little Sprouts,Birkirkara,MT,FALSE,28
+77,Magic Steps,Birkirkara,MT,FALSE,26
+78,Bright Buddies,Luxembourg,LU,FALSE,32
+79,Creative Dreams,Aarhus,DK,FALSE,26
+80,Magic Buddies,Ljubljana,SI,FALSE,34
+81,Sunny Sprouts,Cork,IE,FALSE,27
+82,Sunny Dreams,Odense,DK,FALSE,30
+83,Little Buddies,Valletta,MT,FALSE,30
+84,Creative Dreams,Riga,LV,FALSE,35
+85,Magic Buddies,Copenhagen,DK,FALSE,28
+86,Rainbow Hearts,Ljubljana,SI,FALSE,34
+87,Creative Stars,Ghent,BE,FALSE,31
+88,Creative Buddies,Cork,IE,FALSE,32
+89,Tiny Hearts,Dublin,IE,FALSE,28
+90,Happy Buddies,Dublin,IE,FALSE,30
+91,Bright Adventures,Celje,SI,FALSE,31
+92,Rainbow Dreams,Limerick,IE,FALSE,29
+93,Little Adventures,Riga,LV,FALSE,32
+94,Bright Sprouts,Luxembourg,LU,FALSE,33
+95,Sunny Dreams,Mosta,MT,FALSE,34
+96,Sunny Adventures,Brussels,BE,FALSE,25
+97,Sunny Sprouts,Zagreb,HR,FALSE,31
+98,Tiny Sprouts,Athens,GR,FALSE,25
+99,Tiny Adventures,Liepaja,LV,FALSE,30
+100,Rainbow Explorers,Dublin,IE,FALSE,30
