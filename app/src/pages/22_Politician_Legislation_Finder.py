@@ -1,3 +1,4 @@
+
 """
 import logging
 logger = logging.getLogger(__name__)
@@ -249,6 +250,7 @@ except requests.exceptions.RequestException as e:
     st.error(f"Error connecting to the API: {str(e)}")
     st.info("Please ensure the API server is running on http://web-api:4000")
 """
+
 import logging
 logger = logging.getLogger(__name__)
 import streamlit as st
