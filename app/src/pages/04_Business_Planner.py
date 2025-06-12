@@ -3,7 +3,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 import streamlit as st
-from modules.nav import SideBarLinks
+from modules.nav import SideBarLinks, AlwaysShowAtBottom
 import requests
 from streamlit_extras.app_logo import add_logo
 import datetime
@@ -21,7 +21,8 @@ st.set_page_config(layout="wide")
 ## need to change name soon
 
 # Show appropriate sidebar links for the role of the currently logged in user
-SideBarLinks()
+SideBarLinks(),
+AlwaysShowAtBottom()
 
 st.title(f"Welcome Daycare Owner, {st.session_state['first_name']}.")
 st.write("")
@@ -43,7 +44,7 @@ with col2:
     st.write("\n\n")
     st.write("\n\n")
     if st.button("Research new locations", type="primary", use_container_width=True):
-        st.write("Feature coming soon!")
+        st.switch_page("pages/07_Daycare_Research.py")
     if st.button("Add a new location", type="primary", use_container_width=True):
         API_URL = "http://web-api:4000/location/locations"
         st.switch_page("pages/05_Add_Location.py")

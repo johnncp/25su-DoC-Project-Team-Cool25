@@ -1,11 +1,12 @@
 import streamlit as st
 import requests
 from streamlit_extras.app_logo import add_logo
-from modules.nav import SideBarLinks
+from modules.nav import SideBarLinks, AlwaysShowAtBottom
 import datetime
 
 # Initialize sidebar
 SideBarLinks()
+AlwaysShowAtBottom()
 
 st.title("Add New Daycare Location")
 

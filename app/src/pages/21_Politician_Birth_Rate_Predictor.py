@@ -3,12 +3,13 @@ import requests
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
-from modules.nav import SideBarLinks
+from modules.nav import SideBarLinks, AlwaysShowAtBottom
 
 # config & Sidebar
 logger = logging.getLogger(__name__)
 st.set_page_config(page_title="Birth Rate Predictor", layout="wide")
 SideBarLinks()
+AlwaysShowAtBottom()
 
 st.title("Birth Rate Predictor 🍼")
 st.markdown("Select a country and adjust the inputs to estimate its predicted birth rate for 2024.")

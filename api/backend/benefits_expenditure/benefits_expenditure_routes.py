@@ -23,6 +23,7 @@ def get_all_benefits():
         year = request.args.get("year")
         benefit_type = request.args.get("benefit_type")
         target_group = request.args.get("target_group")
+        unit_measured = request.args.get("unit_measured")
 
         query = "SELECT cfb_id, benefit_type, target_group, unit_measured, country_code, year, expenditure FROM Children_FamilyBenefits WHERE 1=1"
         params = []
@@ -39,6 +40,9 @@ def get_all_benefits():
         if target_group:
             query += " AND target_group = %s"
             params.append(target_group)
+        if unit_measured:
+            query += " AND unit_measured = %s"
+            params.append(unit_measured)
 
         current_app.logger.debug(f'Executing query: {query} with params: {params}')
         cursor.execute(query, params)
