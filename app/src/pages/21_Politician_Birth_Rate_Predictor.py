@@ -111,45 +111,48 @@ import requests
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
-logger = logging.getLogger(__name__)
-import streamlit as st
 from modules.nav import SideBarLinks
 
-# config & cidebar
+# config & Sidebar
 logger = logging.getLogger(__name__)
 st.set_page_config(page_title="Birth Rate Predictor", layout="wide")
+SideBarLinks()
 
 st.title("Birth Rate Predictor 🍼")
 st.markdown("Select a country and adjust the inputs to estimate its predicted birth rate for 2024.")
 
+# data
 @st.cache_data
 def load_data():
     df = pd.read_csv("datasets/raw-datasets/Model_data.csv")
-    return df.dropna(subset=[
+    df = df.dropna(subset=[
         'birth_rate_per_thousand', 'weekly_hours',
         'cash_per_capita', 'maternity_per_capita',
         'services_per_capita', 'year'
     ])
+    # remove EU
+    excluded = ["EU28", "EU Average", "Euro area", "EU27_2020", "EA19"]
+    return df[~df["Country"].isin(excluded)]
 
+df = load_data()
+all_countries = sorted(df["Country"].dropna().unique())
 
-# --- Country Selection ---
+# country selection 
 user_country = st.selectbox("Select your country", all_countries)
 
-# --- Fetch most recent data before 2024 ---
+# fetch most recent data before 2024
 def get_latest_country_data(df, country_name):
     country_df = df[(df['Country'] == country_name) & (df['year'] < 2024)]
     if country_df.empty:
         return None
-    latest = country_df.sort_values('year', ascending=False).iloc[0]
-    return latest
+    return country_df.sort_values('year', ascending=False).iloc[0]
 
 latest_data = get_latest_country_data(df, user_country)
-
 if latest_data is None:
     st.error("No valid data available for this country.")
     st.stop()
 
-# --- Input Sliders ---
+# input sliders 
 st.subheader("Adjust Features for Prediction")
 
 col1, col2 = st.columns(2)
@@ -162,22 +165,19 @@ with col2:
     cash = st.number_input("Cash Benefits per Capita (€)", value=int(latest_data['cash_per_capita']), step=100)
     services = st.number_input("Childcare Services per Capita (€)", value=int(latest_data['services_per_capita']), step=50)
 
-# load Model Weights from API 
-
-
+# load Model Weights + predict
 try:
-    response = requests.get("http://web-api:4000/euro_apis/m1weights")  # Your backend endpoint
+    response = requests.get("http://web-api:4000/euro_apis/m1weights") 
     response.raise_for_status()
     weights_list = response.json()
-
     weights = {row["feature_name"]: float(row["weight"]) for row in weights_list}
 
-    # compute squared 
+    # Compute squared terms
     weekly_hours_sq = weekly_hours ** 2
     cash_sq = cash ** 2
     services_sq = services ** 2
 
-    # cmpute prediction
+    # Predict birth rate
     prediction = (
         weights.get("intercept", 0)
         + weekly_hours * weights.get("weekly_hours", 0)
@@ -188,54 +188,48 @@ try:
         + cash_sq * weights.get("cash_per_capita_squared", 0)
         + services_sq * weights.get("services_per_capita_squared", 0)
     )
-
     prediction = max(0, prediction)
 
     st.success(f"🍼 **Predicted Birth Rate for {user_country} in 2024:** {prediction:.2f} births per 1000 people")
     st.balloons()
 
 except requests.exceptions.RequestException as e:
-
     st.error(f"Failed to fetch model weights: {e}")
+    st.stop()
 
-    # Vis of Actual + Predicted
+# --- Visualization of Actual + Predicted ---
+st.subheader(f"📈 Birth Rate Trend for {user_country} with 2024 Prediction")
 
-    st.subheader(f"📈 Birth Rate Trend for {user_country} with 2024 Prediction")
+country_hist = df[df['Country'] == user_country].copy().sort_values("year")
+if not country_hist.empty:
+    last_actual_year = country_hist['year'].max()
+    last_actual_value = country_hist[country_hist['year'] == last_actual_year]['birth_rate_per_thousand'].values[0]
 
-    country_hist = df[df['Country'] == user_country].copy()
-    country_hist = country_hist.sort_values("year")
+    fig = go.Figure()
 
-    if not country_hist.empty:
-        last_actual_year = country_hist['year'].max()
-        last_actual_value = country_hist[country_hist['year'] == last_actual_year]['birth_rate_per_thousand'].values[0]
+    # historical line
+    fig.add_trace(go.Scatter(
+        x=country_hist['year'],
+        y=country_hist['birth_rate_per_thousand'],
+        mode='lines+markers',
+        name='Actual Birth Rate',
+        line=dict(color='blue')
+    ))
 
-        fig = go.Figure()
+    # prediction line
+    fig.add_trace(go.Scatter(
+        x=[last_actual_year, 2024],
+        y=[last_actual_value, prediction],
+        mode='lines+markers',
+        name='Predicted 2024',
+        line=dict(color='orange', dash='dash'),
+        marker=dict(color='orange', size=10)
+    ))
 
-        # historical line
-        fig.add_trace(go.Scatter(
-            x=country_hist['year'],
-            y=country_hist['birth_rate_per_thousand'],
-            mode='lines+markers',
-            name='Actual Birth Rate',
-            line=dict(color='blue')
-        ))
+    fig.update_layout(
+        xaxis_title='Year',
+        yaxis_title='Birth Rate per 1000 People',
+        template='plotly_white'
+    )
 
-        # prediction line
-        fig.add_trace(go.Scatter(
-            x=[last_actual_year, 2024],
-            y=[last_actual_value, prediction],
-            mode='lines+markers',
-            name='Predicted 2024',
-            line=dict(color='orange', dash='dash'),
-            marker=dict(color='orange', size=10)
-        ))
-
-        fig.update_layout(
-            xaxis_title='Year',
-            yaxis_title='Birth Rate per 1000 People',
-            template='plotly_white'
-        )
-
-        st.plotly_chart(fig, use_container_width=True)
-
-        
+    st.plotly_chart(fig, use_container_width=True)
