@@ -15,6 +15,8 @@ if "show_inputs" not in st.session_state:
         st.session_state['show_inputs'] = False
 if "update_location_data" not in st.session_state:
         st.session_state['update_location_data'] = False
+if "delete_location" not in st.session_state:
+        st.session_state['delete_location'] = False
 
 
 col1, col2, col3 = st.columns([2, 0.5, 2])
@@ -133,5 +135,50 @@ st.write("\n\n")
 if st.button("Return to Business Planner"):
     if "selected_daycare_id" in st.session_state:
         del st.session_state["selected_daycare_id"]
+    if "delete_location" in st.session_state:
+        del st.session_state["delete_location"]
 
     st.switch_page("pages/04_Business_Planner.py")
+
+if st.button("Delete Daycare"):
+     col1, col2, col3 = st.columns([0.5,0.5,0.5])
+     st.session_state['delete_location'] = not st.session_state['delete_location']
+    
+if st.session_state['delete_location']:
+            st.error("Are you sure you want to delete this location?")
+            col1, col2 = st.columns(2)
+
+            with col1:
+                if st.button("Yes, delete"):
+                    st.session_state["confirm_delete"] = True
+
+            with col2:
+                if st.button("Cancel"):
+                    st.session_state["delete_location"] = False
+                    st.rerun()
+
+
+# if user wants to delete the location
+if st.session_state.get("confirm_delete"):
+    try:
+        response2 = requests.delete(f"http://web-api:4000/location/locations/{location_id}")
+
+        if response2.status_code == 200:
+            st.success("Data updated successfully!")
+
+            #reset the session states
+            del st.session_state["confirm_delete"]
+            if "delete_location" in st.session_state:
+                del st.session_state["delete_location"]
+            if "selected_daycare_id" in st.session_state:
+                del st.session_state["selected_daycare_id"]
+
+            st.switch_page("pages/04_Business_Planner.py")
+        else:
+                    st.error(f"Failed to update data: {response2.text}")
+
+    except requests.exceptions.RequestException as e:
+                st.error(f"Connection error: {str(e)}")
+
+
+
