@@ -362,8 +362,11 @@ with col2:
     st.markdown("")
     st.markdown("")
     st.markdown("")
-    st.markdown("")
     st.markdown("# Learn more about the people behind this project.")
+    st.text("""
+        Our team is deeply passionate about understanding and addressing the complex trend of declining birth rates across the European Union. We believe this issue lies at the intersection of public policy, social well-being, and economic sustainability. Through data-driven exploration and digital storytelling, we aim to surface the human and policy dimensions behind the numbers — from parental leave programs and child care access to cultural shifts and regional disparities.
+
+        What motivates us is the opportunity to inform smarter, more compassionate policymaking that supports families and future generations. By building interactive tools, visualizations, and legislative integrations, we hope to empower not just policymakers, but also parents, researchers, and citizens to engage with this pressing demographic challenge in meaningful ways.""")
 
     if st.button("Learn More", type="primary"):
         st.switch_page('pages/30_About.py')
