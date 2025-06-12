@@ -248,130 +248,116 @@ except requests.exceptions.RequestException as e:
     st.error(f"Error connecting to the API: {str(e)}")
     st.info("Please ensure the API server is running on http://web-api:4000")
 """
-
 import logging
 logger = logging.getLogger(__name__)
 import streamlit as st
-import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
 from modules.nav import SideBarLinks
 import requests
+import pandas as pd
+import plotly.graph_objects as go
+import plotly.express as px
 
-# setup
+# PAGE SETUP 
 st.set_page_config(page_title="Legislation Finder", layout="wide")
 SideBarLinks()
-
 st.title("Legislation Finder")
-st.write('\n\n')
+st.write('\n\n\n')
 
-# COUNTRY MAPPING 
+# COUNTRY MAPPING
 country_map = {
-    'EU27_2020': 'European Union (27)', 'BE': 'Belgium', 'BG': 'Bulgaria',
-    'CZ': 'Czechia', 'DK': 'Denmark', 'DE': 'Germany', 'EE': 'Estonia',
-    'IE': 'Ireland', 'EL': 'Greece', 'ES': 'Spain', 'FR': 'France', 'HR': 'Croatia',
-    'IT': 'Italy', 'CY': 'Cyprus', 'LV': 'Latvia', 'LT': 'Lithuania',
-    'LU': 'Luxembourg', 'HU': 'Hungary', 'MT': 'Malta', 'NL': 'Netherlands',
-    'AT': 'Austria', 'PL': 'Poland', 'PT': 'Portugal', 'RO': 'Romania',
-    'SI': 'Slovenia', 'SK': 'Slovakia', 'FI': 'Finland', 'SE': 'Sweden'
+    'EU27_2020': 'European Union (27)',
+    'BE': 'Belgium', 'BG': 'Bulgaria', 'CZ': 'Czechia', 'DK': 'Denmark',
+    'DE': 'Germany', 'EE': 'Estonia', 'IE': 'Ireland', 'EL': 'Greece',
+    'ES': 'Spain', 'FR': 'France', 'HR': 'Croatia', 'IT': 'Italy',
+    'CY': 'Cyprus', 'LV': 'Latvia', 'LT': 'Lithuania', 'LU': 'Luxembourg',
+    'HU': 'Hungary', 'MT': 'Malta', 'NL': 'Netherlands', 'AT': 'Austria',
+    'PL': 'Poland', 'PT': 'Portugal', 'RO': 'Romania', 'SI': 'Slovenia',
+    'SK': 'Slovakia', 'FI': 'Finland', 'SE': 'Sweden'
 }
 
-# data
-df = pd.read_csv("datasets/politician/formatted_birth_data_with_2024.csv")
+# DATA LOAD 
+df = pd.read_csv("datasets/politician/birth_with_2024.csv")
 df["country_name"] = df["country"].map(country_map)
-df["country_name"] = df["country_name"].fillna(df["country"])  # fallback
 df = df[df["birth_rate_per_thousand"].notna()]
 
-# country lists
+# COUNTRY LISTS 
 all_countries = sorted(df["country_name"].dropna().unique())
 eu_country = "European Union (27)"
 national_countries = [c for c in all_countries if c != eu_country]
 
-# toggles
+# TOGGLES 
 col1, col2, col3 = st.columns(3)
 with col1:
     select_all = st.checkbox("Select all members", value=True)
 with col2:
     fixed_range = st.checkbox("Fixed Y-axis", value=True)
 with col3:
-    show_predictions = st.checkbox("Include 2024 Predictions", value=True)
+    show_predictions = st.checkbox("Show 2024 Predictions", value=True)
 
-# multiselect
+# MULTISELECT 
 pre_selected = national_countries if select_all else [eu_country]
 selected_countries = st.multiselect("Select countries to display:", all_countries, default=pre_selected)
 
+# FILTER 
 if not selected_countries:
     st.warning("Please select at least one country.")
     st.stop()
 
 filtered_df = df[df["country_name"].isin(selected_countries)]
+historical_df = filtered_df[filtered_df["year"] < 2024]
+prediction_df = filtered_df[filtered_df["year"] == 2024]
 
-# colors
+# COLOR 
 custom_colors = px.colors.qualitative.Plotly + px.colors.qualitative.Dark24 + px.colors.qualitative.Safe
 color_map = {country: custom_colors[i % len(custom_colors)] for i, country in enumerate(all_countries)}
 
-# PLOT WITH PREDICTION MARKERS 
+# PLOT 
 fig = go.Figure()
 
 for country in selected_countries:
-    country_data = filtered_df[filtered_df["country_name"] == country].sort_values("year")
+    hist = historical_df[historical_df["country_name"] == country]
+    pred = prediction_df[prediction_df["country_name"] == country]
 
-    # Separate predicted 2024 point
-    pred_2024 = country_data[country_data["year"] == 2024]
-    hist_data = country_data[country_data["year"] < 2024]
-
-    # Add historical line
+    # plot historical line
     fig.add_trace(go.Scatter(
-        x=hist_data["year"],
-        y=hist_data["birth_rate_per_thousand"],
+        x=hist["year"], y=hist["birth_rate_per_thousand"],
         mode="lines+markers",
         name=country,
-        line=dict(width=3, color=color_map.get(country, "gray")),
-        marker=dict(size=6),
-        showlegend=True
+        line=dict(width=3, color=color_map[country]),
+        marker=dict(symbol="circle", size=7),
+        legendgroup=country
     ))
 
-    # Add 2024 prediction marker
-    if show_predictions and not pred_2024.empty:
+    # prediction as diamond
+    if show_predictions and not pred.empty:
         fig.add_trace(go.Scatter(
-            x=pred_2024["year"],
-            y=pred_2024["birth_rate_per_thousand"],
+            x=pred["year"], y=pred["birth_rate_per_thousand"],
             mode="markers",
-            name=f"{country} (2024 prediction)",
-            marker=dict(symbol="diamond", size=10, color=color_map.get(country, "gray")),
+            name=f"{country} (2024)",
+            marker=dict(symbol="diamond", size=10, color=color_map[country]),
+            legendgroup=country,
             showlegend=False
         ))
 
-# styling
-opacity_value = 0.4 if select_all else 1
-
-fig.update_traces(opacity=opacity_value)
+# FINAL STYLING 
 fig.update_layout(
     title="Crude Birth Rate Over Time (per 1000 people)",
     xaxis_title="Year",
     yaxis_title="Birth Rate (‰)",
+    template="plotly_white",
+    height=600 if len(selected_countries) <= 10 else 800,
+    legend=dict(orientation="h", yanchor="bottom", y=-0.3, xanchor="center", x=0.5),
     plot_bgcolor="#ffffff",
     paper_bgcolor="#ffffff",
-    height=600 if len(selected_countries) <= 10 else 800,
-    legend=dict(
-        orientation="h",
-        yanchor="bottom",
-        y=-0.3,
-        xanchor="center",
-        x=0.5,
-        title_text=None
-    ),
+    
     xaxis=dict(showgrid=True, gridcolor="lightgrey", zeroline=False),
-    yaxis=dict(showgrid=True, gridcolor="lightgrey"),
+    yaxis=dict(showgrid=True, gridcolor="lightgrey", range=[5.5, 14.5] if fixed_range else None)
 )
 
-if fixed_range:
-    fig.update_yaxes(range=[5.5, 14.5])
 
-# show
 st.plotly_chart(fig, use_container_width=True)
 
-# API Section 
+# POLICY API SECTION 
 API_URL = "http://web-api:4000/policy/allpolicy"
 col1, col2, col3 = st.columns(3)
 
@@ -379,7 +365,7 @@ try:
     response = requests.get(API_URL)
     if response.status_code == 200:
         policy = response.json()
-
+        
         name_to_code = {v: k for k, v in country_map.items()}
         selected_country_codes = [name_to_code[c] for c in selected_countries if c in name_to_code]
 
@@ -414,8 +400,9 @@ try:
                         st.write(f"**Year Passed:** {pol['year']}")
                         st.write(f"**Focus Area:** {pol['focus_area']}")
                     with col2:
-                        st.write("\n\n")
-                        st.write(f"**Description:** {pol['description']})")
+                        st.write("**Description:**")
+                        st.write(pol['description'])
+
     else:
         st.error("Failed to fetch Policy data from the API")
 
