@@ -35,6 +35,10 @@ AlwaysShowAtBottom()
 #    The major content of this page
 # ***************************************************
 
+
+# Top anchor
+st.markdown('<a name="top"></a>', unsafe_allow_html=True)
+
 # set the title of the page and provide a simple prompt. 
 logger.info("Loading Eurobébé Home...")
 
@@ -490,3 +494,17 @@ for i in range(3):
             </div>
         </div>
         """, unsafe_allow_html=True)
+
+st.divider()
+
+
+col1, col2, col3, col4, col5, col6 = st.columns(6)
+
+with col3:
+    st.markdown(
+        '<a href="#top"><button style="width: 100%; padding: 0.5em; border-radius: 10px;">↑ Back to Top</button></a>',
+        unsafe_allow_html=True
+    )
+with col4:
+    if st.button("About This Project", type="tertiary", use_container_width=True):
+        st.switch_page("pages/30_About.py")
