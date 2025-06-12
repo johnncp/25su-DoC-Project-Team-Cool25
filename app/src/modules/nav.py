@@ -48,7 +48,7 @@ def DaycareHomeNav():
 
 def DaycareEUMemberPredictorNav():
     st.sidebar.page_link(
-        "pages/01_Daycare_EU_Member_Predictor.py", label="EU Member Predictor", icon="🇪🇺"
+        "pages/08_Daycare_EU_Member_Predictor.py", label="EU Member Predictor", icon="🇪🇺"
     )
 
 
@@ -139,7 +139,7 @@ def DaycareHomeNav():
 
 def DaycareEUMemberPredictorNav():
     st.sidebar.page_link(
-        "pages/01_Daycare_EU_Member_Predictor.py", label="EU Member Predictor", icon="🇪🇺"
+        "pages/08_Daycare_EU_Member_Predictor.py", label="EU Member Predictor", icon="🇪🇺"
     )
 
 
@@ -353,7 +353,7 @@ def SideBarLinks(show_home=False):
         # Show World Bank Link and Map Demo Link if the user is a political strategy advisor role.
         if st.session_state["role"] == "daycare_operator":
             DaycareHomeNav()
-            #DaycareEUMemberPredictorNav()
+            DaycareEUMemberPredictorNav()
             #DaycareResourcesNav()
             DaycareBusinessPlanNav()
 

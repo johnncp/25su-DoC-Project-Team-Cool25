@@ -69,6 +69,7 @@ with col1:
         #st.success("Redirecting to Country Predictor..."),
         #st.switch_page('pages/01_Daycare_EU_Member_Predictor.py')
         st.write("Page coming soon!")
+        st.switch_page('pages/08_Daycare_EU_Member_Predictor.py')
 
 with col2:
     if st.button('Business Planner', type='primary', use_container_width=True):

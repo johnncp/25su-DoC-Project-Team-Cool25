@@ -7,7 +7,7 @@ from modules.nav import SideBarLinks
 import requests
 
 API_KEY = 'b7fbb637b8044d34b684ae6076ee98e2'
-DEFAULT_TOPIC = "European Birth Rates"
+DEFAULT_TOPIC = "European Union Birth Rates"
 user_topic = DEFAULT_TOPIC
 
 st.set_page_config(layout = 'wide')
@@ -18,7 +18,7 @@ def get_base64(path):
     with open(path, "rb") as f:
         return base64.b64encode(f.read()).decode()
 
-background_img = get_base64("assets/30_Politician/politician_home_background.png")
+background_img = get_base64("assets/20_Politician/politician_home_background.png")
 
 st.markdown(f"""
     <style>
