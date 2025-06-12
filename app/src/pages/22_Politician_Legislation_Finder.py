@@ -255,13 +255,13 @@ import plotly.graph_objects as go
 import requests
 from modules.nav import SideBarLinks
 
-# configs
+# CONFIG
 logger = logging.getLogger(__name__)
 st.set_page_config(page_title="Legislation Finder", layout="wide")
 SideBarLinks()
 st.title("Legislation Finder")
 
-# MAPPING 
+# MAPPING
 country_map = {
     'EU27_2020': 'European Union (27)', 'BE': 'Belgium', 'BG': 'Bulgaria',
     'CZ': 'Czechia', 'DK': 'Denmark', 'DE': 'Germany', 'EE': 'Estonia',
@@ -272,13 +272,13 @@ country_map = {
     'SI': 'Slovenia', 'SK': 'Slovakia', 'FI': 'Finland', 'SE': 'Sweden'
 }
 
-# DATA
+# LOAD DATA
 df = pd.read_csv("datasets/model1/Model_data.csv")
 df["country"] = df["Country"]
 df["country_name"] = df["country"].map(country_map)
 df = df[df["birth_rate_per_thousand"].notna()]
 
-#  MODEL WEIGHTS AND COMPUTE 2024 PREDS
+# MODEL WEIGHTS AND COMPUTE 2024 PREDS
 try:
     response = requests.get("http://web-api:4000/euro_apis/m1weights")
     response.raise_for_status()
@@ -378,10 +378,11 @@ if not selected_countries:
 
 filtered_df = df[df["country_name"].isin(selected_countries)]
 
-# COLOR MAP 
+# COLOR MAP
 import plotly.express as px
 custom_colors = px.colors.qualitative.Plotly + px.colors.qualitative.Dark24 + px.colors.qualitative.Safe
 color_map = {country: custom_colors[i % len(custom_colors)] for i, country in enumerate(all_countries)}
+
 # PLOT
 fig = go.Figure()
 
@@ -390,6 +391,7 @@ for country in selected_countries:
     hist = country_data[country_data["year"] < 2024]
     pred = country_data[country_data["year"] == 2024]
 
+    # Historical line
     fig.add_trace(go.Scatter(
         x=hist["year"],
         y=hist["birth_rate_per_thousand"],
@@ -399,17 +401,25 @@ for country in selected_countries:
         marker=dict(size=6)
     ))
 
+    # 2024 prediction line (even if no history)
     if show_pred and not pred.empty:
+        if not hist.empty:
+            last_actual_year = hist["year"].iloc[-1]
+            last_actual_value = hist["birth_rate_per_thousand"].iloc[-1]
+        else:
+            last_actual_year = 2023
+            last_actual_value = 0
+
         fig.add_trace(go.Scatter(
-            x=[hist["year"].max(), 2024],
-            y=[hist["birth_rate_per_thousand"].iloc[-1], pred["birth_rate_per_thousand"].iloc[0]],
+            x=[last_actual_year, 2024],
+            y=[last_actual_value, pred["birth_rate_per_thousand"].iloc[0]],
             mode="lines+markers",
             name=f"{country} (Predicted 2024)",
             line=dict(color="orange", dash="dash", width=3),
             marker=dict(color="orange", size=8, symbol="diamond")
         ))
 
-# LAYOUT 
+# FINAL LAYOUT 
 fig.update_layout(
     title="Crude Birth Rate Over Time (with Optional 2024 Prediction)",
     xaxis_title="Year",
@@ -425,6 +435,7 @@ fig.update_xaxes(showgrid=True, gridcolor="lightgrey", zeroline=False)
 fig.update_yaxes(showgrid=True, gridcolor="lightgrey")
 if fixed_range:
     fig.update_yaxes(range=[5.5, 14.5])
+
 st.plotly_chart(fig, use_container_width=True)
 
 # API endpoint
