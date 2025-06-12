@@ -122,8 +122,8 @@ with col2:
 
 with col3:
     if st.button('☰ Resource Page', type='primary', use_container_width=True):
-        st.write("Page coming soon!")
+        #st.write("Page coming soon!")
         #st.success("Redirecting to Resources..."),
-        #st.switch_page('pages/23_Politician_Family_Time_Resources.py')
+        st.switch_page('pages/24_Politician_Resources.py')
 
 st.divider()
