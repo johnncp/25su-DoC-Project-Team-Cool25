@@ -99,7 +99,7 @@ def create_radar_chart(country_data: Dict, user_prefs: Dict) -> go.Figure: # ret
                 range=[0, 10]
             )),
         showlegend=True,
-        height=400
+        height=500
     )
     
     return fig
