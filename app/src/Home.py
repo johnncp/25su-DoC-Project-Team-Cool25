@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 # import the main streamlit library as well
 # as SideBarLinks function from src/modules folder
 import streamlit as st
-from modules.nav import SideBarLinks
+from modules.nav import SideBarLinks, AlwaysShowAtBottom
 
 # streamlit supports regular and wide layout (how the controls
 # are organized/displayed on the screen).
@@ -29,6 +29,7 @@ st.session_state['authenticated'] = False
 # IMPORTANT: ensure src/.streamlit/config.toml sets
 # showSidebarNavigation = false in the [client] section
 SideBarLinks(show_home=True)
+AlwaysShowAtBottom()
 
 # ***************************************************
 #    The major content of this page

@@ -4,7 +4,8 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from typing import Dict, List
-from modules.nav import SideBarLinks, AlwaysShowAtBottom
+from modules.nav import SideBarLinks, AlwaysShowAtBottom, Back
+import time
 
 # Page configuration
 st.set_page_config(
@@ -18,6 +19,8 @@ SideBarLinks()
 
 # Configuration
 API_BASE_URL = "http://web-api:4000/model2"  # Adjust based on your Flask server URL
+
+Back("00_Daycare_Home.py")
 
 # Custom CSS
 st.markdown("""
@@ -38,7 +41,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Helper functions
-def get_feature_stats() -> Dict:
+def get_feature_stats() -> Dict: # return Dict
     """Fetch feature statistics from the API"""
     try:
         response = requests.get(f"{API_BASE_URL}/api/features/stats")
@@ -51,7 +54,7 @@ def get_feature_stats() -> Dict:
         st.error(f"Error connecting to API: {e}")
         return None
 
-def get_recommendations(preferences: Dict) -> Dict:
+def get_recommendations(preferences: Dict) -> Dict: # returh Dict
     """Get country recommendations from the API"""
     try:
         response = requests.post(
@@ -69,17 +72,17 @@ def get_recommendations(preferences: Dict) -> Dict:
         st.error(f"Error connecting to API: {e}")
         return None
 
-def create_radar_chart(country_data: Dict, user_prefs: Dict) -> go.Figure:
+
+def create_radar_chart(country_data: Dict, user_prefs: Dict) -> go.Figure: # return go Figure
     """Create a radar chart comparing country features with user preferences"""
     categories = ['Weekly Hours', 'Cash Support', 'Maternity Support', 'Services']
     
-    # Normalize country values to 0-10 scale for comparison
-    # This is a simplified normalization - in production, you'd use the actual min/max from all countries
+    # Normalize country values to 0 to 10 scale
     country_values = [
-        10 - (country_data.get('weekly_hours', 40) - 29) / (41 - 29) * 10,  # Inverted: lower hours = higher score
-        country_data.get('cash_per_capita', 0) / 50000 * 10,  # Assuming max ~50k
-        country_data.get('maternity_per_capita', 0) / 1000 * 10,  # Assuming max ~1k
-        country_data.get('services_per_capita', 0) / 50000 * 10  # Assuming max ~50k
+        10 - (country_data.get('weekly_hours', 40.60) - 30.95) / (40.60 - 30.95) * 10,  # Inverted, Max 40.60, Min 30.95
+        country_data.get('cash_per_capita', 0) / 407371 * 10,  # Max 407371
+        country_data.get('maternity_per_capita', 0) / 3012.24 * 10,  # Max 3012.24
+        country_data.get('services_per_capita', 0) / 309752 * 10  # Max 309752
     ]
     
     user_values = [
@@ -119,7 +122,7 @@ def create_radar_chart(country_data: Dict, user_prefs: Dict) -> go.Figure:
     
     return fig
 
-# Main app
+# putting it all together in main
 def main():
     st.title("🇪🇺 EU Country Recommender")
     st.markdown("Find the EU country that best matches your preferences for work-life balance and family support!")
@@ -132,7 +135,7 @@ def main():
         preferences = {}
         
         # Weekly Hours slider
-        st.subheader("💼 Work-Life Balance")
+        st.subheader("Work-Life Balance ⚖️")
         preferences['weekly_hours'] = st.slider(
             "Preference for shorter working hours",
             min_value=0,
@@ -142,7 +145,7 @@ def main():
         )
         
         # Cash Support slider
-        st.subheader("💰 Cash Support")
+        st.subheader("Cash Support 💶")
         preferences['cash_per_capita'] = st.slider(
             "Importance of cash benefits per capita",
             min_value=0,
@@ -152,7 +155,7 @@ def main():
         )
         
         # Maternity Support slider
-        st.subheader("👶 Maternity Support")
+        st.subheader("Maternity Support 👶")
         preferences['maternity_per_capita'] = st.slider(
             "Importance of maternity benefits",
             min_value=0,
@@ -162,7 +165,7 @@ def main():
         )
         
         # Services Support slider
-        st.subheader("🏥 Public Services")
+        st.subheader("Public Services 🚑")
         preferences['services_per_capita'] = st.slider(
             "Importance of public services per capita",
             min_value=0,
@@ -172,7 +175,7 @@ def main():
         )
         
         # Get recommendations button
-        recommend_button = st.button("🔍 Find Best Countries", type="primary", use_container_width=True)
+        recommend_button = st.button("Find Best Countries 🌍", type="primary", use_container_width=True)
     
     # Main content area
     if recommend_button:
@@ -180,16 +183,16 @@ def main():
             recommendations = get_recommendations(preferences)
         
         if recommendations:
-            st.success("Here are your personalized recommendations!")
+            st.success("Successfully personalized your recommendations!")
             
             # Display top recommendations
             top_countries = recommendations['recommendations'][:5]
             
-            # Create tabs for different views
-            tab1, tab2, tab3 = st.tabs(["🏆 Top Recommendations", "📊 Comparison Chart", "📈 All Results"])
+            # TABS
+            tab1, tab2, tab3 = st.tabs(["↥ Top Recommendations", "⏀ Comparison Chart", "⊙ All Results"])
             
             with tab1:
-                st.subheader("Top 5 Countries for You")
+                st.subheader("Your Top 5 Countries")
                 
                 for i, country in enumerate(top_countries):
                     with st.expander(f"#{i+1} {country['country']} - Match Score: {country['similarity_score']:.1%}"):
@@ -203,15 +206,20 @@ def main():
                             st.metric("Maternity Support", f"€{country['maternity_per_capita']:,.0f}")
                             st.metric("Public Services", f"€{country['services_per_capita']:,.0f}")
                         
-                        # Add radar chart
+                        # maybe: add radarr chart...
                         fig = create_radar_chart(country, preferences)
                         st.plotly_chart(fig, use_container_width=True)
                         
-                        # Additional info
-                        if country['birth_rate_per_thousand']:
-                            st.info(f"Birth Rate: {country['birth_rate_per_thousand']:.1f} per 1000")
-                        if country['price_index']:
-                            st.info(f"Price Index: {country['price_index']:.1f}")
+                        st.divider()
+
+                        # extra info
+                        col1, col2 = st.columns(2)
+                        with col1:
+                            if country['birth_rate_per_thousand']:
+                                st.metric(f"Birth Rate of {country['country']}", f"{country['birth_rate_per_thousand']:.1f} per 1000")
+                        with col2:
+                            if country['price_index']:
+                                st.metric(f"Consumer Price Index of {country['country']}", f"{country['price_index']:.1f}")
                         st.caption(f"Data from year: {country['year']}")
             
             with tab2:
@@ -230,6 +238,8 @@ def main():
                     color='similarity_score',
                     color_continuous_scale='Blues'
                 )
+
+                # update bar
                 fig_similarity.update_traces(text=[f"{x:.1%}" for x in df_compare['similarity_score']], textposition='outside')
                 st.plotly_chart(fig_similarity, use_container_width=True)
                 
@@ -254,17 +264,17 @@ def main():
             with tab3:
                 st.subheader("All Country Rankings")
                 
-                # Create full dataframe
+                # FULL dataframe
                 df_all = pd.DataFrame(recommendations['recommendations'])
                 
-                # Format columns
+                # format columns
                 df_display = df_all[['country', 'similarity_score', 'weekly_hours', 
                                    'cash_per_capita', 'maternity_per_capita', 'services_per_capita', 'year']].copy()
                 
                 df_display.columns = ['Country', 'Match Score', 'Weekly Hours', 
                                     'Cash Support (€)', 'Maternity Support (€)', 'Public Services (€)', 'Data Year']
                 
-                # Format numeric columns
+                # FORMAT?? Nurmic columns
                 df_display['Match Score'] = df_display['Match Score'].apply(lambda x: f"{x:.1%}")
                 df_display['Weekly Hours'] = df_display['Weekly Hours'].apply(lambda x: f"{x:.1f}")
                 df_display['Cash Support (€)'] = df_display['Cash Support (€)'].apply(lambda x: f"{x:,.0f}")
@@ -289,48 +299,51 @@ def main():
                     fig_map.update_geos(fitbounds="locations", visible=False)
                     st.plotly_chart(fig_map, use_container_width=True)
     
-    else:
-        # Show instructions when no recommendations yet
-        st.info("👈 Use the sliders in the sidebar to set your preferences, then click 'Find Best Countries'")
-        
-        # Show feature statistics
-        with st.expander("📊 Learn About the Features"):
-            stats = get_feature_stats()
-            if stats:
-                st.markdown("### What do these features mean?")
+    else: # no recs just yet
+        # Show instructions
+        st.info("← Use the sliders in the sidebar to set your preferences, then click 'Find Best Countries'")
+
+        st.divider()
+
+        stats = get_feature_stats()
+
+        if stats:
+            st.markdown("### Wondering what these features mean?")
+            
+            col1, col2 = st.columns(2)
+            with col1:
+                st.markdown("""
+                **💼 Work-Life Balance (Weekly Hours)**: Average working hours per week. Lower is generally better for work-life balance.
                 
-                col1, col2 = st.columns(2)
-                with col1:
-                    st.markdown("""
-                    **💼 Weekly Hours**: Average working hours per week. Lower is generally better for work-life balance.
-                    
-                    **💰 Cash Support**: Government cash benefits per capita (in EUR). Higher means more financial support.
-                    """)
+                **💰 Cash Support**: Government cash benefits per capita (€). Higher means more financial support.
+                """)
+            
+            with col2:
+                st.markdown("""
+                **👶 Maternity Support**: Maternity benefits per capita (€). Higher means better parental support.
                 
-                with col2:
-                    st.markdown("""
-                    **👶 Maternity Support**: Maternity benefits per capita (in EUR). Higher means better parental support.
-                    
-                    **🏥 Public Services**: Public services spending per capita (in EUR). Higher means better public services.
-                    """)
-                
-                st.markdown("### Feature Ranges Across EU Countries")
-                
-                feature_names = {
-                    'weekly_hours': 'Weekly Hours',
-                    'cash_per_capita': 'Cash Support (€)',
-                    'maternity_per_capita': 'Maternity Support (€)',
-                    'services_per_capita': 'Public Services (€)'
-                }
-                
-                for feature, display_name in feature_names.items():
-                    if feature in stats['statistics']:
-                        stat = stats['statistics'][feature]
-                        col1, col2, col3, col4 = st.columns(4)
-                        col1.metric(f"{display_name} - Min", f"{stat['min']:,.0f}")
-                        col2.metric("Average", f"{stat['mean']:,.0f}")
-                        col3.metric("Median", f"{stat['median']:,.0f}")
-                        col4.metric("Max", f"{stat['max']:,.0f}")
+                **🏥 Public Services**: Public services spending per capita (€). Higher means better public services.
+                """)
+            
+            st.divider()
+
+            st.markdown("### Feature Ranges Across EU Countries")
+            
+            feature_names = {
+                'weekly_hours': 'Weekly Hours',
+                'cash_per_capita': 'Cash Support (€)',
+                'maternity_per_capita': 'Maternity Support (€)',
+                'services_per_capita': 'Public Services (€)'
+            }
+            
+            for feature, display_name in feature_names.items():
+                if feature in stats['statistics']:
+                    stat = stats['statistics'][feature]
+                    col1, col2, col3, col4 = st.columns(4)
+                    col1.metric(f"{display_name} - Min", f"{stat['min']:,.0f}")
+                    col2.metric("Average", f"{stat['mean']:,.0f}")
+                    col3.metric("Median", f"{stat['median']:,.0f}")
+                    col4.metric("Max", f"{stat['max']:,.0f}")
 
 if __name__ == "__main__":
     main()

@@ -38,6 +38,11 @@ def HomeNav():
 def AboutPageNav():
     st.sidebar.page_link("pages/30_About.py", label="About", icon="🧑‍🧑‍🧒‍🧒")
 
+def Back(page):
+    if st.button("← Back", type="tertiary"):
+        st.spinner("Returning...")
+        st.switch_page(f"pages/{page}")
+
 
 #### ------------------------ Role of daycare_operator ------------------------
 def DaycareHomeNav():

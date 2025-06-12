@@ -27,8 +27,8 @@ def normalize_user_input(user_input, max_scale=10):
     """Normalize user input from 0-10 scale to 0-1"""
     return np.array([user_input[feature] / max_scale for feature in FEATURES])
 
+# computee cosine similarity between user preferences and country features
 def compute_cosine_similarity(user_vec, country_vec):
-    """Compute cosine similarity between user preferences and country features"""
     dot = np.dot(user_vec, country_vec)
     norm_user = np.linalg.norm(user_vec)
     norm_country = np.linalg.norm(country_vec)
@@ -36,8 +36,8 @@ def compute_cosine_similarity(user_vec, country_vec):
         return 0
     return dot / (norm_user * norm_country)
 
+# Get the latest available data per country
 def get_latest_country_data():
-    """Get the latest available data for each country"""
     query = """
     WITH latest_data AS (
         SELECT 
@@ -106,8 +106,8 @@ def get_latest_country_data():
     
     return df
 
+# normaluze country features to 0-1 scale
 def normalize_country_features(df):
-    """Normalize country features to 0-1 scale"""
     df_norm = df.copy()
     
     # Normalize features using min-max normalization
@@ -117,7 +117,7 @@ def normalize_country_features(df):
         if max_val > min_val:
             df_norm[feature] = (df[feature] - min_val) / (max_val - min_val)
         else:
-            df_norm[feature] = 0.5  # If all values are the same
+            df_norm[feature] = 0.5  # If all values are equal
     
     return df_norm
 
