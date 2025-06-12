@@ -4,7 +4,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from typing import Dict, List
-from modules.nav import SideBarLinks
+from modules.nav import SideBarLinks, AlwaysShowAtBottom
 
 # Page configuration
 st.set_page_config(
@@ -15,6 +15,8 @@ st.set_page_config(
 
 # Show appropriate sidebar links for the role of the currently logged in user
 SideBarLinks()
+AlwaysShowAtBottom()
+
 st.sidebar.divider()
 
 # Configuration
@@ -138,7 +140,7 @@ def main():
             "Preference for shorter working hours",
             min_value=0,
             max_value=10,
-            value=7,
+            value=5,
             help="Higher value = preference for countries with shorter working weeks"
         )
         
@@ -335,3 +337,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+AlwaysShowAtBottom()

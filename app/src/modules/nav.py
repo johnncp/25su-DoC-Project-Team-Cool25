@@ -280,29 +280,39 @@ def NoteTakingFeature():
         
         st.caption("Rest assured: \'Your Insights\' are only accessible to you.")
         
-"""
-def YourInsightsWarning():
-    # Warning if notes are empty.
+def Logout():
     if st.session_state["authenticated"]:
-        if st.session_state.get("logout_warning", False):
-            container = st.sidebar.container(border=True)
-            container.warning("⚠️ \'Your insights\' will be **permanently** deleted upon logout if not downloaded. Are you sure?")
-
-            col1, col2 = container.columns(2)
-
-            with col1:
-                if st.button("☆ Cancel", use_container_width=True, type="primary"):
-                    st.session_state["logout_warning"] = False
-                    st.rerun()
-
-            with col2:
-                if st.button("Proceed", use_container_width=True, type="tertiary"):
-                    del st.session_state["role"]
-                    del st.session_state["authenticated"]
-                    del st.session_state["notes"]
-                    st.session_state["logout_warning"] = False
-                    st.switch_page("Home.py")
-"""
+        if st.sidebar.button("❌ Logout", type='secondary'):
+            # Save any remaining notes before logout
+            user_id = st.session_state.get("user_id", None)
+            if user_id:
+                user_notes_key = f"notes_{user_id}"
+                notes = st.session_state.get(user_notes_key, "").strip()
+                if notes:
+                    try:
+                        requests.post(
+                            "http://web-api:4000/notes/notes",
+                            json={
+                                "user_id": user_id,
+                                "note_content": notes
+                            }
+                        )
+                    except:
+                        pass  # Silent fail
+                
+                # Clear user-specific notes from session state only
+                if user_notes_key in st.session_state:
+                    del st.session_state[user_notes_key]
+            
+            # Clear authentication session state
+            del st.session_state["role"]
+            del st.session_state["authenticated"]
+            if "user_id" in st.session_state:
+                del st.session_state["user_id"]
+            if "first_name" in st.session_state:
+                del st.session_state["first_name"]
+            
+            st.switch_page("Home.py")
             
 
 
@@ -371,50 +381,6 @@ def SideBarLinks(show_home=False):
         
         st.sidebar.divider()
 
-    # Always show the About page at the bottom of the list of links
+def AlwaysShowAtBottom():
     AboutPageNav()
-
-    if st.session_state["authenticated"]:
-        if st.sidebar.button("❌ Logout", type='secondary'):
-            # Save any remaining notes before logout
-            user_id = st.session_state.get("user_id", None)
-            if user_id:
-                user_notes_key = f"notes_{user_id}"
-                notes = st.session_state.get(user_notes_key, "").strip()
-                if notes:
-                    try:
-                        requests.post(
-                            "http://web-api:4000/notes/notes",
-                            json={
-                                "user_id": user_id,
-                                "note_content": notes
-                            }
-                        )
-                    except:
-                        pass  # Silent fail
-                
-                # Clear user-specific notes from session state only
-                if user_notes_key in st.session_state:
-                    del st.session_state[user_notes_key]
-            
-            # Clear authentication session state
-            del st.session_state["role"]
-            del st.session_state["authenticated"]
-            if "user_id" in st.session_state:
-                del st.session_state["user_id"]
-            if "first_name" in st.session_state:
-                del st.session_state["first_name"]
-            
-            st.switch_page("Home.py")
-
-    """
-    if st.session_state["authenticated"]:
-        notes = st.session_state.get("notes", "").strip()
-        if st.sidebar.button("❌ Logout", type='secondary'):
-            if notes:
-                st.session_state["logout_warning"] = True
-            else:
-                del st.session_state["role"]
-                del st.session_state["authenticated"]
-                st.switch_page("Home.py")
-    """
+    Logout()

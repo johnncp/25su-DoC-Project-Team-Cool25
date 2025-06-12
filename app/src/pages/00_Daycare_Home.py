@@ -3,12 +3,13 @@ import base64, requests
 logger = logging.getLogger(__name__)
 
 import streamlit as st
-from modules.nav import SideBarLinks
+from modules.nav import SideBarLinks, AlwaysShowAtBottom
 
 st.set_page_config(layout = 'wide')
 
 # Show appropriate sidebar links for the role of the currently logged in user
 SideBarLinks()
+AlwaysShowAtBottom()
 
 def get_base64(path):
     with open(path, "rb") as f:

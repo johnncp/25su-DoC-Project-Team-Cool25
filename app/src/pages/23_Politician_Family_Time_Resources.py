@@ -1,12 +1,13 @@
 import logging
 logger = logging.getLogger(__name__)
 import streamlit as st
-from modules.nav import SideBarLinks
+from modules.nav import SideBarLinks, AlwaysShowAtBottom
 import requests
 
 st.set_page_config(page_title="Birth Rate Predictor", layout="wide")
 
 SideBarLinks()
+AlwaysShowAtBottom()
 
 eu_countries = [
     "Austria",

@@ -7,7 +7,7 @@ import world_bank_data as wb
 import matplotlib.pyplot as plt
 import numpy as np
 import plotly.express as px
-from modules.nav import SideBarLinks
+from modules.nav import SideBarLinks, AlwaysShowAtBottom
 import streamlit as st
 import requests
 
@@ -18,6 +18,7 @@ st.set_page_config(page_title="Daycare Finder", layout="wide")
 
 # Call the SideBarLinks from the nav module in the modules directory
 SideBarLinks()
+AlwaysShowAtBottom()
 
 if st.session_state.get("go_to_daycare_profile"):
     st.session_state["go_to_daycare_profile"] = False

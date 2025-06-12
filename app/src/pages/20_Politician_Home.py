@@ -3,7 +3,7 @@ logger = logging.getLogger(__name__)
 import base64, requests
 
 import streamlit as st
-from modules.nav import SideBarLinks
+from modules.nav import SideBarLinks, AlwaysShowAtBottom
 import requests
 
 API_KEY = 'b7fbb637b8044d34b684ae6076ee98e2'
@@ -13,6 +13,7 @@ user_topic = DEFAULT_TOPIC
 st.set_page_config(layout = 'wide')
 
 SideBarLinks()
+AlwaysShowAtBottom()
 
 def get_base64(path):
     with open(path, "rb") as f:

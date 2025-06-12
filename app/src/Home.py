@@ -423,7 +423,7 @@ st.markdown("""
     position: relative;
     width: 100%;
     height: 340px;
-    border-radius: 15px;
+    border-radius: 7px;
     overflow: hidden;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     transition: transform 0.3s ease;

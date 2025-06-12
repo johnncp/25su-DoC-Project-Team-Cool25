@@ -2,7 +2,7 @@
 import logging
 logger = logging.getLogger(__name__)
 import streamlit as st
-from modules.nav import SideBarLinks
+from modules.nav import SideBarLinks, AlwaysShowAtBottom
 import requests
 
 
@@ -10,6 +10,7 @@ import requests
 st.set_page_config(page_title="Legislation Finder", layout="wide")
 
 SideBarLinks()
+AlwaysShowAtBottom()
 
 # Visualization Imports
 import pandas as pd
@@ -251,7 +252,7 @@ except requests.exceptions.RequestException as e:
 import logging
 logger = logging.getLogger(__name__)
 import streamlit as st
-from modules.nav import SideBarLinks
+from modules.nav import SideBarLinks, AlwaysShowAtBottom
 import requests
 import pandas as pd
 import plotly.graph_objects as go
@@ -260,6 +261,8 @@ import plotly.express as px
 # PAGE SETUP 
 st.set_page_config(page_title="Legislation Finder", layout="wide")
 SideBarLinks()
+AlwaysShowAtBottom()
+
 st.title("Legislation Finder")
 st.write('\n\n\n')
 

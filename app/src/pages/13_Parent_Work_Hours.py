@@ -5,9 +5,10 @@ import pandas as pd
 from sklearn import datasets
 from sklearn.ensemble import RandomForestClassifier
 from streamlit_extras.app_logo import add_logo
-from modules.nav import SideBarLinks
+from modules.nav import SideBarLinks, AlwaysShowAtBottom
 
 SideBarLinks()
+AlwaysShowAtBottom()
 
 st.write("""
 # Simple Iris Flower Prediction App

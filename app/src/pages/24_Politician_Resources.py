@@ -2,10 +2,11 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 from streamlit_extras.app_logo import add_logo
-from modules.nav import SideBarLinks
+from modules.nav import SideBarLinks, AlwaysShowAtBottom
 import requests
 
 SideBarLinks()
+AlwaysShowAtBottom()
 
 st.title('Resources')
 
