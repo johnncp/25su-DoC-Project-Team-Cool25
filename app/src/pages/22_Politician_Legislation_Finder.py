@@ -261,7 +261,7 @@ st.set_page_config(page_title="Legislation Finder", layout="wide")
 SideBarLinks()
 st.title("Legislation Finder")
 
-# country mapping
+# MAPPING 
 country_map = {
     'EU27_2020': 'European Union (27)', 'BE': 'Belgium', 'BG': 'Bulgaria',
     'CZ': 'Czechia', 'DK': 'Denmark', 'DE': 'Germany', 'EE': 'Estonia',
@@ -272,12 +272,13 @@ country_map = {
     'SI': 'Slovenia', 'SK': 'Slovakia', 'FI': 'Finland', 'SE': 'Sweden'
 }
 
-# loads data
-df = pd.read_csv("datasets/Model1/Model_data.csv")
+# DATA
+df = pd.read_csv("datasets/model1/Model_data.csv")
+df["country"] = df["Country"]
 df["country_name"] = df["country"].map(country_map)
 df = df[df["birth_rate_per_thousand"].notna()]
 
-# gets model weights
+#  MODEL WEIGHTS AND COMPUTE 2024 PREDS
 try:
     response = requests.get("http://web-api:4000/euro_apis/m1weights")
     response.raise_for_status()
@@ -355,16 +356,18 @@ except requests.exceptions.RequestException as e:
     st.warning("Could not fetch model weights. 2024 predictions skipped.")
     logger.error(e)
 
-# UI FILTERS 
+# UI
 all_countries = sorted(df["country_name"].dropna().unique())
 eu_country = "European Union (27)"
 national_countries = [c for c in all_countries if c != eu_country]
 
-col1, col2 = st.columns(2)
+col1, col2, col3 = st.columns(3)
 with col1:
     select_all = st.checkbox("Select all members", value=True)
 with col2:
     fixed_range = st.checkbox("Fixed Y-axis", value=True)
+with col3:
+    show_pred = st.checkbox("Include 2024 Predictions", value=True)
 
 pre_selected = national_countries if select_all else [eu_country]
 selected_countries = st.multiselect("Select countries to display:", all_countries, default=pre_selected)
@@ -375,11 +378,12 @@ if not selected_countries:
 
 filtered_df = df[df["country_name"].isin(selected_countries)]
 
-# color map
+# COLOR MAP 
+import plotly.express as px
 custom_colors = px.colors.qualitative.Plotly + px.colors.qualitative.Dark24 + px.colors.qualitative.Safe
 color_map = {country: custom_colors[i % len(custom_colors)] for i, country in enumerate(sorted(df["country_name"].unique()))}
 
-# split-line
+# PLOT
 fig = go.Figure()
 
 for country in selected_countries:
@@ -387,32 +391,28 @@ for country in selected_countries:
     hist = country_data[country_data["year"] < 2024]
     pred = country_data[country_data["year"] == 2024]
 
-    # Historical line
     fig.add_trace(go.Scatter(
         x=hist["year"],
         y=hist["birth_rate_per_thousand"],
         mode="lines+markers",
         name=f"{country} (Actual)",
         line=dict(color=color_map.get(country, "gray"), width=3),
-        marker=dict(size=6),
-        showlegend=True
+        marker=dict(size=6)
     ))
 
-    # 2024 predicted line
-    if not pred.empty:
+    if show_pred and not pred.empty:
         fig.add_trace(go.Scatter(
             x=[hist["year"].max(), 2024],
             y=[hist["birth_rate_per_thousand"].iloc[-1], pred["birth_rate_per_thousand"].iloc[0]],
             mode="lines+markers",
             name=f"{country} (Predicted 2024)",
             line=dict(color="orange", dash="dash", width=3),
-            marker=dict(color="orange", size=8, symbol="diamond"),
-            showlegend=True
+            marker=dict(color="orange", size=8, symbol="diamond")
         ))
 
-# layout
+# LAYOUT 
 fig.update_layout(
-    title="Crude Birth Rate Over Time (with 2024 Predictions Highlighted)",
+    title="Crude Birth Rate Over Time (with Optional 2024 Prediction)",
     xaxis_title="Year",
     yaxis_title="Birth Rate (‰)",
     template="plotly_white",
@@ -423,11 +423,107 @@ fig.update_layout(
 )
 
 fig.update_xaxes(showgrid=True, gridcolor="lightgrey", zeroline=False)
-
+fig.update_yaxes(showgrid=True, gridcolor="lightgrey")
 if fixed_range:
-    fig.update_yaxes(range=[5.5, 14.5], showgrid=True, gridcolor="lightgrey")
-else:
-    fig.update_yaxes(showgrid=True, gridcolor="lightgrey")
-
-# SHOW
+    fig.update_yaxes(range=[5.5, 14.5])
 st.plotly_chart(fig, use_container_width=True)
+
+# API endpoint
+API_URL = "http://web-api:4000/policy/allpolicy"
+
+# Create filter columns
+col1, col2, col3 = st.columns(3)
+
+# Get unique values for filters from the API
+try:
+    response = requests.get(API_URL)
+    if response.status_code == 200:
+        policy = response.json()
+
+        # Extract unique values for filters
+        # Invert country_map: full country name -> code
+        name_to_code = {v: k for k, v in country_map.items()}
+
+        # Convert selected full country names to country codes
+        selected_country_codes = [name_to_code[c] for c in selected_countries if c in name_to_code]
+
+        params = {}
+        #params = []
+        # Filter policies by selected country codes
+        if selected_country_codes:
+            #filtered_policy = [pol for pol in policy if pol['country_code'] in selected_country_codes]
+            #params["country_code"] = selected_country_codes
+            #params["country_code"] = ",".join(selected_country_codes)
+            params["country_code"] = ",".join(selected_country_codes)
+
+        #for code in selected_country_codes:
+            #params.append(('country_code', code))
+
+        #else:
+            #filtered_policy = policy  # no filtering if none selected
+        #countries = sorted(list(set(pol["country_code"] for pol in policy)))
+        focus_areas = sorted(list(set(pol["focus_area"] for pol in policy)))
+        founding_years = sorted(list(set(pol["year"] for pol in policy)))
+
+        # Create filters
+        with col1:
+            #selected_country = st.selectbox("Filter by Country", ["All"] + countries)
+
+        #with col2:
+            selected_focus = st.selectbox("Filter by Focus Area", ["All"] + focus_areas)
+
+        with col2:
+            selected_year = st.selectbox(
+                "Filter by Year",
+                ["All"] + [str(year) for year in founding_years],
+            )
+
+        # Build query parameters
+
+        #if selected_country != "All":
+            #params["country_code"] = selected_country
+        if selected_focus != "All":
+            params["focus_area"] = selected_focus
+            #params.append(('focus_area', selected_focus))
+
+        if selected_year != "All":
+            params["year"] = selected_year
+            #params.append(('year', selected_year))
+
+
+        #if selected_focus != "All":
+            #filtered_policy = [pol for pol in filtered_policy if pol["focus_area"] == selected_focus]
+       #if selected_year != "All":
+            #filtered_policy = [pol for pol in filtered_policy if str(pol["year"]) == selected_year]
+
+        # Get filtered data
+        filtered_response = requests.get(API_URL, params=params)
+        if filtered_response.status_code == 200:
+            filtered_policy = filtered_response.json()
+
+            # Display results count
+            st.write(f"Found {len(filtered_policy)} Policies")
+
+            # Create expandable rows for each NGO
+            for pol in filtered_policy:
+                with st.expander(f"{pol['policy_name']} ({pol['country_code']})"):
+                    col1, col2 = st.columns(2)
+
+                    with col1:
+                        st.write("**Basic Information**")
+                        st.write(f"**Country:** {pol['country_code']}")
+                        st.write(f"**Year Passed:** {pol['year']}")
+                        st.write(f"**Focus Area:** {pol['focus_area']}")
+
+                    with col2:
+                        st.write("\n\n")
+                        st.write(f"**Description:** {pol['description']})")
+
+                    
+
+    else:
+        st.error("Failed to fetch Policy data from the API")
+
+except requests.exceptions.RequestException as e:
+    st.error(f"Error connecting to the API: {str(e)}")
+    st.info("Please ensure the API server is running on http://web-api:4000")
