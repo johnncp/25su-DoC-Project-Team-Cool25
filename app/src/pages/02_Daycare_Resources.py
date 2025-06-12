@@ -34,46 +34,32 @@ viewLocations = st.session_state.get('view_locations', False)
 
 with tab1:
     # User inputs
-    
     country = st.text_input("Country Code", "BE")
     city = st.text_input("City", "Brussels")
 
+    # Fetch data
+    #if st.button("Search Daycares"):
+    params = {
+            "country_code": country,
+            "city": city
+        }
+    response = requests.get("http://web-api:4000/location/locations", params=params)
 
-    if viewLocations:
-            try:
-                params = {
-                    "country_code": country,
-                    "city": city
-                }
-                response = requests.get("http://web-api:4000/location/locations", params=params)
-                if response.status_code == 200:
-                    data = response.json()
+    if response.status_code == 200:
+            data = response.json()
+            st.success(f"Found {len(data)} results")
 
-                logger.info("Before the for loop")
-                st.success(f"Found {len(data)} results")
+            for item in data:
+                col1, col2 = st.columns([3,1])
+                with col1: 
+                    if st.button(item["daycare_name"],type='primary', use_container_width=True, key=f"{item['daycare_id']}"):
+                        st.session_state['selected_daycare_id'] = item['daycare_id']
+                        st.switch_page("pages/18_Parent_Daycare_Profile.py")
 
-                for item in data :
-                    logger.info(f"location = {item}")
-                    with st.container(border=True):
-                        col1, col2 = st.columns(2)
-                        with col1:
-                            st.write(item["daycare_name"])
-                        with col2:
-                            if st.button(
-                                f'View Full Profile',
-                                key=item["daycare_id"],
-                            ):
-                                logger.info("in the button execution...")
-                                st.session_state["selected_daycare_id"] = item["daycare_id"]
-                                st.session_state["go_to_daycare_profile"] = True
-                                st.rerun()
 
-            except requests.exceptions.RequestException as e:
-                st.error(f"Error connecting to the API: {str(e)}")
-                st.info("Please ensure the API server is running on http://web-api:4000")
-if st.session_state.get("go_to_daycare_profile") == True:
-    st.switch_page("pages/06_Daycare_Profile.py")
-
+                    
+    else:
+            st.error("Failed to fetch locations")
 
 with tab2:
     selected_country = st.selectbox('Pick a country', ('BE', 'BG', 'CZ', 'DK', 'DE', 'EE', 'IE', 'EL', 'ES', 'FR', 'HR', 'IT', 'CY',
@@ -94,7 +80,6 @@ with tab2:
         st.write("##### Not enough daycares. Choose a different country")
 
     daycare1 = st.selectbox("Select first daycare", daycareNames, key="d1")
-    st.write(daycareNames.index(daycare1))
     id1 = daycareIds[daycareNames.index(daycare1)]
     daycare2 = st.selectbox("Select second daycare", [d for d in daycareNames if d != daycare1], key="d2")
     if pd.notnull(daycare2): 
