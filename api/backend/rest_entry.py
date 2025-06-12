@@ -5,8 +5,6 @@ import logging
 from logging.handlers import RotatingFileHandler
 
 from backend.db_connection import db
-from backend.simple.simple_routes import simple_routes
-from backend.ngos.ngo_routes import ngos
 from backend.daycare_locations.daycare_location_routes import locations
 from backend.api_calls.api_calls_routes import apis
 from backend.employment_hours.employment_hours_routes import hours
@@ -61,7 +59,6 @@ def create_app():
     app.register_blueprint(daycare, url_prefix="/daycaredata")
     app.register_blueprint(policy, url_prefix="/policy")
     app.register_blueprint(users, url_prefix="/users")
-    app.register_blueprint(simple_routes)
     app.register_blueprint(notes, url_prefix="/notes")
     app.register_blueprint(model2_routes, url_prefix="/model2")
 
