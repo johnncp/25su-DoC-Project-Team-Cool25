@@ -21,7 +21,7 @@ def get_model_1_weights():
         current_app.logger.info("Fetching Model 1 Weights")
 
         cursor = db.get_db().cursor()
-        query = "SELECT feature_name, weight FROM Model1Weights"
+        query = "SELECT * FROM Model1Weights"
         cursor.execute(query)
         weights = cursor.fetchall()
         cursor.close()
