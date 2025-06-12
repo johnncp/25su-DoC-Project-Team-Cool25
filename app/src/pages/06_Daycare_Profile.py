@@ -43,10 +43,10 @@ else:
             # Display data
             if loc.get("data"):
                 st.subheader("Data Over the Years")
+                selected_year = st.selectbox("Choose a year", (2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015))
                 for data in loc["data"]:
-                    with st.expander(
-                        f"{data['Year']}"
-                    ):
+                    if data["Year"] == selected_year: 
+                        st.write("\n\n")
                         st.write(f"**Enrollment:** {data['Enrollment']}")
                         st.write(f"**Monthly Price:** {data['Monthly Price']}")
                         budget = float(data["Monthly Budget"]) if data["Monthly Budget"] else 0.0
@@ -72,6 +72,7 @@ else:
         st.info("Please ensure the API server is running")
 
 # Add a button to return to the NGO Directory
+st.write("\n\n")
 if st.button("Return to Business Planner"):
     # Clear the selected NGO ID from session state
     if "selected_daycare_id" in st.session_state:
