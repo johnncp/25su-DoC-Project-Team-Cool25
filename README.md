@@ -3,6 +3,8 @@ by [Sophie Farrel](https://github.com/sophiefarrell), [Mia Giargiari](https://gi
 
 ## About
 
+This project was created throughout the course of Northeastern University's Data and Software in International Government and Politics Summer 2025 Dialouge of Civilizations. Our project is aimed towards exploring an alarming trend, falling birth rates. In 2023, the European Union saw its largest decline in birth rate since 1961. Given this trend, we seek to understand how a nations average weekly working hours, as well as parental and family oriented benefits and expenditures. 
+
 This is a template repo for the project course associated with the Summer 2025 Northeastern University's Data and Software in International Government and Politics Dialogue of Civilization.
 
 It includes most of the infrastructure setup (containers), sample databases and ML models, and example UI pages. Explore it fully and ask questions!

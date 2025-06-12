@@ -113,8 +113,22 @@ try:
     )
     prediction = max(0, prediction)
 
-    st.success(f"🍼 **Predicted Birth Rate for {user_country} in 2024:** {prediction:.2f} births per 1000 people")
-    st.balloons()
+    st.markdown(
+        f"""
+        <div style='padding: 1em; background-color: #e0f7fa; border-left: 5px solid #00acc1; margin-top: 2em;'>
+            <h2 style='font-size: 2.5em; color: #007c91; margin: 0;'>
+                🍼 Predicted Birth Rate for {user_country} in 2024:
+            </h2>
+            <p style='font-size: 2.2em; font-weight: bold; color: #004d40; margin: 0;'>
+                {prediction:.2f} births per 1000 people
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True
+)
+
+    #st.success(f"🍼 **Predicted Birth Rate for {user_country} in 2024:** {prediction:.2f} births per 1000 people")
+    #st.balloons()
 
 except requests.exceptions.RequestException as e:
     st.error(f"Failed to fetch model weights: {e}")
