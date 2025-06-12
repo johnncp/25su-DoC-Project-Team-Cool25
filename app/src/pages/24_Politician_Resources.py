@@ -8,7 +8,8 @@ import requests
 SideBarLinks()
 
 st.title('Resources')
-
+st.write("Get a clear picture of life across Europe — from how many hours people work each week, " \
+"to how prices are changing, and how much governments are investing in family support.")
 
 # Load and filter data
 df = pd.read_csv("datasets/parent/workhour_total.csv")
@@ -33,7 +34,7 @@ eu_countries.sort()
 eu_countries.append('EU27_2020')
 
 # Streamlit selectbox for country selection
-selected_country = st.selectbox("Select a country", eu_countries)
+selected_country = st.selectbox("Select a country to research", eu_countries)
 
 # Filter data for selected country
 selected_data = df_clean[df_clean['country'] == selected_country]
@@ -58,9 +59,15 @@ fig.update_layout(
 )
 
 # Display
-st.plotly_chart(fig, use_container_width=True)
+# st.markdown("### 👷 Average Weekly Working Hours by Gender")
+# st.markdown(
+#     f"Understanding work hours can reveal gender disparities in labor markets. "
+#     f"Below are the average weekly hours worked by men and women in **{selected_country}**."
+# )
+# st.plotly_chart(fig, use_container_width=True)
 
 
+# Public Expenidtures Table
 benefit_type = []
 expenditures = []
 unit_measured = []
@@ -101,7 +108,7 @@ try:
     API_URL = "http://web-api:4000/benefits/benefit"
     name_to_code = {v: k for k, v in country_map.items()}
 
-        # Convert selected full country names to country codes
+    # Convert selected full country names to country codes
     selected_country_code = name_to_code[selected_country] if selected_country in name_to_code else None
     params = {
         "country_code": selected_country_code,
@@ -128,10 +135,63 @@ df = pd.DataFrame (
     {
         "Benefit": benefit_type,
         "Expenditure": expenditures,
-        "Unit Measured": unit_measured,
-        "Country": country
+        "Unit Measured": unit_measured
     }
 )
 
-st.subheader(f"{selected_country} Benefit Expenditures")
-st.table(df)
+# Display
+# st.subheader(f"{selected_country} Benefit Expenditures")
+# st.table(df)
+
+# CPI visualization
+# Load CPI data
+cpi_df = pd.read_csv("datasets/politician/4CPI.csv")  # update with your actual path
+# Filter for selected country
+cpi_row = cpi_df[cpi_df["Country"] == selected_country]
+
+if not cpi_row.empty:
+    # Reshape to long format for plotting
+    cpi_long = pd.melt(
+        cpi_row,
+        id_vars=["Country"],
+        var_name="Year",
+        value_name="CPI"
+    )
+
+    cpi_long["Year"] = cpi_long["Year"].astype(int)
+    cpi_long["CPI"] = pd.to_numeric(cpi_long["CPI"], errors="coerce")
+
+    fig_cpi = go.Figure()
+    fig_cpi.add_trace(go.Scatter(
+        x=cpi_long["Year"],
+        y=cpi_long["CPI"],
+        mode="lines+markers",
+        name="CPI",
+        line=dict(color="orange", width=3)
+    ))
+
+    fig_cpi.update_layout(
+        xaxis_title="Year",
+        yaxis_title="CPI",
+        height=400,
+        title=f"{selected_country} CPI Trend"
+    )
+
+    # Display
+    #st.plotly_chart(fig_cpi, use_container_width=True)
+
+    
+else:
+    st.info("CPI data not available for this country.")
+
+tab1, tab2, tab3 = st.tabs(["Average Weekly Working Hours by Gender ", " Public Spending on Family Benefits ", " Consumer Price Index (CPI) Over Time"])
+
+with tab1: 
+    st.plotly_chart(fig, use_container_width=True)
+
+with tab2:
+    st.subheader(f"{selected_country} Benefit Expenditures")
+    st.table(df)
+
+with tab3: 
+    st.plotly_chart(fig_cpi, use_container_width=True)
