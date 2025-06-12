@@ -1,6 +1,8 @@
 import streamlit as st
 from streamlit_extras.app_logo import add_logo
-from modules.nav import SideBarLinks, AlwaysShowAtBottom
+from modules.nav import SideBarLinks, AlwaysShowAtBottom, Back
+
+Back("../Home.py")
 
 if st.session_state["authenticated"]:
     SideBarLinks()
@@ -62,5 +64,5 @@ st.text("Made with ♡ from Leuven, Belgium. A.D. 2025.")
 st.divider()
 
 # Add a button to return to home page
-if st.button("Return to Home", type="primary"):
+if st.button("Return to Home"):
     st.switch_page("Home.py")
