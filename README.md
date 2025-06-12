@@ -1,4 +1,7 @@
-# Summer 2025 Data and Software Belgium Dialogue
+# [Eurobébé](https://github.com/johnncp/25su-DoC-Project-Team-Cool25)
+by [Sophie Farrel](https://github.com/sophiefarrell), [Mia Giargiari](https://github.com/miagiargiari), [Emma Kulla](https://github.com/emmakulla), [John Nguyen](https://github.com/johnncp)
+
+## About
 
 This is a template repo for the project course associated with the Summer 2025 Northeastern University's Data and Software in International Government and Politics Dialogue of Civilization.
 
