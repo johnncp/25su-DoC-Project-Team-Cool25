@@ -15,9 +15,6 @@ st.set_page_config(
 
 # Show appropriate sidebar links for the role of the currently logged in user
 SideBarLinks()
-AlwaysShowAtBottom()
-
-st.sidebar.divider()
 
 # Configuration
 API_BASE_URL = "http://web-api:4000/model2"  # Adjust based on your Flask server URL
@@ -338,4 +335,6 @@ def main():
 if __name__ == "__main__":
     main()
 
+
+st.sidebar.divider()
 AlwaysShowAtBottom()
