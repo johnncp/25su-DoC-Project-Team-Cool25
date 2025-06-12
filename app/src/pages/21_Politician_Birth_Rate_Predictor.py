@@ -172,21 +172,52 @@ try:
     weights_list = response.json()
     weights = {row["feature_name"]: float(row["weight"]) for row in weights_list}
 
-    # Compute squared terms
+    # Means and stds from training data
+    mean_vals = {
+        'weekly_hours': 37.88517,
+        'maternity_per_capita': 247.1181,
+        'services_per_capita': 26039.31,
+        'year': 2018.45,
+        'weekly_hours_squared': 1440.816,
+        'cash_per_capita_squared': 8.248512e9,
+        'services_per_capita_squared': 3.750855e9
+    }
+
+    std_vals = {
+        'weekly_hours': 2.35736,
+        'maternity_per_capita': 656.3605,
+        'services_per_capita': 55566.02,
+        'year': 2.265675,
+        'weekly_hours_squared': 171.7396,
+        'cash_per_capita_squared': 2.972042e10,
+        'services_per_capita_squared': 1.440493e10
+    }
+
+    # Compute and standardize inputs
     weekly_hours_sq = weekly_hours ** 2
     cash_sq = cash ** 2
     services_sq = services ** 2
 
+    features_std = {
+        "weekly_hours": (weekly_hours - mean_vals['weekly_hours']) / std_vals['weekly_hours'],
+        "maternity_per_capita": (maternity - mean_vals['maternity_per_capita']) / std_vals['maternity_per_capita'],
+        "services_per_capita": (services - mean_vals['services_per_capita']) / std_vals['services_per_capita'],
+        "year": (2024 - mean_vals['year']) / std_vals['year'],
+        "weekly_hours_squared": (weekly_hours_sq - mean_vals['weekly_hours_squared']) / std_vals['weekly_hours_squared'],
+        "cash_per_capita_squared": (cash_sq - mean_vals['cash_per_capita_squared']) / std_vals['cash_per_capita_squared'],
+        "services_per_capita_squared": (services_sq - mean_vals['services_per_capita_squared']) / std_vals['services_per_capita_squared'],
+    }
+
     # Predict birth rate
     prediction = (
         weights.get("intercept", 0)
-        + weekly_hours * weights.get("weekly_hours", 0)
-        + maternity * weights.get("maternity_per_capita", 0)
-        + services * weights.get("services_per_capita", 0)
-        + 2024 * weights.get("year", 0)
-        + weekly_hours_sq * weights.get("weekly_hours_squared", 0)
-        + cash_sq * weights.get("cash_per_capita_squared", 0)
-        + services_sq * weights.get("services_per_capita_squared", 0)
+        + features_std["weekly_hours"] * weights.get("weekly_hours", 0)
+        + features_std["maternity_per_capita"] * weights.get("maternity_per_capita", 0)
+        + features_std["services_per_capita"] * weights.get("services_per_capita", 0)
+        + features_std["year"] * weights.get("year", 0)
+        + features_std["weekly_hours_squared"] * weights.get("weekly_hours_squared", 0)
+        + features_std["cash_per_capita_squared"] * weights.get("cash_per_capita_squared", 0)
+        + features_std["services_per_capita_squared"] * weights.get("services_per_capita_squared", 0)
     )
     prediction = max(0, prediction)
 
