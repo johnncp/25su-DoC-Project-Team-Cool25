@@ -6,11 +6,9 @@ import streamlit as st
 from datetime import datetime
 from io import StringIO
 import requests
-import json
 import logging
-import time
 
-# Logger to debug
+# Set up logger
 logger = logging.getLogger(__name__)
 
 # Get current hour
@@ -53,7 +51,7 @@ def DaycareHomeNav():
 
 def DaycareEUMemberPredictorNav():
     st.sidebar.page_link(
-        "pages/08_Daycare_EU_Member_Predictor.py", label="EU Member Predictor", icon="🇪🇺"
+        "pages/08_Daycare_EU_Member_Predictor.py", label="EU Member Recommender", icon="🇪🇺"
     )
 
 
@@ -71,98 +69,7 @@ def ParentHomeNav():
     )
 
 def ParentEUMemberPredictorNav():
-    st.sidebar.page_link("pages/11_Parent_EU_Member_Predictor.py", label="EU Country Predictor", icon="🇪🇺")
-
-
-def ParentResourcesNav():
-    st.sidebar.page_link(
-        "pages/17_Parent_Affinity_Resources.py", label="Resources", icon="📚")
-
-
-def ParentWorkHoursNav():
-    st.sidebar.page_link(
-        "pages/13_Parent_Work_Hours.py", label="Work Hours Analysis", icon="⏱️"
-    )
-
-def ParentDaycareFindNav():
-    st.sidebar.page_link("pages/02_Daycare_Resources.py", label="Daycare Finder", icon="🔎")
-
-
-def NgoDirectoryNav():
-    st.sidebar.page_link("pages/14_NGO_Directory.py", label="NGO Directory", icon="📁")
-
-
-def AddNgoNav():
-    st.sidebar.page_link("pages/15_Add_NGO.py", label="Add New NGO", icon="➕")
-
-# Idea borrowed from https://github.com/fsmosca/sample-streamlit-authenticator
-
-# This file has function to add certain functionality to the left side bar of the app
-
-import streamlit as st
-from datetime import datetime
-from io import StringIO
-import requests
-import json
-import logging
-
-# Set up logger
-logger = logging.getLogger(__name__)
-
-# Get current hour
-now = datetime.now()
-hour = now.hour
-
-# Determine greeting
-if hour < 3:
-    greeting = "🌚 Working late"
-elif 3 <= hour < 12:
-    greeting = "🌅 Good morning"
-elif 12 <= hour < 16:
-    greeting = "☀️ Good afternoon"
-elif 16 <= hour < 19:
-    greeting = "🌓 Good evening"
-else:
-    greeting = "🌜 Good night"
-
-
-#### ------------------------ General ------------------------
-def HomeNav():
-    st.sidebar.page_link("Home.py", label="Home", icon="🖼️")
-
-
-def AboutPageNav():
-    st.sidebar.page_link("pages/30_About.py", label="About", icon="🧑‍🧑‍🧒‍🧒")
-
-
-#### ------------------------ Role of daycare_operator ------------------------
-def DaycareHomeNav():
-    st.sidebar.page_link(
-        "pages/00_Daycare_Home.py", label="Your Home", icon="🛖"
-    )
-
-
-def DaycareEUMemberPredictorNav():
-    st.sidebar.page_link(
-        "pages/08_Daycare_EU_Member_Predictor.py", label="EU Member Predictor", icon="🇪🇺"
-    )
-
-
-def DaycareResourcesNav():
-    st.sidebar.page_link("pages/02_Daycare_Resources.py", label="Resources", icon="📚")
-
-def DaycareBusinessPlanNav():
-    st.sidebar.page_link("pages/04_Business_Planner.py", label="Business Planner", icon="💼")
-
-
-## ------------------------ Role of parent ------------------------
-def ParentHomeNav():
-    st.sidebar.page_link(
-        "pages/10_Parent_Home.py", label="Your Home", icon="🛖"
-    )
-
-def ParentEUMemberPredictorNav():
-    st.sidebar.page_link("pages/11_Parent_EU_Member_Predictor.py", label="EU Country Predictor", icon="🇪🇺")
+    st.sidebar.page_link("pages/11_Parent_EU_Member_Predictor.py", label="EU Country Recommender", icon="🇪🇺")
 
 
 def ParentResourcesNav():
