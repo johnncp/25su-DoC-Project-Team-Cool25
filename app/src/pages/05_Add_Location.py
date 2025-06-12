@@ -17,45 +17,24 @@ with st.form("add_location_form"):
     st.subheader("Daycare Location Information")
 
     # Required fields
-    name = st.number_input("Daycare ID *", min_value=0)
     daycare_name = st.text_input("Daycare Name *")
-    country = st.text_input("City *")
-    founding_year = st.text_input("Country *" )
-    focus_area = st.time_input("Opening Time *")
-    website = st.time_input("Closing Time *")
-    monthly_price = st.number_input("Monthly Price *")
+    city = st.text_input("City *")
+    country = st.text_input("Country *" )
 
     # Form submission button
     submitted = st.form_submit_button("Add Location")
 
     if submitted:
         # Validate required fields
-        if not all([name, daycare_name, country, founding_year, focus_area, website]):
+        if not all([daycare_name, city, country]):
             st.error("Please fill in all required fields marked with *")
         else:
-            if isinstance(focus_area, datetime.timedelta):
-                jsonifiable_time = (datetime.datetime.min + focus_area).time()
-            else:
-                jsonifiable_time = focus_area
-            
-            if isinstance(website, datetime.timedelta):
-                jsonifiable_time2 = (datetime.datetime.min + website).time()
-            else:
-                jsonifiable_time2 = website
-            
-            departure_time = jsonifiable_time
-            time_two = jsonifiable_time2
-
-
             # Prepare the data for API
             ngo_data = {
-                "daycare_id": int(name),
                 "daycare_name": daycare_name,
-                "opening_time": departure_time.isoformat(),
-                "closing_time": time_two.isoformat(),
-                "monthly_price": monthly_price,
-                "city": country,
-                "country_code": founding_year,
+                "city": city,
+                "country_code": country,
+                "owner_id": st.session_state['user_id']
             }
 
             try:
