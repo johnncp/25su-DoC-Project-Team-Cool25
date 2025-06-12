@@ -30,7 +30,7 @@ df = load_data()
 all_countries = sorted(df["Country"].dropna().unique())
 
 # country selection 
-user_country = st.selectbox("Select your country", all_countries)
+user_country = st.sidebar.selectbox("Select your country", all_countries)
 
 # fetch most recent data before 2024
 def get_latest_country_data(df, country_name):
@@ -50,12 +50,12 @@ st.subheader("Adjust Features for Prediction")
 col1, col2 = st.columns(2)
 
 with col1:
-    weekly_hours = st.slider("Weekly Hours Worked", 0, 60, int(latest_data['weekly_hours']))
-    maternity = st.number_input("Maternity Spending per Capita (€)", value=int(latest_data['maternity_per_capita']), step=50)
+    weekly_hours = st.sidebar.slider("Weekly Hours Worked", 0, 60, int(latest_data['weekly_hours']))
 
 with col2:
-    cash = st.number_input("Cash Benefits per Capita (€)", value=int(latest_data['cash_per_capita']), step=100)
-    services = st.number_input("Childcare Services per Capita (€)", value=int(latest_data['services_per_capita']), step=50)
+    cash = st.sidebar.number_input("Cash Benefits per Capita (€)", value=int(latest_data['cash_per_capita']), step=100)
+    services = st.sidebar.number_input("Childcare Services per Capita (€)", value=int(latest_data['services_per_capita']), step=50)
+    maternity = st.sidebar.number_input("Maternity Spending per Capita (€)", value=int(latest_data['maternity_per_capita']), step=50)
 
 # load Model Weights + predict
 try:
@@ -112,22 +112,25 @@ try:
         + features_std["services_per_capita_squared"] * weights.get("services_per_capita_squared", 0)
     )
     prediction = max(0, prediction)
-
+    st.text(f"Predicted Birth Rate for {user_country} in 2024:")
     st.markdown(
+    
         f"""
-        <div style='padding: 1em; background-color: #e0f7fa; border-left: 5px solid #00acc1; margin-top: 2em;'>
-            <h2 style='font-size: 2.5em; color: #007c91; margin: 0;'>
-                🍼 Predicted Birth Rate for {user_country} in 2024:
-            </h2>
-            <p style='font-size: 2.2em; font-weight: bold; color: #004d40; margin: 0;'>
+        <div style='
+            padding: 1em; 
+            background: linear-gradient(135deg, #0e47cb, #5f99f7); 
+            border-radius: 15px;
+        '>
+            <p style='font-size: 2.2em; font-weight: bold; color: #ffffff; margin: 0;'>
                 {prediction:.2f} births per 1000 people
             </p>
         </div>
         """,
-        unsafe_allow_html=True
-)
 
-    #st.success(f"🍼 **Predicted Birth Rate for {user_country} in 2024:** {prediction:.2f} births per 1000 people")
+        unsafe_allow_html=True
+
+    )
+    #st.success(f" **Predicted Birth Rate for {user_country} in 2024:** {prediction:.2f} births per 1000 people")
     #st.balloons()
 
 except requests.exceptions.RequestException as e:
@@ -135,7 +138,7 @@ except requests.exceptions.RequestException as e:
     st.stop()
 
 # --- Visualization of Actual + Predicted ---
-st.subheader(f"📈 Birth Rate Trend for {user_country} with 2024 Prediction")
+st.subheader(f"Birth Rate Trend for {user_country} with 2024 Prediction")
 
 country_hist = df[df['Country'] == user_country].copy().sort_values("year")
 if not country_hist.empty:
