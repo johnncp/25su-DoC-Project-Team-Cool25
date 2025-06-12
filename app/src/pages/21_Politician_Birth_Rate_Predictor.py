@@ -124,7 +124,7 @@ st.markdown("Select a country and adjust the inputs to estimate its predicted bi
 # data
 @st.cache_data
 def load_data():
-    df = pd.read_csv("25SU-DOC-PROJECT-TEAM-COOL25/datasets/raw-datasets/Model_data.csv")
+    df = pd.read_csv("datasets/model1/Model_data.csv")
     df = df.dropna(subset=[
         'birth_rate_per_thousand', 'weekly_hours',
         'cash_per_capita', 'maternity_per_capita',
