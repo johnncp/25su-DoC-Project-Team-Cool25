@@ -194,6 +194,10 @@ try:
     st.success(f"🍼 **Predicted Birth Rate for {user_country} in 2024:** {prediction:.2f} births per 1000 people")
     st.balloons()
 
+except requests.exceptions.RequestException as e:
+
+    st.error(f"Failed to fetch model weights: {e}")
+
     # Vis of Actual + Predicted
 
     st.subheader(f"📈 Birth Rate Trend for {user_country} with 2024 Prediction")
