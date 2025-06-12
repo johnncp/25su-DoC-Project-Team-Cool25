@@ -132,6 +132,8 @@ if st.session_state["update_location_data"]:
 # Add a button to return to the Business Planner Page
 st.write("\n\n")
 if st.button("Return to Business Planner"):
+    st.session_state['show_inputs'] = not st.session_state['show_inputs']
+
     if "selected_daycare_id" in st.session_state:
         del st.session_state["selected_daycare_id"]
 
