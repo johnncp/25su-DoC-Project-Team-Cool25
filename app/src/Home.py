@@ -352,17 +352,36 @@ html(carousel_html, height=350)
 
 st.divider()
 
+# LEARN MORE ABOUT AUTHORS ------------------------------------------------------------------------------------------------------------------------
 col1, col2 = st.columns(2)
+learn_more_authors_img = get_base64("assets/Home/LearnMore_photo.png")
 
 with col1:
-    st.image("assets/Home/LearnMore_photo.png")
+    st.markdown(f"""
+            <style>
+            .hover-image {{
+                transition: transform 0.3s ease;
+                width: 130%;
+                max-width: 500px;
+                border-radius: 12px;
+                /* box-shadow: 0 4px 12px rgba(0,0,0,0.1); */
+            }}
+            .hover-image:hover {{
+                transform: scale(1.05);
+            }}
+            </style>
+
+            <div style="text-align:center;">
+                <img class="hover-image" src="data:image/png;base64,{learn_more_authors_img}" alt="hoverable image">
+            </div>
+        """, unsafe_allow_html=True)
 
 with col2:
     st.markdown("")
     st.markdown("")
     st.markdown("")
     st.markdown("")
-    st.markdown("# Learn more about the people behind this project.")
+    st.markdown("# Learn about the people behind this project.")
     st.text("""
         Our team is deeply passionate about understanding and addressing the complex trend of declining birth rates across the European Union. We believe this issue lies at the intersection of public policy, social well-being, and economic sustainability. Through data-driven exploration and digital storytelling, we aim to surface the human and policy dimensions behind the numbers — from parental leave programs and child care access to cultural shifts and regional disparities.
 
@@ -370,3 +389,103 @@ with col2:
 
     if st.button("Learn More", type="primary"):
         st.switch_page('pages/30_About.py')
+
+st.divider()
+# TESTIMONIES ------------------------------------------------------------------------------------------------------------------------
+
+st.title("*Hear it for yourself.*")
+
+# images
+quote_imgs = [
+    get_base64("assets/Home/testimony_1.jpg"),
+    get_base64("assets/Home/testimony_2.jpg"),
+    get_base64("assets/Home/testimony_3.jpg")
+]
+
+# --- Quotes ---
+quotes = [
+    "“Eurobébé helped me find affordable care while navigating a new city.”",
+    "“As a single dad, I finally feel supported thanks to their guidance.”",
+    "“The resources saved us time, money, and a lot of stress.”"
+]
+
+# --- Names or Roles ---
+names = [
+    "— Cara Day, Prague, CZ",
+    "— Coake Cero, Ghent, BE",
+    "— Eyci Ell, Nice, FR"
+]
+
+# --- CSS Styling ---
+st.markdown("""
+<style>
+.quote-card {
+    position: relative;
+    width: 100%;
+    height: 340px;
+    border-radius: 7px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+    max-width: 500px;
+}
+
+/* Black gradient overlay at bottom */
+.quote-card::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.quote-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    z-index: 0;
+}
+            
+.quote-card:hover {
+    transform: scale(1.05);
+}
+
+.quote-overlay {
+    position: absolute;
+    bottom: 0;
+    padding: 20px;
+    color: white;
+    text-shadow: 1px 1px 6px rgba(0,0,0,0.6);
+    font-size: 1.1rem;
+    font-style: italic;
+    z-index: 2; /* Above gradient */
+}
+.quote-name {
+    margin-top: 10px;
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# --- 3-Column Layout ---
+col1, col2, col3 = st.columns(3)
+cols = [col1, col2, col3]
+
+for i in range(3):
+    with cols[i]:
+        st.markdown(f"""
+        <div class="quote-card">
+            <img src="data:image/jpeg;base64,{quote_imgs[i]}" />
+            <div class="quote-overlay">
+                {quotes[i]}
+                <span class="quote-name">{names[i]}</span>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)

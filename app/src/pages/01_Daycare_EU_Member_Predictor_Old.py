@@ -5,23 +5,44 @@ from streamlit_extras.app_logo import add_logo
 import pandas as pd
 import pydeck as pdk
 from urllib.error import URLError
-from modules.nav import SideBarLinks
+from modules.nav import SideBarLinks, AlwaysShowAtBottom
+import requests
 
 SideBarLinks()
+AlwaysShowAtBottom()
 
 # add the logo
 add_logo("assets/eurobebe_logo1.png", height=400)
 
 # set up the page
-st.markdown("# Mapping Demo")
-st.sidebar.header("Mapping Demo")
-st.write(
-    """This Mapping Demo is from the Streamlit Documentation. It shows how to use
-[`st.pydeck_chart`](https://docs.streamlit.io/library/api-reference/charts/st.pydeck_chart)
-to display geospatial data."""
-)
+st.title("Predict Page")
+
+st.title("🧠 Birth Rate Country Recommender")
+
+st.markdown("Rate the importance of each factor from 0 (not important) to 10 (very important):")
+
+user_input = {
+    "weekly_hours": st.slider("Average Weekly Hours", 0, 10, 5),
+    "cash_per_capita": st.slider("Cash Support per Capita", 0, 10, 5),
+    "maternity_per_capita": st.slider("Maternity Support per Capita", 0, 10, 5),
+    "services_per_capita": st.slider("Childcare Services per Capita", 0, 10, 5),
+}
+
+if st.button("Recommend Countries"):
+    try:
+        url = "http://web-api:4000/model2/recommend_countries"  # internal Docker name
+        response = requests.post(url, json=user_input)
+        if response.status_code == 200:
+            recommendations = response.json()
+            st.success("Top 5 Matches:")
+            st.table(pd.DataFrame(recommendations))
+        else:
+            st.error(f"Error {response.status_code}: {response.json().get('error', 'Unknown error')}")
+    except Exception as e:
+        st.error(f"Could not connect to recommendation service. Details: {e}")
 
 
+"""
 @st.cache_data
 def from_data_file(filename):
     url = (
@@ -96,9 +117,8 @@ try:
         st.error("Please choose at least one layer above.")
 except URLError as e:
     st.error(
-        """
-        **This demo requires internet access.**
-        Connection error: %s
-    """
+        
         % e.reason
     )
+
+"""    

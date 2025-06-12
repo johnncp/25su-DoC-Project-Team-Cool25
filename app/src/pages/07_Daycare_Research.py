@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 from streamlit_extras.app_logo import add_logo
-from modules.nav import SideBarLinks
+from modules.nav import SideBarLinks, AlwaysShowAtBottom
 import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
@@ -9,6 +9,7 @@ import pycountry
 import os
 
 SideBarLinks()
+AlwaysShowAtBottom()
 
 # datasets
 df_data = pd.read_csv("datasets/parent/DaycareData.csv")

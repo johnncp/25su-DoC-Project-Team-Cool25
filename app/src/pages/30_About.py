@@ -1,9 +1,10 @@
 import streamlit as st
 from streamlit_extras.app_logo import add_logo
-from modules.nav import SideBarLinks
+from modules.nav import SideBarLinks, AlwaysShowAtBottom
 
 if st.session_state["authenticated"]:
     SideBarLinks()
+    AlwaysShowAtBottom()
 else:
     SideBarLinks(True)
 

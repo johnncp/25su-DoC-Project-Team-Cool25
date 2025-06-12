@@ -3,7 +3,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 import streamlit as st
-from modules.nav import SideBarLinks
+from modules.nav import SideBarLinks, AlwaysShowAtBottom
 import requests
 import pandas as pd
 import plotly.express as px
@@ -14,6 +14,7 @@ st.set_page_config(page_title="EU Country Predictor", layout="wide")
 
 # Display the appropriate sidebar links for the role of the logged in user
 SideBarLinks()
+AlwaysShowAtBottom()
 
 st.title("Find EU Members by Childcare Spending")
 

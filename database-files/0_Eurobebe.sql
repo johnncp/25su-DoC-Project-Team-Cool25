@@ -199,7 +199,10 @@ CREATE TABLE IF NOT EXISTS Model1Weights
     weight       DECIMAL(10, 6) NOT NULL
 );
 
-
+INSERT INTO UserRoles (role_id, role_name) VALUES
+(1, 'daycare_operator'),
+(2, 'parent'),
+(3, 'politician');
 
 
 
