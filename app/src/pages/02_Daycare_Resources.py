@@ -47,7 +47,7 @@ with tab1:
 
     if response.status_code == 200:
             data = response.json()
-            st.success(f"Found {len(data)} results")
+            st.success(f"Found {len(data)} results! Click it to see information about each location. ")
 
             for item in data:
                 col1, col2 = st.columns([3,1])

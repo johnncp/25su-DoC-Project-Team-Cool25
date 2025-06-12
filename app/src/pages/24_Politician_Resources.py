@@ -6,6 +6,9 @@ from modules.nav import SideBarLinks
 
 SideBarLinks()
 
+st.title('Resources')
+
+
 # Load and filter data
 df = pd.read_csv("datasets/parent/workhour_total.csv")
 df_2024 = df[
