@@ -2,7 +2,10 @@ import streamlit as st
 from streamlit_extras.app_logo import add_logo
 from modules.nav import SideBarLinks
 
-SideBarLinks(True)
+if st.session_state["authenticated"]:
+    SideBarLinks()
+else:
+    SideBarLinks(True)
 
 st.title("About Eurobébé")
 
@@ -24,22 +27,22 @@ st.title("About the Authors")
 authors = [
     {
         "name": "Sophie Farrell",
-        "image": "assets/30_About/sophie_author_photo.png",
+        "image": "assets/30_About/sophie_baby_photo.png",
         "bio": "3rd Year Computer Science and Economics Student"
     },
     {
         "name": "Mia Giargiari",
-        "image": "assets/30_About/mia_author_photo.png",
+        "image": "assets/30_About/mia_baby_photo.png",
         "bio": "2nd Year Honors Business (Marketing) and Law Student Minoring in Data Science"
     },
     {
         "name": "Emma Kulla",
-        "image": "assets/30_About/emma_author_photo.png",
+        "image": "assets/30_About/emma_baby_photo.png",
         "bio": "2nd Year Honors Data Science and Business Administration (Finance) Student"
     },
     {
         "name": "John Nguyen",
-        "image": "assets/30_About/john_author_photo.png",
+        "image": "assets/30_About/john_baby_photo.png",
         "bio": "3rd Year Computer Science and Business Administration (FinTech, Marketing Analytics) Student"
     },
 ]

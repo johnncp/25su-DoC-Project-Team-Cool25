@@ -131,6 +131,12 @@ with col1:
                 use_container_width=True,
                 key="daycare_login"):
             selected_user = daycare_options[selected_daycare]
+
+            # Clear any existing user-specific notes from session state
+            keys_to_remove = [key for key in st.session_state.keys() if key.startswith("notes_")]
+            for key in keys_to_remove:
+                del st.session_state[key]
+
             st.session_state['authenticated'] = True
             st.session_state['role'] = 'daycare_operator'
             st.session_state['first_name'] = selected_user['first_name']
@@ -166,6 +172,12 @@ with col2:
                 use_container_width=True,
                 key="parent_login"):
             selected_user = parent_options[selected_parent]
+
+            # Clear any existing user-specific notes from session state
+            keys_to_remove = [key for key in st.session_state.keys() if key.startswith("notes_")]
+            for key in keys_to_remove:
+                del st.session_state[key]
+
             st.session_state['authenticated'] = True
             st.session_state['role'] = 'parent'
             st.session_state['first_name'] = selected_user['first_name']
@@ -201,6 +213,12 @@ with col3:
                 use_container_width=True,
                 key="politician_login"):
             selected_user = politician_options[selected_politician]
+
+            # Clear any existing user-specific notes from session state
+            keys_to_remove = [key for key in st.session_state.keys() if key.startswith("notes_")]
+            for key in keys_to_remove:
+                del st.session_state[key]
+                
             st.session_state['authenticated'] = True
             st.session_state['role'] = 'politician'
             st.session_state['first_name'] = selected_user['first_name']
