@@ -4,6 +4,8 @@ import plotly.graph_objects as go
 from streamlit_extras.app_logo import add_logo
 from modules.nav import SideBarLinks, AlwaysShowAtBottom, Back
 import requests
+import plotly.express as px
+
 
 SideBarLinks()
 AlwaysShowAtBottom()
@@ -12,187 +14,192 @@ st.title('Resources')
 st.write("Get a clear picture of life across Europe — from how many hours people work each week, " \
 "to how prices are changing, and how much governments are investing in family support.")
 
-# Load and filter data
-df = pd.read_csv("datasets/parent/workhour_total.csv")
-df_2024 = df[
-    (df['TIME_PERIOD'] == 2024) &
-    (df['sex'].isin(['Males', 'Females'])) &
-    (df['OBS_VALUE'].notna())
-].copy()
 
-df_2024['sex'] = df_2024['sex'].replace({'Males': 'Male', 'Females': 'Female'})
-df_2024 = df_2024[['geo', 'sex', 'OBS_VALUE']]
-df_2024.columns = ['country', 'sex', 'average_hours']
-
-# Reshape and keep only countries with both Male and Female data
-pivot = df_2024.pivot(index='country', columns='sex', values='average_hours').dropna().reset_index()
-df_clean = pivot.melt(id_vars='country', value_vars=['Male', 'Female'],
-                      var_name='sex', value_name='average_hours')
-
-# List of EU countries with EU27_2020 at the end
-eu_countries = df_clean[df_clean['country'] != 'EU27_2020']['country'].unique().tolist()
-eu_countries.sort()
-eu_countries.append('EU27_2020')
-
-# Streamlit selectbox for country selection
-selected_country = st.selectbox("Select a country to research", eu_countries)
-
-# Filter data for selected country
-selected_data = df_clean[df_clean['country'] == selected_country]
-
-# Colors
-colors = {'Male': 'blue', 'Female': 'pink'}
-
-# Build plot
-fig = go.Figure()
-fig.add_trace(go.Bar(
-    x=selected_data['sex'],
-    y=selected_data['average_hours'],
-    marker_color=[colors[sex] for sex in selected_data['sex']]
-))
-
-fig.update_layout(
-    title=f'Average Weekly Working Hours in {selected_country} (2024)',
-    xaxis_title='Sex',
-    yaxis_title='Average Weekly Hours',
-    yaxis=dict(tickformat=".1f", dtick=5, range = [0,50]),
-    height=600  # Adjust chart size here
-)
-
-# Display
-# st.markdown("### 👷 Average Weekly Working Hours by Gender")
-# st.markdown(
-#     f"Understanding work hours can reveal gender disparities in labor markets. "
-#     f"Below are the average weekly hours worked by men and women in **{selected_country}**."
-# )
-# st.plotly_chart(fig, use_container_width=True)
+API_URL = "http://web-api:4000/hours/weeklyhours"
 
 
-# Public Expenidtures Table
-benefit_type = []
-expenditures = []
-unit_measured = []
-group = []
-country = []
+# Input selection
+selected_country = st.selectbox("Select a Country", [
+    "Austria", "Belgium", "Bulgaria", "Croatia", "Cyprus", "Czechia",
+    "Denmark", "Estonia", "Finland", "France", "Germany", "Greece",
+    "Hungary", "Ireland", "Italy", "Latvia", "Lithuania", "Luxembourg",
+    "Malta", "Netherlands", "Poland", "Portugal", "Romania", "Slovakia",
+    "Slovenia", "Spain", "Sweden"
+])  
 
-country_map = {
-    'BE': 'Belgium',
-    'BG': 'Bulgaria',
-    'CZ': 'Czechia',
-    'DK': 'Denmark',
-    'DE': 'Germany',
-    'EE': 'Estonia',
-    'IE': 'Ireland',
-    'EL': 'Greece',
-    'ES': 'Spain',
-    'FR': 'France',
-    'HR': 'Croatia',
-    'IT': 'Italy',
-    'CY': 'Cyprus',
-    'LV': 'Latvia',
-    'LT': 'Lithuania',
-    'LU': 'Luxembourg',
-    'HU': 'Hungary',
-    'MT': 'Malta',
-    'NL': 'Netherlands',
-    'AT': 'Austria',
-    'PL': 'Poland',
-    'PT': 'Portugal',
-    'RO': 'Romania',
-    'SI': 'Slovenia',
-    'SK': 'Slovakia',
-    'FI': 'Finland',
-    'SE': 'Sweden'
-}
+selected_year = st.number_input("Select Year", min_value=2015, max_value=2024, step=1, value=2023)
 
-try: 
-    API_URL = "http://web-api:4000/benefits/benefit"
-    name_to_code = {v: k for k, v in country_map.items()}
+# Fetch data for both sexes
+sexes = ["males", "females"]
+data = []
 
-    # Convert selected full country names to country codes
-    selected_country_code = name_to_code[selected_country] if selected_country in name_to_code else None
+for sex in sexes:
     params = {
-        "country_code": selected_country_code,
-        "year": 2022,
-        "unit_measured": 'Million Euros',
-        'target_group': "All Parents"  
+        "country_name": selected_country,
+        "year": str(selected_year),
+        "sex": sex
     }
-
     response = requests.get(API_URL, params=params)
+
     if response.status_code == 200:
-        data = response.json()
+        results = response.json()
+        for row in results:
+            emp_all = row["emp_all"]
+            data.append({
+                "Sex": sex,
+                "Average Weekly Hours": emp_all,
+                "Age Group": row["age_group"]
+            })
+    else:
+        st.error(f"Failed to fetch data for sex: {sex} (Status Code: {response.status_code})")
 
-        for item in data:
-            benefit_type.append(item['benefit_type'])
-            expenditures.append(item['expenditure'])
-            unit_measured.append(item['unit_measured'])
-            country.append(item['country_code'])
+# Convert to DataFrame
+if data:
+    df = pd.DataFrame(data)
 
+    # Average across all age groups for each sex
+    avg_df = df.groupby("Sex")["Average Weekly Hours"].mean().reset_index()
 
-except requests.exceptions.RequestException as e:
-    st.error(f"Error connecting to the API: {str(e)}")
-
-df = pd.DataFrame (
-    {
-        "Benefit": benefit_type,
-        "Expenditure": expenditures,
-        "Unit Measured": unit_measured
-    }
-)
-
-# Display
-# st.subheader(f"{selected_country} Benefit Expenditures")
-# st.table(df)
-
-# CPI visualization
-# Load CPI data
-cpi_df = pd.read_csv("datasets/politician/4CPI.csv")  # update with your actual path
-# Filter for selected country
-cpi_row = cpi_df[cpi_df["Country"] == selected_country]
-
-if not cpi_row.empty:
-    # Reshape to long format for plotting
-    cpi_long = pd.melt(
-        cpi_row,
-        id_vars=["Country"],
-        var_name="Year",
-        value_name="CPI"
+    # Plot
+    fig = px.bar(
+        avg_df,
+        x="Sex",
+        y="Average Weekly Hours",
+        color="Sex",
+        title=f"Average Weekly Working Hours by Sex in {selected_country} ({selected_year})",
+        labels={"Average Weekly Hours": "Hours"}
     )
-
-    cpi_long["Year"] = cpi_long["Year"].astype(int)
-    cpi_long["CPI"] = pd.to_numeric(cpi_long["CPI"], errors="coerce")
-
-    fig_cpi = go.Figure()
-    fig_cpi.add_trace(go.Scatter(
-        x=cpi_long["Year"],
-        y=cpi_long["CPI"],
-        mode="lines+markers",
-        name="CPI",
-        line=dict(color="orange", width=3)
-    ))
-
-    fig_cpi.update_layout(
-        xaxis_title="Year",
-        yaxis_title="CPI",
-        height=400,
-        title=f"{selected_country} CPI Trend"
-    )
-
-    # Display
-    #st.plotly_chart(fig_cpi, use_container_width=True)
-
-    
 else:
-    st.info("CPI data not available for this country.")
+    st.warning("No data available for the selected country and year.")
+
 
 tab1, tab2, tab3 = st.tabs(["Average Weekly Working Hours by Gender ", " Public Spending on Family Benefits ", " Consumer Price Index (CPI) Over Time"])
 
-with tab1: 
+with tab1:
     st.plotly_chart(fig, use_container_width=True)
 
-with tab2:
+
+with tab2: 
+    # Public Expenidtures Table
+    benefit_type = []
+    expenditures = []
+    unit_measured = []
+    group = []
+    country = []
+    year = []
+
+    country_map = {
+        'BE': 'Belgium',
+        'BG': 'Bulgaria',
+        'CZ': 'Czechia',
+        'DK': 'Denmark',
+        'DE': 'Germany',
+        'EE': 'Estonia',
+        'IE': 'Ireland',
+        'EL': 'Greece',
+        'ES': 'Spain',
+        'FR': 'France',
+        'HR': 'Croatia',
+        'IT': 'Italy',
+        'CY': 'Cyprus',
+        'LV': 'Latvia',
+        'LT': 'Lithuania',
+        'LU': 'Luxembourg',
+        'HU': 'Hungary',
+        'MT': 'Malta',
+        'NL': 'Netherlands',
+        'AT': 'Austria',
+        'PL': 'Poland',
+        'PT': 'Portugal',
+        'RO': 'Romania',
+        'SI': 'Slovenia',
+        'SK': 'Slovakia',
+        'FI': 'Finland',
+        'SE': 'Sweden'
+    }
+
+    try: 
+        API_URL = "http://web-api:4000/benefits/benefit"
+        name_to_code = {v: k for k, v in country_map.items()}
+
+        # Convert selected full country names to country codes
+        selected_country_code = name_to_code[selected_country] if selected_country in name_to_code else None
+        params = {
+            "country_code": selected_country_code,
+            "year": selected_year,
+            "unit_measured": 'Million Euros',
+            'target_group': "All Parents"  
+        }
+
+        response1 = requests.get(API_URL, params=params)
+        if response1.status_code == 200:
+            data = response1.json()
+
+            for item in data:
+                benefit_type.append(item['benefit_type'])
+                expenditures.append(item['expenditure'])
+                unit_measured.append(item['unit_measured'])
+                country.append(item['country_code'])
+                group.append(item['target_group'])
+                country.append(item['country_code'])
+
+
+    except requests.exceptions.RequestException as e:
+        st.error(f"Error connecting to the API: {str(e)}")
+
+    df = pd.DataFrame (
+        {
+            "Benefit": benefit_type,
+            "Expenditure": expenditures,
+            "Unit Measured": unit_measured,
+        }
+    )
+
+    # Display
     st.subheader(f"{selected_country} Benefit Expenditures")
     st.table(df)
 
-with tab3: 
-    st.plotly_chart(fig_cpi, use_container_width=True)
+
+with tab3:
+    #CPI Viz
+    API_URL = "http://web-api:4000/cpi/cpi"  # Adjust host/port if needed
+    params = {"country_name": selected_country}
+    response = requests.get(API_URL, params=params)
+
+    if response.status_code == 200:
+        data = response.json()
+
+        if data:
+            # Convert to DataFrame
+            cpi_df = pd.DataFrame(data, columns=["eucpi_id", "country_name", "year", "cpi_value"])
+
+            # Data cleanup
+            cpi_df["year"] = cpi_df["year"].astype(int)
+            cpi_df["cpi_value"] = pd.to_numeric(cpi_df["cpi_value"], errors="coerce")
+
+            # Sort by year just in case
+            cpi_df.sort_values("year", inplace=True)
+
+            # Plot
+            fig_cpi = go.Figure()
+            fig_cpi.add_trace(go.Scatter(
+                x=cpi_df["year"],
+                y=cpi_df["cpi_value"],
+                mode="lines+markers",
+                name="CPI",
+                line=dict(color="orange", width=3)
+            ))
+
+            fig_cpi.update_layout(
+                xaxis_title="Year",
+                yaxis_title="CPI",
+                height=400,
+                title=f"{selected_country} CPI Trend"
+            )
+
+            st.plotly_chart(fig_cpi, use_container_width=True)
+        else:
+            st.info("No CPI data available for this country.")
+    else:
+        st.error(f"API request failed with status code {response.status_code}")
+
