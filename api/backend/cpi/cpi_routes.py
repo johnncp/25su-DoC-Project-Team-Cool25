@@ -12,18 +12,17 @@ from backend.db_connection import db
 from mysql.connector import Error
 import datetime
 
-hours = Blueprint("hours", __name__)
+cpi = Blueprint("cpi", __name__)
 
 # gets all weekly working hours of full time adults
-@hours.route("/weeklyhours", methods=["GET"])
-def get_all_hours():
+@cpi.route("/cpi", methods=["GET"])
+def get_all_cpi():
     try: 
         cursor = db.get_db().cursor()
         country = request.args.get("country_name")
         year = request.args.get("year")
-        sex = request.args.get("sex")
 
-        query = "SELECT eue_id, emp_all, country_code, year, sex, age_group FROM EUEmployment WHERE 1=1"
+        query = "SELECT * FROM EUCPI WHERE 1=1"
         params = []
 
         if country:
@@ -32,20 +31,17 @@ def get_all_hours():
         if year: 
             query += " AND year = %s"
             params.append(year)
-        if sex:
-            query += " AND sex = %s"
-            params.append(sex)
 
         current_app.logger.debug(f'Executing query: {query} with params: {params}')
         cursor.execute(query, params)
 
-        hours = cursor.fetchall()
+        item = cursor.fetchall()
 
         cursor.close()
 
-        current_app.logger.info(f'Successfully retrieved {len(hours)} Weekly Hours')
-        return jsonify(hours), 200
+        current_app.logger.info(f'Successfully retrieved {len(item)} CPI')
+        return jsonify(item), 200
 
     except Error as e:
-        current_app.logger.error(f'Database error in get_all_hours: {str(e)}')
+        current_app.logger.error(f'Database error in get_all_cpi: {str(e)}')
         return jsonify({"error": str(e)}), 500
