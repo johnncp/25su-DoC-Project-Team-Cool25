@@ -1,11 +1,25 @@
 import streamlit as st
 import requests
 from streamlit_extras.app_logo import add_logo
-from modules.nav import SideBarLinks, AlwaysShowAtBottom
+from modules.nav import SideBarLinks, AlwaysShowAtBottom, Back
+
 
 # Initialize sidebar
+Back("04_Business_Planner.py")
 SideBarLinks()
 AlwaysShowAtBottom()
+
+# COUNTRY MAPPING
+country_map = {
+    'EU27_2020': 'European Union (27)',
+    'BE': 'Belgium', 'BG': 'Bulgaria', 'CZ': 'Czechia', 'DK': 'Denmark',
+    'DE': 'Germany', 'EE': 'Estonia', 'IE': 'Ireland', 'EL': 'Greece',
+    'ES': 'Spain', 'FR': 'France', 'HR': 'Croatia', 'IT': 'Italy',
+    'CY': 'Cyprus', 'LV': 'Latvia', 'LT': 'Lithuania', 'LU': 'Luxembourg',
+    'HU': 'Hungary', 'MT': 'Malta', 'NL': 'Netherlands', 'AT': 'Austria',
+    'PL': 'Poland', 'PT': 'Portugal', 'RO': 'Romania', 'SI': 'Slovenia',
+    'SK': 'Slovakia', 'FI': 'Finland', 'SE': 'Sweden'
+}
 
 st.title("Location Profile")
 
@@ -41,8 +55,7 @@ with col1:
                 # Display basic information
                 st.header(loc["daycare_name"])
                 st.subheader("Basic Information")
-                st.write(f"City: {loc['city']}")
-                st.write(f"Country: {loc['country_code']}")
+                st.write(f"{loc['city']}, {country_map.get(loc['country_code'], loc['country_code'])}")
 
                 
                 # Display data
@@ -172,17 +185,3 @@ if st.session_state.get("confirm_delete"):
 
     except requests.exceptions.RequestException as e:
                 st.error(f"Connection error: {str(e)}")
-
-
-
-# Add a button to return to the Business Planner Page
-st.write("\n\n")
-if st.button("Return to Business Planner"):
-    st.session_state['show_inputs'] = not st.session_state['show_inputs']
-
-    if "selected_daycare_id" in st.session_state:
-        del st.session_state["selected_daycare_id"]
-    if "delete_location" in st.session_state:
-        del st.session_state["delete_location"]
-
-    st.switch_page("pages/04_Business_Planner.py")

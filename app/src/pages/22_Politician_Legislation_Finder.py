@@ -166,6 +166,26 @@ fig.update_layout(
         range=[5.5, 14.5] if fixed_range else None)
 )
 
+SHADE = "rgba(150,150,150,0.18)"
+
+fig.add_shape(
+    type="rect",
+    x0=2023, x1=2024.6, # span the last two years
+    y0=0,  y1=1, # full height of the axes
+    xref="x", yref="paper", # x in data units, y in (0-1) as paper
+    fillcolor=SHADE,
+    layer="below",
+    line_width=0
+)
+
+fig.add_annotation(
+    x=2023.82, y=.85, # center of band
+    xref="x",  yref="paper",
+    text="prediction",
+    showarrow=False,
+    font=dict(size=14, color="grey")
+)
+
 
 st.plotly_chart(fig, use_container_width=True)
 

@@ -76,7 +76,7 @@ with col1:
     ])  
     st.caption("Note: Complete Cyprus data is not available at the moment.")
 with col2:
-    selected_year = st.number_input("Select Year", min_value=2015, max_value=2024, step=1, value=2023)
+    selected_year = st.number_input("Select Year", min_value=2015, max_value=2022, step=1, value=2022)
 
 # Fetch data for both sexes
 sexes = ["males", "females"]
