@@ -1,10 +1,11 @@
 import streamlit as st
 import requests
 from streamlit_extras.app_logo import add_logo
-from modules.nav import SideBarLinks, AlwaysShowAtBottom
+from modules.nav import SideBarLinks, AlwaysShowAtBottom, Back
 import datetime
 
 # Initialize sidebar
+Back("04_Business_Planner.py")
 SideBarLinks()
 AlwaysShowAtBottom()
 
@@ -54,7 +55,3 @@ with st.form("add_location_form"):
             except requests.exceptions.RequestException as e:
                 st.error(f"Error connecting to the API: {str(e)}")
                 st.info("Please ensure the API server is running")
-
-# Add a button to return to the NGO Directory
-if st.button("Return to Planning Page"):
-    st.switch_page("pages/04_Business_Planner.py")
