@@ -63,7 +63,21 @@ country_map = {
 }
 
 # DATA LOAD 
-df = pd.read_csv("datasets/politician/birth_with_2024.csv")
+
+def fetch_birth_rates() -> pd.DataFrame:
+    API_BIRTH_URL = "http://web-api:4000/birthdata/api/birth-rates"   # Flask route :contentReference[oaicite:1]{index=1}
+    try:
+        resp = requests.get(API_BIRTH_URL, timeout=10)
+        resp.raise_for_status()          # -> HTTPError if 4xx/5xx
+        # Flask returns a JSON list → list of rows in the fixed column order
+        cols = ["country", "year", "birth_rate_per_thousand", "live_births"]
+        return pd.DataFrame(resp.json(), columns=cols)
+    except requests.exceptions.RequestException as e:
+        st.error(f"Unable to fetch birth-rate data: {e}")
+        st.stop()                        # abort the page if data is missing
+
+df = fetch_birth_rates() 
+df["birth_rate_per_thousand"] = pd.to_numeric(df["birth_rate_per_thousand"], errors='coerce')
 df["country_name"] = df["country"].map(country_map)
 df = df[df["birth_rate_per_thousand"].notna()]
 
@@ -133,9 +147,7 @@ for country in selected_countries:
         ))
 
 # FINAL STYLING 
-fig.update_traces(
-    line_shape='spline',
-)
+fig.update_traces(line_shape='spline')
 
 fig.update_layout(
     title="Crude Birth Rate Over Time (per 1000 people)",
@@ -148,7 +160,10 @@ fig.update_layout(
     paper_bgcolor="#ffffff",
     
     xaxis=dict(showgrid=True, gridcolor="lightgrey", zeroline=False),
-    yaxis=dict(showgrid=True, gridcolor="lightgrey", range=[5.5, 14.5] if fixed_range else None)
+    yaxis=dict(
+        showgrid=True, 
+        gridcolor="lightgrey", 
+        range=[5.5, 14.5] if fixed_range else None)
 )
 
 
