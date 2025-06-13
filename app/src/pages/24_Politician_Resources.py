@@ -5,29 +5,78 @@ from streamlit_extras.app_logo import add_logo
 from modules.nav import SideBarLinks, AlwaysShowAtBottom, Back
 import requests
 import plotly.express as px
+import base64, logging
+
+logger = logging.getLogger(__name__)
+
+def get_base64(path):
+    with open(path, "rb") as f:
+        return base64.b64encode(f.read()).decode()
+    
+def fetch_users_by_role(role_id):
+    try:
+        response = requests.get(f"http://web-api:4000/users/role/{role_id}")
+        if response.status_code == 200:
+            return response.json()
+    except Exception as e:
+        logger.error(f"Error fetching users: {e}")
+
+background_img = get_base64("assets/Feature_background.png")
+
+st.markdown(f"""
+    <style>
+    @keyframes fadeIn {{
+        0% {{ opacity: 0; }}
+        100% {{ opacity: 1; }}
+    }}
+
+    .overlay-text {{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-125%, -80%);
+        color: #31333E;
+        font-size: 3.8rem;
+        font-weight: bold;
+        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+        padding: 15px 25px;
+        border-radius: 8px;
+        line-height: 0.8;
+        opacity: 0;
+        animation: fadeIn 0.5s ease-out forwards;
+    }}
+    </style>
+
+    <img src="data:image/png;base64,{background_img}">
+    <div class="overlay-text">📁 Resources</div>
+""", unsafe_allow_html=True)
 
 
 SideBarLinks()
 AlwaysShowAtBottom()
 
-st.title('Resources')
 st.write("Get a clear picture of life across Europe — from how many hours people work each week, " \
 "to how prices are changing, and how much governments are investing in family support.")
+
+st.divider()
 
 
 API_URL = "http://web-api:4000/hours/weeklyhours"
 
 
-# Input selection
-selected_country = st.selectbox("Select a Country", [
-    "Austria", "Belgium", "Bulgaria", "Croatia", "Cyprus", "Czechia",
-    "Denmark", "Estonia", "Finland", "France", "Germany", "Greece",
-    "Hungary", "Ireland", "Italy", "Latvia", "Lithuania", "Luxembourg",
-    "Malta", "Netherlands", "Poland", "Portugal", "Romania", "Slovakia",
-    "Slovenia", "Spain", "Sweden"
-])  
-
-selected_year = st.number_input("Select Year", min_value=2015, max_value=2024, step=1, value=2023)
+col1, col2 = st.columns(2)
+with col1:
+    # Input selection
+    selected_country = st.selectbox("Select a Country", [
+        "Austria", "Belgium", "Bulgaria", "Croatia", "Czechia",
+        "Denmark", "Estonia", "Finland", "France", "Germany", "Greece",
+        "Hungary", "Ireland", "Italy", "Latvia", "Lithuania", "Luxembourg",
+        "Malta", "Netherlands", "Poland", "Portugal", "Romania", "Slovakia",
+        "Slovenia", "Spain", "Sweden"
+    ])  
+    st.caption("Note: Complete Cyprus data is not available at the moment.")
+with col2:
+    selected_year = st.number_input("Select Year", min_value=2015, max_value=2024, step=1, value=2023)
 
 # Fetch data for both sexes
 sexes = ["males", "females"]

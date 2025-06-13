@@ -238,7 +238,7 @@ def PoliticianPageNav():
     st.sidebar.page_link(
         "pages/22_Politician_Legislation_Finder.py", label="Legislation Finder", icon="🔎"
     )
-    st.sidebar.page_link("pages/24_Politician_Resources.py", label="Politician Resources", icon="📁")
+    st.sidebar.page_link("pages/24_Politician_Resources.py", label="Resources", icon="📁")
 
 
 # --------------------------------Links Function -----------------------------------------------
