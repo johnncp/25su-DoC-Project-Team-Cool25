@@ -21,8 +21,6 @@ country_map = {
     'SK': 'Slovakia', 'FI': 'Finland', 'SE': 'Sweden'
 }
 
-st.title("Location Profile")
-
 # Get ID from session state
 location_id = st.session_state.get("selected_daycare_id")
 
@@ -34,7 +32,7 @@ if "delete_location" not in st.session_state:
         st.session_state['delete_location'] = False
 
 
-col1, col2, col3 = st.columns([2, 0.5, 2])
+col1, col2, col3 = st.columns([3, 0.2, 1])
 
 with col1: 
     if location_id is None:
@@ -53,15 +51,16 @@ with col1:
                 loc = response.json()
 
                 # Display basic information
-                st.header(loc["daycare_name"])
-                st.subheader("Basic Information")
+                st.title(loc["daycare_name"])
+                st.header("Location")
                 st.write(f"{loc['city']}, {country_map.get(loc['country_code'], loc['country_code'])}")
 
                 
                 # Display data
                 if loc.get("data"):
-                        st.subheader("Data Over the Years")
+                        st.header("Data Over the Years")
                         selected_year = st.selectbox("Choose a year", (2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015))
+                        st.divider()
                         for data in loc["data"]:
                             if data["Year"] == selected_year: 
                                 st.write("\n\n")
@@ -185,3 +184,47 @@ if st.session_state.get("confirm_delete"):
 
     except requests.exceptions.RequestException as e:
                 st.error(f"Connection error: {str(e)}")
+
+st.divider()
+
+API_KEY = 'b7fbb637b8044d34b684ae6076ee98e2'
+DEFAULT_TOPIC = f"{loc['city']}, {country_map.get(loc['country_code'], loc['country_code'])}"
+user_topic = DEFAULT_TOPIC
+
+# Display
+st.header(f"The Latest on {user_topic}")
+
+# Text input from user
+user_topic = st.text_input("Or click to refine queries yourself:", value=DEFAULT_TOPIC)
+
+# Disclaimer
+st.caption("• Eurobébé is not affiliated with the following articles and does not confirm factuality. Use intended for informational purposes only.")
+
+# Request to NewsAPI
+url = f"https://newsapi.org/v2/everything?q={user_topic}&sortBy=publishedAt&language=en&apiKey={API_KEY}"
+
+# Fetch
+response = requests.get(url)
+data = response.json()
+
+if data.get("articles"):
+    articles = data["articles"][:6]  # Top 3
+
+    # Create 3 columns
+    cols = st.columns(3)
+
+    for i, article in enumerate(articles):
+        with cols[i % 3]:
+            st.markdown(
+                f"""
+                <div style="border:1px solid #ddd; border-radius:10px; padding:15px; margin-bottom:10px; background-color:#F4F4F4;">
+                    <img src="{article['urlToImage']}" style="width:100%; border-radius:8px; margin-bottom:10px;" />
+                    <h4 style="margin-top:0;">{article['title']}</h4>
+                    <p>{article['description'] or ''}</p>
+                    <a href="{article['url']}" target="_blank">Read more</a>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+else:
+    st.warning("No articles found. Try a different topic.")
