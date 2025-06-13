@@ -255,7 +255,7 @@ if user_country_code:
         st.warning(f"No historical data available for {user_country}")
 
 st.sidebar.caption("""
-The values you see loaded in already come from that country's 2023 data. Adjust to see the changes."""
+The values you see loaded in come from the particular country's data from 2023. Adjust to see the changes."""
 )      
 st.sidebar.divider()
 AlwaysShowAtBottom()
