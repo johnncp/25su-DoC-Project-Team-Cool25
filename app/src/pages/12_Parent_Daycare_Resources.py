@@ -7,15 +7,61 @@ import world_bank_data as wb
 import matplotlib.pyplot as plt
 import numpy as np
 import plotly.express as px
-from modules.nav import SideBarLinks, AlwaysShowAtBottom
+from modules.nav import SideBarLinks, AlwaysShowAtBottom, Back
 import streamlit as st
 import requests
 import time
+import base64
 
 logger = logging.getLogger(__name__)
 
 
 st.set_page_config(page_title="Daycare Finder", layout="wide")
+
+Back("10_Parent_Home.py")
+
+def get_base64(path):
+    with open(path, "rb") as f:
+        return base64.b64encode(f.read()).decode()
+    
+def fetch_users_by_role(role_id):
+    try:
+        response = requests.get(f"http://web-api:4000/users/role/{role_id}")
+        if response.status_code == 200:
+            return response.json()
+    except Exception as e:
+        logger.error(f"Error fetching users: {e}")
+
+background_img = get_base64("assets/Feature_background.png")
+
+st.markdown(f"""
+    <style>
+    @keyframes fadeIn {{
+        0% {{ opacity: 0; }}
+        100% {{ opacity: 1; }}
+    }}
+
+    .overlay-text {{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-100%, -80%);
+        color: #31333E;
+        font-size: 3.8rem;
+        font-weight: bold;
+        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+        padding: 15px 25px;
+        border-radius: 8px;
+        line-height: 0.8;
+        opacity: 0;
+        animation: fadeIn 0.5s ease-out forwards;
+    }}
+    </style>
+
+    <img src="data:image/png;base64,{background_img}">
+    <div class="overlay-text">🔎 Daycare Finder</div>
+""", unsafe_allow_html=True)
+
 
 # COUNTRY MAPPING
 country_map = {
@@ -40,8 +86,7 @@ else:
     logger.info("in the else")
     logger.info(st.session_state)
 
-# set the title of the page
-st.title('Find Daycares')
+
 tab1, tab2 = st.tabs(["⊚ Search for Daycares", "⏀ Compare Domestic Daycares"])
 viewLocations = st.session_state.get('view_locations', False)
 

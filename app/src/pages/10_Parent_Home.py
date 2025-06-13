@@ -75,7 +75,7 @@ with col1:
 with col2:
     if st.button('🔎 Daycare Finder', type='primary', use_container_width=True):
         st.success("Legendary sessions..."),
-        st.switch_page('pages/02_Daycare_Resources.py')
+        st.switch_page('pages/12_Parent_Daycare_Resources.py')
 
 with col3:
     if st.button('☰ Resource Page', type='primary', use_container_width=True):

@@ -2,12 +2,57 @@ import streamlit as st
 import requests
 from streamlit_extras.app_logo import add_logo
 from modules.nav import SideBarLinks, AlwaysShowAtBottom
+import logging, base64
 
 # Initialize sidebar
 SideBarLinks()
-AlwaysShowAtBottom()
 
-st.title("Resource Directory")
+logger = logging.getLogger(__name__)
+
+def get_base64(path):
+    with open(path, "rb") as f:
+        return base64.b64encode(f.read()).decode()
+    
+def fetch_users_by_role(role_id):
+    try:
+        response = requests.get(f"http://web-api:4000/users/role/{role_id}")
+        if response.status_code == 200:
+            return response.json()
+    except Exception as e:
+        logger.error(f"Error fetching users: {e}")
+
+background_img = get_base64("assets/Feature_background.png")
+
+st.markdown(f"""
+    <style>
+    @keyframes fadeIn {{
+        0% {{ opacity: 0; }}
+        100% {{ opacity: 1; }}
+    }}
+
+    .overlay-text {{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-100%, -80%);
+        color: #31333E;
+        font-size: 3.8rem;
+        font-weight: bold;
+        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+        padding: 15px 25px;
+        border-radius: 8px;
+        line-height: 0.8;
+        opacity: 0;
+        animation: fadeIn 0.5s ease-out forwards;
+    }}
+    </style>
+
+    <img src="data:image/png;base64,{background_img}">
+    <div class="overlay-text">☰ Discover Affinity Groups</div>
+""", unsafe_allow_html=True)
+
+st.markdown("The place to unearth *your* community.")
+
 
 # Country code to full name
 country_map = {
@@ -67,14 +112,10 @@ try:
         country_names = sorted([country_map.get(code, code) for code in country_codes])
 
         # Select full country name
-        with col1:
+        with st.sidebar:
             selected_country_name = st.selectbox("Filter by Country", ["All"] + country_names)
-
-        with col2:
             selected_focus = st.selectbox("Filter by Focus Area", ["All"] + focus_area)
-
-        with col3:
-            selected_type = st.selectbox("Filter by Resource Type", ["All"] + resource_type,)
+            selected_type = st.selectbox("Filter by Resource Type", ["All"] + resource_type)
 
         # Build query parameters
         params = {}
@@ -93,34 +134,43 @@ try:
             filtered_groups = filtered_response.json()
 
             # Display results count
-            st.write(f"Found {len(filtered_groups)} Resources")
 
-            # Create expandable rows for each NGO
-            for group in filtered_groups:
-                country_full = country_map.get(group['country_code'], group['country_code'])
-                with st.expander(f"{group['resource_name']} ({group['city']})"):
-                    col1, col2 = st.columns(2)
+            col1, col2 = st.columns(2)
+            with col1:
+                st.info("← Find your place with specific filters on the sidebar.")
+            with col2:
+                if len(filtered_groups) > 0:
+                    st.success(f"Found {len(filtered_groups)} Resources.")
+                else:
+                    st.warning(f"Found {len(filtered_groups)} Resources. We recommend expanding your criteria.")
+            
+            st.divider()
 
-                    with col1:
-                        st.write("**Basic Information**")
-                        st.write(f"**Resource Type:** {group['resource_type']}")
-                        st.write(f"**Focus Area:** {group['focus_area']}")
-                        st.write(f"**Description:** {group['description']}")
+            # Create 3-column grid layout
+            for i in range(0, len(filtered_groups), 3):
+                cols = st.columns(3)
+                for j in range(3):
+                    if i + j < len(filtered_groups):
+                        group = filtered_groups[i + j]
+                        country_full = country_map.get(group['country_code'], group['country_code'])
+                        
+                        with cols[j]:
+                            with st.expander(f"{group['resource_name']} ({group['city']}, {group['country_code']})"):
+                                st.write("**Basic Information**")
+                                st.write(f"**Resource Type:** {group['resource_type']}")
+                                st.write(f"**Focus Area:** {group['focus_area']}")
+                                st.write(f"**Description:** {group['description']}")
+                                
+                                st.divider()
+                                
+                                st.write(f"**City:** {group['city']}")
+                                st.write(f"**Country:** {country_full}")
+                                st.write(f"**Website:** [{group['website']}]({group['website']})")
 
-
-                    with col2:
-                        #st.write("**Contact Information**")
-                        st.write(f"**City:** {group['city']}")
-                        st.write(f"**Country:** {country_full}")
-
-
-                        st.write(f"**Website:** [{group['website']}]({group['website']})")
-
-
-                    # Add a button to view full profile
-                    #if st.button(f"View Full Profile", key=f"view_{group['NGO_ID']}"):
-                       # st.session_state["selected_ngo_id"] = group["NGO_ID"]
-                      # st.switch_page("pages/16_NGO_Profile.py")
+                                # Add a button to view full profile
+                                #if st.button(f"View Full Profile", key=f"view_{group['NGO_ID']}"):
+                                   # st.session_state["selected_ngo_id"] = group["NGO_ID"]
+                                  # st.switch_page("pages/16_NGO_Profile.py")
 
     else:
         st.error("Failed to fetch Resource data from the API")
@@ -128,3 +178,6 @@ try:
 except requests.exceptions.RequestException as e:
     st.error(f"Error connecting to the API: {str(e)}")
     st.info("Please ensure the API server is running on http://web-api:4000")
+
+st.sidebar.divider()
+AlwaysShowAtBottom()
