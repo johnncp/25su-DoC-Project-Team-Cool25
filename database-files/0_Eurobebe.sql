@@ -104,40 +104,9 @@ CREATE TABLE IF NOT EXISTS EUCPI
 
 
 -- # FEATURES:
--- ## Politicians:
--- PolicyAnalysis
-CREATE TABLE IF NOT EXISTS PolicyAnalysis
-(
-    analysis_id  INT AUTO_INCREMENT PRIMARY KEY,
-    user_id      INT,
-    country_code VARCHAR(10),
-    FOREIGN KEY (user_id) REFERENCES User (user_id)
-        ON UPDATE cascade ON DELETE restrict
-);
-
--- ### PolicyDetails
-CREATE TABLE IF NOT EXISTS PolicyDetails
-(
-    details_id           INT AUTO_INCREMENT PRIMARY KEY,
-    cost_per_month       DECIMAL(10, 2),
-    policy_type          VARCHAR(50),
-    effect_on_birth_rate DECIMAL(5, 2),
-    analysis_id          INT,
-    FOREIGN KEY (analysis_id) REFERENCES PolicyAnalysis (analysis_id)
-        ON UPDATE cascade ON DELETE restrict
-);
 
 -- ## Daycare Operators:
--- ### BusinessPlanning
-CREATE TABLE IF NOT EXISTS BusinessPlanning
-(
-    plan_id       INT AUTO_INCREMENT PRIMARY KEY,
-    daycare_id    INT,
-    year_forecast INT,
-    user_id       INT,
-    FOREIGN KEY (user_id) REFERENCES User (user_id)
-        ON UPDATE cascade ON DELETE restrict
-);
+
 
 -- DaycareLocations
 CREATE TABLE IF NOT EXISTS DaycareLocations
@@ -148,46 +117,10 @@ CREATE TABLE IF NOT EXISTS DaycareLocations
     country_code  VARCHAR(10),
     inactive BOOLEAN DEFAULT FALSE,
     owner_id INT,
-    plan_id       INT,
-    FOREIGN KEY (plan_id) REFERENCES BusinessPlanning (plan_id)
-        ON UPDATE cascade ON DELETE restrict,
     FOREIGN KEY (owner_id) REFERENCES User (user_id)
         ON UPDATE cascade ON DELETE restrict
 );
 
--- GeneralLogistics
-CREATE TABLE IF NOT EXISTS GeneralLogistics
-(
-    oper_id            INT AUTO_INCREMENT PRIMARY KEY,
-    staffing_demand    INT,
-    financial_analysis TEXT,
-    plan_id            INT,
-    FOREIGN KEY (plan_id) REFERENCES BusinessPlanning (plan_id)
-        ON UPDATE cascade ON DELETE restrict
-);
-
--- OperatingHours
-CREATE TABLE IF NOT EXISTS OperatingHours
-(
-    hours_id      INT AUTO_INCREMENT PRIMARY KEY,
-    plan_id       INT,
-    year_forecast INT,
-    daycare_id    INT,
-    FOREIGN KEY (plan_id) REFERENCES BusinessPlanning (plan_id)
-        ON UPDATE cascade ON DELETE restrict
-);
-
--- ## Expecting Parents:
--- ### ChildcareOptions
-CREATE TABLE IF NOT EXISTS ChildcareOptions
-(
-    option_id      INT AUTO_INCREMENT PRIMARY KEY,
-    country_code   VARCHAR(10),
-    cost_per_month DECIMAL(10, 2),
-    user_id        INT,
-    FOREIGN KEY (user_id) REFERENCES User (user_id)
-        ON UPDATE cascade ON DELETE restrict
-);
 
 -- Model 1 Weights
 CREATE TABLE IF NOT EXISTS Model1Weights

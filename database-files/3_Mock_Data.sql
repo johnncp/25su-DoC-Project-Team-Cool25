@@ -24,16 +24,6 @@ CREATE TABLE IF NOT EXISTS Policies
     description VARCHAR(200)
 );
 
-CREATE TABLE IF NOT EXISTS DeletedDaycareLocations (
-    daycare_id    INT PRIMARY KEY,
-    daycare_name  VARCHAR(100),
-    opening_time  TIME,
-    closing_time  TIME,
-    monthly_price DECIMAL(7, 2),
-    city          VARCHAR(50),
-    country_code  VARCHAR(10)
-);
-
 CREATE TABLE IF NOT EXISTS DaycareData 
 (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -50,12 +40,6 @@ CREATE TABLE IF NOT EXISTS DaycareData
         ON UPDATE cascade ON DELETE restrict
 );
 
-/*INSERT INTO AffinityResources (id, resource_name, resource_type, focus_area, country_code)
-VALUES(1, "Helping Parents", "Charity", "Working Parents", "BE"),
-(2, "Supporting Mothers", "Affinity Group", "Single Mothers", "FR"); */
-
--- # REAL DATA: 
--- ## UserRoles:
 
 -- ## Users:
 INSERT INTO User (first_name,last_name,age,occupation,country_code,role_id) 
@@ -113,7 +97,7 @@ INSERT INTO User (first_name, last_name, age, occupation, country_code, role_id)
 VALUES
     ('Paul E.', 'Tishan', 45, 'City Council Member', 'BE', 3),
     ('Charles', 'Reuva', 52, 'Regional Parliament Member', 'ES', 3),
-    ('Miss', 'O\'Hill', 48, 'Local Mayor', 'IE', 3);
+    ('Miss', 'O''Hill', 48, 'Local Mayor', 'IE', 3);
 
 -- ## AffinityResources
 INSERT INTO AffinityResources(id,resource_name,resource_type,focus_area,city,country_code,description,website) 
