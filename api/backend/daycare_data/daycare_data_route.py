@@ -78,7 +78,7 @@ def get_all_daycare_data():
 
             result = {
                 "ID": row["id"],
-                "Daycare ID": row["daycare_id"],
+                "daycare_id": row["daycare_id"],
                 "Enrollment": row["enrollment"],
                 "Year": row["year"],
                 "Staff": row["staff"],
