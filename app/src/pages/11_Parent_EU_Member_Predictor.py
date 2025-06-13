@@ -199,6 +199,9 @@ with st.sidebar:
     
     # Get recommendations button
     recommend_button = st.button("Find Best Countries 🌍", type="primary", use_container_width=True)
+    if recommend_button:
+        with st.spinner("Staring blankly..."):
+            time.sleep(1)
 
 # Main content area
 if recommend_button:
@@ -206,7 +209,7 @@ if recommend_button:
         recommendations = get_recommendations(preferences)
     
     if recommendations:
-        st.success("Successfully personalized your recommendations!")
+        st.success("Successfully personalized your recommendations.")
         
         # Display top recommendations
         top_countries = recommendations['recommendations'][:5]

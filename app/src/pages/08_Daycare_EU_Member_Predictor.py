@@ -201,6 +201,9 @@ with st.sidebar:
     
     # Get recommendations button
     recommend_button = st.button("Find Best Markets", type="primary", use_container_width=True)
+    if recommend_button:
+        with st.spinner("Fiddling..."):
+            time.sleep(1)
 
 # Main content area
 if recommend_button:

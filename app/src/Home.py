@@ -6,6 +6,7 @@
 # Set up basic logging infrastructure
 import logging, requests
 import base64
+from datetime import datetime
 from streamlit.components.v1 import html
 logging.basicConfig(format='%(filename)s:%(lineno)s:%(levelname)s -- %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -24,10 +25,9 @@ st.set_page_config(layout = 'wide')
 # in the streamlit session_state to false. 
 st.session_state['authenticated'] = False
 
-# Use the SideBarLinks function from src/modules/nav.py to control
-# the links displayed on the left-side panel. 
-# IMPORTANT: ensure src/.streamlit/config.toml sets
-# showSidebarNavigation = false in the [client] section
+now = datetime.now()
+hour = now.hour
+
 SideBarLinks(show_home=True)
 AlwaysShowAtBottom()
 
@@ -416,9 +416,9 @@ quotes = [
 
 # --- Names or Roles ---
 names = [
-    "— Cara Day, Prague, CZ",
+    "— Cara Day, Grenoble, FR",
     "— Coake Cero, Ghent, BE",
-    "— Eyci Ell, Nice, FR"
+    "— Eyci Ell, Stockholm, SE"
 ]
 
 # --- CSS Styling ---
@@ -508,3 +508,16 @@ with col3:
 with col4:
     if st.button("About This Project", type="tertiary", use_container_width=True):
         st.switch_page("pages/30_About.py")
+
+
+with st.sidebar:
+    st.divider()
+    with st.expander("☆ Rate Eurobébé", expanded=False):
+        sentiment_mapping = ["1", "2", "3", "4", "5"]
+        st.session_state.selected = st.feedback("stars")
+        
+        if st.session_state.selected is not None:
+            if st.session_state.selected in [0, 1, 2]:
+                st.markdown("We are continually improving our services. Check ***Europe's preferred resource for parenthood*** again soon!")
+            else:
+                st.markdown(f"Thanks for rating ***Europe's preferred resource for parenthood*** {sentiment_mapping[st.session_state.selected]} stars!")
