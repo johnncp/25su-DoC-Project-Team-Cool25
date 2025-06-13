@@ -80,9 +80,7 @@ with col2:
                 
     **🏥 Public Services**: Public services spending per capita (€). Higher means better public services.
     """)
-st.markdown("""
-The values you see loaded in already come from that country's 2023 data, adjust to see the changes!"""
-)           
+     
 st.divider()
             
 # country selection 
@@ -256,5 +254,8 @@ if user_country_code:
     else:
         st.warning(f"No historical data available for {user_country}")
 
+st.sidebar.caption("""
+The values you see loaded in already come from that country's 2023 data. Adjust to see the changes."""
+)      
 st.sidebar.divider()
 AlwaysShowAtBottom()
