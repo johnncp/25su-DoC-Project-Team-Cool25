@@ -11,7 +11,6 @@ import json
 import pandas as pd
 import numpy as np
 from backend.db_connection import db
-from backend.ml_models import model01
 
 # This blueprint handles some basic routes that you can use for testing
 model2_routes = Blueprint("model2_routes", __name__)

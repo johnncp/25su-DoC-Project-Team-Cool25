@@ -46,21 +46,20 @@ st.markdown(f"""
     <div class="overlay-text">Birth Rate Predictor 🍼</div>
 """, unsafe_allow_html=True)
 
-# data
-@st.cache_data
-def load_data():
-    df = pd.read_csv("datasets/model1/Model_data.csv")
-    df = df.dropna(subset=[
-        'birth_rate_per_thousand', 'weekly_hours',
-        'cash_per_capita', 'maternity_per_capita',
-        'services_per_capita', 'year'
-    ])
-    # remove EU
-    excluded = ["EU28", "EU Average", "Euro area", "EU27_2020", "EA19"]
-    return df[~df["Country"].isin(excluded)]
+# COUNTRY MAPPING
+country_map = {
+    'EU27_2020': 'European Union (27)',
+    'BE': 'Belgium', 'BG': 'Bulgaria', 'CZ': 'Czechia', 'DK': 'Denmark',
+    'DE': 'Germany', 'EE': 'Estonia', 'IE': 'Ireland', 'EL': 'Greece',
+    'ES': 'Spain', 'FR': 'France', 'HR': 'Croatia', 'IT': 'Italy',
+    'CY': 'Cyprus', 'LV': 'Latvia', 'LT': 'Lithuania', 'LU': 'Luxembourg',
+    'HU': 'Hungary', 'MT': 'Malta', 'NL': 'Netherlands', 'AT': 'Austria',
+    'PL': 'Poland', 'PT': 'Portugal', 'RO': 'Romania', 'SI': 'Slovenia',
+    'SK': 'Slovakia', 'FI': 'Finland', 'SE': 'Sweden'
+}
 
-df = load_data()
-all_countries = sorted(df["Country"].dropna().unique())
+# Get country names excluding EU aggregate
+all_countries = sorted([name for code, name in country_map.items() if code != 'EU27_2020'])
 
 st.markdown("Select a country and adjust the inputs to estimate its predicted birth rate for 2024.")
 st.info("← Customize your criteria on the sidebar.")
@@ -89,17 +88,28 @@ st.divider()
 # country selection 
 user_country = st.sidebar.selectbox("Select your country", all_countries)
 
-# fetch most recent data before 2024
-def get_latest_country_data(df, country_name):
-    country_df = df[(df['Country'] == country_name) & (df['year'] < 2024)]
-    if country_df.empty:
-        return None
-    return country_df.sort_values('year', ascending=False).iloc[0]
+# Reverse mapping to get country code from name
+name_to_code = {name: code for code, name in country_map.items()}
+user_country_code = name_to_code.get(user_country)
 
-latest_data = get_latest_country_data(df, user_country)
-if latest_data is None:
-    st.error("No valid data available for this country.")
-    st.stop()
+# Fetch historical data for the selected country
+def fetch_country_birth_data(country_code):
+    """Fetch birth rate data for a specific country"""
+    API_BIRTH_URL = "http://web-api:4000/birthdata/api/birth-rates"
+    try:
+        resp = requests.get(API_BIRTH_URL, timeout=10)
+        resp.raise_for_status()
+        
+        # Convert to DataFrame
+        cols = ["country", "year", "birth_rate_per_thousand", "live_births"]
+        df = pd.DataFrame(resp.json(), columns=cols)
+        
+        # Filter for specific country and years before 2024
+        country_df = df[(df["country"] == country_code) & (df["year"] < 2024)]
+        return country_df.sort_values("year")
+    except requests.exceptions.RequestException as e:
+        st.error(f"Unable to fetch birth-rate data: {e}")
+        return pd.DataFrame()
 
 # input sliders 
 st.subheader("Adjust Features for Prediction")
@@ -187,8 +197,6 @@ try:
         unsafe_allow_html=True
 
     )
-    #st.success(f" **Predicted Birth Rate for {user_country} in 2024:** {prediction:.2f} births per 1000 people")
-    #st.balloons()
 
 except requests.exceptions.RequestException as e:
     st.error(f"Failed to fetch model weights: {e}")
@@ -199,44 +207,54 @@ st.divider()
 # --- Visualization of Actual + Predicted ---
 st.subheader(f"Birth Rate Trend for {user_country} with 2024 Prediction")
 
-country_hist = df[df['Country'] == user_country].copy().sort_values("year")
-if not country_hist.empty:
-    last_actual_year = country_hist['year'].max()
-    last_actual_value = country_hist[country_hist['year'] == last_actual_year]['birth_rate_per_thousand'].values[0]
+# Fetch historical data for visualization
+if user_country_code:
+    country_hist = fetch_country_birth_data(user_country_code)
+    
+    if not country_hist.empty:
+        # Ensure birth_rate_per_thousand is numeric
+        country_hist['birth_rate_per_thousand'] = pd.to_numeric(country_hist['birth_rate_per_thousand'], errors='coerce')
+        country_hist = country_hist.dropna(subset=['birth_rate_per_thousand'])
+        
+        last_actual_year = country_hist['year'].max()
+        last_actual_value = country_hist[country_hist['year'] == last_actual_year]['birth_rate_per_thousand'].values[0]
 
-    fig = go.Figure()
+        fig = go.Figure()
 
-    # historical line
-    fig.add_trace(go.Scatter(
-        x=country_hist['year'],
-        y=country_hist['birth_rate_per_thousand'],
-        mode='lines+markers',
-        name='Actual Birth Rate',
-        line=dict(color='blue')
-    ))
+        # historical line
+        fig.add_trace(go.Scatter(
+            x=country_hist['year'],
+            y=country_hist['birth_rate_per_thousand'],
+            mode='lines+markers',
+            name='Actual Birth Rate',
+            line=dict(color='blue')
+        ))
 
-    # prediction line
-    fig.add_trace(go.Scatter(
-        x=[last_actual_year, 2024],
-        y=[last_actual_value, prediction],
-        mode='lines+markers',
-        name='Predicted 2024',
-        line=dict(color='orange', dash='dash'),
-        marker=dict(color='orange', size=10)
-    ))
+        # prediction line
+        fig.add_trace(go.Scatter(
+            x=[last_actual_year, 2024],
+            y=[last_actual_value, prediction],
+            mode='lines+markers',
+            name='Predicted 2024',
+            line=dict(color='orange', dash='dash'),
+            marker=dict(color='orange', size=10)
+        ))
 
-    fig.update_traces(
-        line_shape='spline',
-    )
+        fig.update_traces(
+            line_shape='spline',
+        )
 
-    fig.update_layout(
-        xaxis_title='Year',
-        yaxis_title='Birth Rate per 1000 People',
-        template='plotly_white',
-        height=600
-    )
+        fig.update_layout(
+            xaxis_title='Year',
+            yaxis_title='Birth Rate per 1000 People',
+            template='plotly_white',
+            height=600,
+            yaxis=dict(autorange=True)
+        )
 
-    st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, use_container_width=True)
+    else:
+        st.warning(f"No historical data available for {user_country}")
 
 st.sidebar.divider()
 AlwaysShowAtBottom()
