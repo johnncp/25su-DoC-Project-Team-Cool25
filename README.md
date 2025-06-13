@@ -22,11 +22,11 @@ Another persona in our app is Eura Pean, an expecting parent living in the Europ
 Lastly, one can enter as Paul E. Tishan, a politician residing in the EU. Paul can use the app to predict the birth rate for his country to get a better sense as to what the future of his nation looks like. Paul can also view predictions for all European Union countries, as well as past legislatin that may have played a role in the trends he views. 
 
 ## Structure
-Below is the general structure of the project. The `api` directory contains the majority of the routes connecting each component of the various Docker containers. Within the  `api/backend/ml_models` directory, you can find the backend renferences for the main logic of the two machine learning models. 
+Below is an overview of the structure of this project. The `api` directory contains the majority of the routes connecting each component of the various Docker containers. Within  `api/backend/ml_models` directory, you can find the backend renferences for the main logic of the our first linear regression model, where the references to our second are stored within model2. 
 
-From the `app` directory, one can find the main contents of the front end. The `app\src\pages` folder contains each of the pages a user can interact with. Inside of the `pages` folder, one can see each of the pages labeled with the first two digits of each page representing its location within the app. For example, all of the pages a user acting as Anton can view begin with `0X`. 
+From the `app` directory, one can find the main contents of the front end. The `app\src\pages` folder contains each of the pages a user can interact with on this app. The `pages` folder is organized by number as well as the user persona it corresponds too. 
 
-Finally, the other main component of the project structure is the `database` folder which contains all of the information allowing for users to interact with articles and training data for the two machine learning models, amongst other features.
+Finally, the `database` folder which contains all of the information allowing for users to interact with different visualizations and models within the app. Here training data for the two machine learning models, amongst other features are accessed.
 
 ```
 └───Eurobébé
@@ -35,7 +35,7 @@ Finally, the other main component of the project structure is the `database` fol
     │       ├───affinity_groups
     │       ├───api_calls
     │       ├───benefits_expenditure
-    │       ├───customers
+    │       ├───cpi
     │       ├───daycare
     │       ├───daycare_data
     │       ├───daycare_locations
@@ -43,15 +43,18 @@ Finally, the other main component of the project structure is the `database` fol
     │       ├───employment_hours
     │       ├───ml_models
     │       ├───model2
-    │       ├───ngos
-    
+    │       ├───notes
+    │       ├───policy
+    │       ├───simple
+    │       ├───users
+    │       ├───rest_entry.py
     ├───app
     │   └───src
     │       ├───assets
     │       ├───modules
     │       └───pages
     ├───database
-    └───fake_data
+    └───datasets
 ```
 
 ## Improvements To Make & Current Limitations
