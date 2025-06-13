@@ -187,7 +187,7 @@ if st.session_state.get("confirm_delete"):
 
 st.divider()
 
-API_KEY = 'b7fbb637b8044d34b684ae6076ee98e2'
+API_KEY = 'a6025c9e68c4420e8eecb10dd38480da'
 DEFAULT_TOPIC = f"{loc['city']}, {country_map.get(loc['country_code'], loc['country_code'])}"
 user_topic = DEFAULT_TOPIC
 

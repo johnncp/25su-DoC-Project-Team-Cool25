@@ -1,10 +1,11 @@
 import streamlit as st
 import requests
 from streamlit_extras.app_logo import add_logo
-from modules.nav import SideBarLinks, AlwaysShowAtBottom
+from modules.nav import SideBarLinks, AlwaysShowAtBottom, Back
 import logging, base64
 
 # Initialize sidebar
+Back("10_Parent_Home.py")
 SideBarLinks()
 
 logger = logging.getLogger(__name__)

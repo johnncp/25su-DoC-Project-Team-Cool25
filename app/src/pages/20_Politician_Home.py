@@ -6,7 +6,7 @@ import streamlit as st
 from modules.nav import SideBarLinks, AlwaysShowAtBottom
 import requests
 
-API_KEY = 'b7fbb637b8044d34b684ae6076ee98e2'
+API_KEY = 'a6025c9e68c4420e8eecb10dd38480da'
 DEFAULT_TOPIC = "European Union Birth Rates"
 user_topic = DEFAULT_TOPIC
 
