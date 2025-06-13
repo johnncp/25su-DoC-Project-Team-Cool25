@@ -16,7 +16,6 @@ from backend.users.user_routes import users
 from backend.notes.notes_routes import notes
 from backend.model2.model2_routes import model2_routes
 from backend.policy.birth_data_w24_routes import birth_data_routes
-from backend.model1.model1_routes import model1_routes
 
 def create_app():
     app = Flask(__name__)
@@ -63,7 +62,6 @@ def create_app():
     app.register_blueprint(users, url_prefix="/users")
     app.register_blueprint(notes, url_prefix="/notes")
     app.register_blueprint(model2_routes, url_prefix="/model2")
-    app.register_blueprint(model1_routes, url_prefix="/model1")
     app.register_blueprint(birth_data_routes, url_prefix="/birthdata")
 
     # Don't forget to return the app object

@@ -10,7 +10,6 @@ from flask import (
 import json
 from datetime import datetime
 from backend.db_connection import db
-from backend.ml_models import model01
 
 # This blueprint handles some basic routes that you can use for testing
 notes = Blueprint("notes", __name__)
