@@ -280,7 +280,7 @@ if recommend_button:
                 title='Market Fit Scores by Country',
                 labels={'similarity_score': 'Market Fit Score', 'country': 'Country'},
                 color='similarity_score',
-                color_continuous_scale='Greens'
+                color_continuous_scale='Blues'
             )
 
             # update bar
@@ -346,7 +346,7 @@ if recommend_button:
             df_display['Public Childcare (€)'] = df_display['Public Childcare (€)'].apply(lambda x: f"{x:,.0f}")
             
             st.dataframe(df_display, use_container_width=True, hide_index=True)
-            st.caption("💡 Tip: Click column headers to sort. Consider both market fit and competition levels.")
+            st.caption("Tip: Click column headers to sort. Consider both market fit and competition levels. Table can be resized.")
 
             st.divider()
 
@@ -361,7 +361,7 @@ if recommend_button:
                     locationmode=loc_mode,
                     color='similarity_score',
                     hover_name='country',
-                    color_continuous_scale='Greens',
+                    color_continuous_scale='Blues',
                     range_color=(0, 1),
                     scope='europe',
                     title='EU Daycare Market Opportunities',
@@ -462,10 +462,10 @@ else: # no recs just yet
             if feature in stats['statistics']:
                 stat = stats['statistics'][feature]
                 col1, col2, col3, col4 = st.columns(4)
-                col1.metric(f"Minimum", f"{stat['min']:,.0f}")
+                col1.metric(f"{display_name} - Min.", f"{stat['min']:,.0f}")
                 col2.metric("EU Average", f"{stat['mean']:,.0f}")
                 col3.metric("EU Median", f"{stat['median']:,.0f}")
-                col4.metric("Maximum", f"{stat['max']:,.0f}")
+                col4.metric("Max.", f"{stat['max']:,.0f}")
     
 
 
