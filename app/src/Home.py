@@ -8,6 +8,7 @@ import logging, requests
 import base64
 from datetime import datetime
 from streamlit.components.v1 import html
+import time
 logging.basicConfig(format='%(filename)s:%(lineno)s:%(levelname)s -- %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -517,7 +518,9 @@ with st.sidebar:
         st.session_state.selected = st.feedback("stars")
         
         if st.session_state.selected is not None:
-            if st.session_state.selected in [0, 1, 2]:
-                st.markdown("We are continually improving our services. Check ***Europe's preferred resource for parenthood*** again soon!")
-            else:
-                st.markdown(f"Thanks for rating ***Europe's preferred resource for parenthood*** {sentiment_mapping[st.session_state.selected]} stars!")
+            with st.spinner("Your feedback matters..."):
+                time.sleep(1)
+                if st.session_state.selected in [0, 1, 2]:
+                    st.markdown("We are continually improving our services. Check ***Europe's preferred resource for parenthood*** again soon!")
+                else:
+                    st.markdown(f"Thanks for rating ***Europe's preferred resource for parenthood*** {sentiment_mapping[st.session_state.selected]} stars!")
