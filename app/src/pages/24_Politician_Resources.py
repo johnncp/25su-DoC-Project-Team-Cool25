@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 from streamlit_extras.app_logo import add_logo
-from modules.nav import SideBarLinks, AlwaysShowAtBottom
+from modules.nav import SideBarLinks, AlwaysShowAtBottom, Back
 import requests
 
 SideBarLinks()

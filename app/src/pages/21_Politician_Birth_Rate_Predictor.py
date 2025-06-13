@@ -4,12 +4,13 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 import base64
-from modules.nav import SideBarLinks, AlwaysShowAtBottom
+from modules.nav import SideBarLinks, AlwaysShowAtBottom, Back
 
 # config & Sidebar
 logger = logging.getLogger(__name__)
 st.set_page_config(page_title="Birth Rate Predictor", layout="wide")
 SideBarLinks()
+Back("20_Politician_Home.py")
 
 def get_base64(path):
     with open(path, "rb") as f:

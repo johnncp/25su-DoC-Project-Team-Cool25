@@ -1,21 +1,53 @@
 import logging
 logger = logging.getLogger(__name__)
 import streamlit as st
-from modules.nav import SideBarLinks, AlwaysShowAtBottom
+from modules.nav import SideBarLinks, AlwaysShowAtBottom, Back
 import requests
 import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
+import base64
 
 # PAGE SETUP 
 st.set_page_config(page_title="Legislation Finder", layout="wide")
 SideBarLinks()
+Back("20_Politician_Home.py")
 
+def get_base64(path):
+    with open(path, "rb") as f:
+        return base64.b64encode(f.read()).decode()
+    
+background_img = get_base64("assets/Feature_background.png")
 
-st.title("Legislation Finder")
-col1, col2 = st.columns(2)
-with col1:
-    st.text("Discover trends and filter through laws that impact families and child care across the EU.")
+st.markdown(f"""
+    <style>
+    @keyframes fadeIn {{
+        0% {{ opacity: 0; }}
+        100% {{ opacity: 1; }}
+    }}
+
+    .overlay-text {{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-100%, -80%);
+        color: #31333E;
+        font-size: 3.8rem;
+        font-weight: bold;
+        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+        padding: 15px 25px;
+        border-radius: 8px;
+        line-height: 0.8;
+        opacity: 0;
+        animation: fadeIn 0.5s ease-out forwards;
+    }}
+    </style>
+
+    <img src="data:image/png;base64,{background_img}">
+    <div class="overlay-text">Legislation Finder 📑</div>
+""", unsafe_allow_html=True)
+
+st.text("Discover trends and filter through laws that impact families and child care across the EU.") 
 st.write('\n\n\n')
 
 # COUNTRY MAPPING
