@@ -1,5 +1,5 @@
 # [Eurobébé](https://github.com/johnncp/25su-DoC-Project-Team-Cool25)
-by [Sophie Farrel](https://github.com/sophiefarrell), [Mia Giargiari](https://github.com/miagiargiari), [Emma Kulla](https://github.com/emmakulla), [John Nguyen](https://github.com/johnncp)
+by [Sophie Farrell](https://github.com/sophiefarrell), [Mia Giargiari](https://github.com/miagiargiari), [Emma Kulla](https://github.com/emmakulla), [John Nguyen](https://github.com/johnncp)
 
 ## About
 
