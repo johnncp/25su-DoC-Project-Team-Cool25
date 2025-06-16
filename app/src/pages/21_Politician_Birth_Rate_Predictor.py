@@ -118,9 +118,9 @@ with col1:
     weekly_hours = st.sidebar.slider("Weekly Hours Worked", 0, 60, 30)
 
 with col2:
-    cash = st.sidebar.number_input("Cash Benefits per Capita (€)", 40000, step=100)
-    services = st.sidebar.number_input("Childcare Services per Capita (€)", 20000, step=50)
-    maternity = st.sidebar.number_input("Maternity Spending per Capita (€)", 300, step=50)
+    cash = st.sidebar.number_input("Cash Benefits per Capita (€)", value=40000, min_value=0, step=100)
+    services = st.sidebar.number_input("Childcare Services per Capita (€)", value=20000, min_value=0, step=50)
+    maternity = st.sidebar.number_input("Maternity Spending per Capita (€)", value=300, min_value=0, step=50)
 
 # load Model Weights + predict
 try:
